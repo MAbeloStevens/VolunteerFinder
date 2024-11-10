@@ -1,0 +1,20 @@
+{
+  "name": "volunteerfinder",
+  "version": "1.0.0",
+  "description": "web app to connect non-profit organizations with volunteers of similar interests",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MAbeloStevens/CS546_final_project.git"
+  },
+  "author": "Mark Abelo, Larc Lim, Kendell Muldrow, Kush Parmar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MAbeloStevens/CS546_final_project/issues"
+  },
+  "homepage": "https://github.com/MAbeloStevens/CS546_final_project#readme"
+}
