@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="utf-8">
-        <title>{{pageTitle}}</title>
-        <link rel="stylesheet" href="/public/css/styles.css">
-    </head>
-    
+<head>
+    <meta charset="utf-8">
+    <title>Volunteer Finder {{title}}</title>
+    <link rel="stylesheet" href="/public/css/styles.css">
+</head>
 
-    <body>
 
-        <ul id="nav_bar">
-            <li class="nav_link" id="nav_logo"><a href="/">VolunteerFinderLogo</a></li>
-            <li class="nav_link" id="nav_profile"><a href="/accounts">Profile</a></li>
-            <li class="nav_link" id="nav_search"><a href="/search">Organization Search</a></li>
-            <li class="nav_link" id="nav_admin"><a href="/organizations">Organization Admin</a></li>
-            <li class="nav_link" id="nav_account"> <a>AccountName/Login/Logout/DeleteAccount</a></li>
-        </ul>
+<body>
 
-        <div id="pageContent">
-        {{{body}}}
-        </div>
+    <ul id="nav_bar">
+        <li class="nav_link" id="nav_logo"><a href="/">VolunteerFinderLogo</a></li>
+        <li class="nav_link" id="nav_profile"><a href="/accounts">Profile</a></li>
+        <li class="nav_link" id="nav_search"><a href="/search">Organization Search</a></li>
+        <li class="nav_link" id="nav_admin"><a href="/organizations">Organization Admin</a></li>
+        <li class="nav_link" id="nav_account"> <a>AccountName/Login/Logout/DeleteAccount</a></li>
+    </ul>
 
-        {{> (lookup . 'script_partial') }}
-    </body>
+    <div id="pageContent">
+    {{{body}}}
+    </div>
+
+    {{> (lookup . 'script_partial') }}
+</body>
+
 </html>
