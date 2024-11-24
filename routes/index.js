@@ -1,11 +1,15 @@
-
-import viewRoutes from './views.js'
+import viewRoutes from './views.js';
+import {static as staticDir} from 'express';
 
 const constructorMethod = (app) => {
-  app.use(viewRoutes)
-  app.use('*', (req, res) => {
-    res.sendStatus(404);
-  });
+    // defined routes
+    app.use('/', viewRoutes);
+    app.use('/public', staticDir('public'));
+    
+    // undefined routes
+    app.use('*', (req, res) => {
+        res.status(404).json({error: 'Route not Found'});
+    });
 };
 
 export default constructorMethod;
