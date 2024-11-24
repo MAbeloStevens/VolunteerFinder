@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.route('/').get(async (req, res) => {
   res.render('landing', {
-    title: 'Volunteer Finder',
+    title: '',
     script_partial: 'landing_script'
   })
 });
