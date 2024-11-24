@@ -9,7 +9,6 @@ router.route('/').get(async (req, res) => {
 });
 
 
-//sign in //render the page
 router.route('/login').get(async (req, res) => {
   res.render('login', {
     title: 'Log in'
@@ -17,7 +16,6 @@ router.route('/login').get(async (req, res) => {
 })
 
 
-//sign up
 router.route('/register').get(async (req, res) => {
   res.render('register', {
     title: 'Register an account'
@@ -25,17 +23,13 @@ router.route('/register').get(async (req, res) => {
 })
 
 
-//account
-router.route('/account/:id').get(async (req, res) => { 
-  //Instructions: Routing for account page given a_id?
-
-  //Function that takes in id returns account information?
-  //req.params.id
-
-  //res.render('getaccount' {
-  //title: `Welcome ${name}`,
-  // ?
-  //})
+router.route('/account').get(async (req, res) => { 
+  // get id of currently logged in user from authentication system.
+  // Validate Id -> trade for user
+  res.render('account', {
+    title: 'Welcome ...',
+    // user: user
+  })
 })
 
 
