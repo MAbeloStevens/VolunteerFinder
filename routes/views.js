@@ -19,6 +19,9 @@ router.route('/login').get(async (req, res) => {
 
 //sign up
 router.route('/register').get(async (req, res) => {
+  res.render('register', {
+    title: 'Register an account'
+  })
 })
 
 
