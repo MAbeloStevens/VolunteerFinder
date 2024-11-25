@@ -26,13 +26,15 @@ a.nav_elem {
     float: left;
 }
 
+/* nav bar dropdown menu */
 div#nav_account {
     float: right;
     overflow: hidden;
+    min-width: fit-content;
     width: 10%; 
+    height: 100%;
 }
 
-/* nav bar dropdown menu */
 div#nav_account .dropbtn {
     border: none;
     outline: none;
@@ -49,8 +51,7 @@ div#nav_account .dropbtn {
     display: none;
     position: absolute;
     background-color: aliceblue;
-    min-width: 160px;
-    width: inherit;
+    width: fit-content;
     box-shadow: 0px 8px 16px 0px black;
     z-index: 1;
 }

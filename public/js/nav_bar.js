@@ -9,3 +9,7 @@ for (const child of nav_bar.children) {
         child.classList.add("nav_active");
     }
 }
+
+/* cookie code to check current user */
+
+let accountNameNav = document.getElementById('accountNameNav');
