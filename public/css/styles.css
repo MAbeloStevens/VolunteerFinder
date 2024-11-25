@@ -7,8 +7,8 @@ body{
     padding: 0;
 }
 
-ul#nav_bar {
-    list-style-type: none;
+/* nav bar */
+div#nav_bar {
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -17,32 +17,72 @@ ul#nav_bar {
     width: 100%;
 }
 
-li.nav_link a {
+a.nav_elem {
     display: block;
     color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-}
-
-li.nav_link {
     float: left;
 }
 
-li#nav_account {
+div#nav_account {
     float: right;
+    overflow: hidden;
+    width: 10%; 
 }
 
-li.nav_active {
+/* nav bar dropdown menu */
+div#nav_account .dropbtn {
+    border: none;
+    outline: none;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+}
+
+#dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: aliceblue;
+    min-width: 160px;
+    width: inherit;
+    box-shadow: 0px 8px 16px 0px black;
+    z-index: 1;
+}
+
+#dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 18px;
+    display: block;
+    text-align: left;
+}
+
+#dropdown-content a:hover {
+    background-color: lightgray;
+}
+
+div#nav_account:hover #dropdown-content {
+    display: block;
+}
+
+/* nav bar active tab */
+a.nav_active {
     background-color: green;
 }
 
-li a:hover,
-li.nav_active a:hover {
+.nav_elem:hover,
+.nav_active:hover {
     background-color: darkolivegreen;
 }
 
-div#pageContent {
+/* page content */
+#pageContent {
     margin: 10px;
     padding: 10px;
 }

@@ -10,13 +10,19 @@
 
 <body>
 
-    <ul id="nav_bar">
-        <li class="nav_link" id="nav_logo"><a href="/">VolunteerFinderLogo</a></li>
-        <li class="nav_link" id="nav_profile"><a href="/accounts">Profile</a></li>
-        <li class="nav_link" id="nav_search"><a href="/search">Organization Search</a></li>
-        <li class="nav_link" id="nav_admin"><a href="/organizations">Organization Admin</a></li>
-        <li class="nav_link" id="nav_account"> <a>Account</a></li>
-    </ul>
+    <div id="nav_bar">
+        <a class="nav_elem" id="nav_logo" href="/">VolunteerFinderLogo</a>
+        <a class="nav_elem" id="nav_profile" href="/account">Profile</a>
+        <a class="nav_elem" id="nav_search" href="/search">Organization Search</a>
+        <a class="nav_elem" id="nav_admin" href="/organizations">Organization Admin</a>
+        <div class="nav_elem" id="nav_account">
+            <button class="dropbtn">Account</button>
+            <div id="dropdown-content">
+                <a href="/login">Log in</a>
+                <a href="/register">Register</a>
+            </div>
+        </div>
+    </div>
 
     <div id="pageContent">
     {{{body}}}
