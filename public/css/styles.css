@@ -1,3 +1,17 @@
+/* color palette */
+:root {
+    --bg1-color: white;
+    --txt-color: black;
+    --txtalt-color: white;
+    --bnnr-color: olivedrab;
+    --bnnr-hover: darkolivegreen;
+    --bnnr-curr: green;
+    --shdw-color: black;
+    --mnu-color: aliceblue;
+    --mnu-hover: lightgray;
+    --btn-color: gray;
+}
+
 * {
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
@@ -5,6 +19,8 @@
 body{
     margin: 0;
     padding: 0;
+    background-color: var(--bg1-color);
+    color: var(--txt-color);
 }
 
 /* nav bar */
@@ -12,14 +28,14 @@ div#nav_bar {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: olivedrab;
+    background-color: var(--bnnr-color);
     top: 0;
     width: 100%;
 }
 
 a.nav_elem {
     display: block;
-    color: white;
+    color: var(--txtalt-color);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -59,7 +75,7 @@ div#nav_account {
 div#nav_account .dropbtn {
     border: none;
     outline: none;
-    color: white;
+    color: var(--txtalt-color);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -71,22 +87,22 @@ div#nav_account .dropbtn {
 #dropdown-content {
     display: none;
     position: absolute;
-    background-color: aliceblue;
+    background-color: var(--mnu-color);
     width: fit-content;
-    box-shadow: 0px 8px 16px 0px black;
+    box-shadow: 0px 8px 16px 0px var(--shdw-color);
     z-index: 1;
 }
 
 #dropdown-content a {
     float: none;
-    color: black;
+    color: var(--txt-color);
     padding: 12px 18px;
     display: block;
     text-align: left;
 }
 
 #dropdown-content a:hover {
-    background-color: lightgray;
+    background-color: var(--mnu-hover);
 }
 
 div#nav_account:hover #dropdown-content {
@@ -95,12 +111,12 @@ div#nav_account:hover #dropdown-content {
 
 /* nav bar active tab */
 a.nav_active {
-    background-color: green;
+    background-color: var(--bnnr-curr);
 }
 
 .nav_elem:hover,
 .nav_active:hover {
-    background-color: darkolivegreen;
+    background-color: var(--bnnr-hover);
 }
 
 /* page content */
@@ -111,4 +127,28 @@ a.nav_active {
 
 h1 {
     font-weight: bold;
+}
+
+/* forms */
+form {
+    border: solid var(--btn-color);
+    border-radius: 10px;
+    padding: 10px;
+    vertical-align: auto;
+    margin: auto;
+    width: fit-content;
+}
+
+form * {
+    display: inline-block;
+}
+
+form button {
+    border: solid 2px var(--btn-color);
+    border-radius: 4px;
+}
+
+form button:hover {
+    color: var(--txtalt-color);
+    background-color: var(--bnnr-color);
 }
