@@ -137,11 +137,13 @@ form {
     vertical-align: auto;
     margin: auto;
     width: fit-content;
+    display: flex;
+    flex-direction: column;
 }
 
-form * {
+/* form * {
     display: inline-block;
-}
+} */
 
 form button {
     border: solid 2px var(--btn-color);
