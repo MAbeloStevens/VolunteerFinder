@@ -15,29 +15,31 @@ const knownTagsFunctions  ={
     async addToKnownTags (listOfTags) {
         //check listOfTags, which will be appended to the 
         if(!listOfTags) throw  'No additonal tags were provided'
-        const verifiedTags= await validation.checkTags(listOfTags)
-        const tagList = await tagsCollection.findOne({});
+        
+        const tagsCollection = await knownTags();
+        if (!tagsCollection) throw 'Failed to connect to the KnownTags collection';
+
         //this wasn't really clarified IDK for sure
         //lets normalize these tags (this was shown in the db proposal)
-        const normalizeTags= verifiedTags.map((tag) => 
-            tag.toLowerCase().split(' ').map((word) => word.charAt(0).toUpperCase()+ word.slice(1)).join(' ')
-        );
-    
+        const verifiedTags= await validation.checkTags(listOfTags)
+        const normalizeTags= validation.properCaseTags(verifiedTags) 
+
+        const tagList = await tagsCollection.findOne({});
         //insert new object in collection
         if(!tagList){
             //remove duplicates and add to tag collections
             const insertedTags=await tagsCollection.insertOne({tags:Array.from(new Set([...normalizeTags]))})
+            if (!insertedTags.acknowledged) throw new Error("Failed to insert new tags");
             //not really sure what i should exactly return but this should be fine????
             return insertedTags
         }
         else{
             //normalize existing tags not sure if we need this but eh
-            const existingTags= tagList.tags.map((tag) => 
-                tag.toLowerCase().split(' ').map((word) => word.charAt(0).toUpperCase()+ word.slice(1)).join(' ')
-            );
+            const existingTags= validation.properCaseTags(tagList.tags)
             //remove duplicates and concat two arrays together
             const updateTags= Array.from(new Set([...existingTags,...normalizeTags]));
             const updatingTagsDB = await tagsCollection.updateOne({},{$set: {tags:updateTags}});
+            if (!updatingTagsDB.modifiedCount) throw new Error("Failed to update known tags");
             //again not sure
             return updatingTagsDB;
         }
@@ -56,8 +58,9 @@ const knownTagsFunctions  ={
             {},
             {$pull: {tags: trimTag}}
         );
+        if (!tagList.modifiedCount) throw new Error("Failed to update known tags");
         //this seems alright
-        return await this.getKnownTags;
+        return await this.getKnownTags();
     }
 }
 export default knownTagsFunctions;

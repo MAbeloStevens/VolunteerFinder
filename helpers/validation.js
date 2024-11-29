@@ -20,7 +20,25 @@ const validation = {
         if(trimmedOrganizationName.length>100) throw  'Organaization name is too long, please it under 100 characters!'
         return trimmedOrganizationName;
     },
-
+    //Helper function because strings are stupid.
+    //It will make sure the tag entires look like what they do in the proposal
+    //example suppose a tag was 'race & ethnicity' or "raCe   & ethnicity " it will make sure its 'Race & Ethnicity' which will help filitering by tag
+    properCaseTags(tags){
+        const properTags = tags.map((tag) => {
+            return tag
+                .trim()
+                .split(' ')
+                .filter((word) => word.length !== 0)
+                .map((word) => {
+                    //this will check if the word has special characters or is an acronym
+                    if (/[^a-zA-Z]/.test(word) || word.toUpperCase() === word)  return word
+                    //else capitalize the first letter and lowercase the rest
+                    else return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                })
+                .join(' ');
+        });
+        return properTags;
+    },
     async checkTags(tags){
         //checks to see if the tags are in a array
         if(!Array.isArray(tags)) throw 'Tags are not in an Array';
@@ -69,9 +87,10 @@ const validation = {
         if(trimmedContactInfo.length===0) throw 'Organization contact information cannot be empty!';
         //based on db proposal we are splitting by newline
         const seperate = trimmedContactInfo.split('\n');
+        if(seperate.length!=2) throw'Contact information must include exactly one email and one phone number.';
         //check each invidually
-        const trimmedEmail= await checkEmail(seperate[0]);
-        const trimmedPhone= await checkPhone(seperate[1]);
+        const trimmedEmail= await this.checkEmail(seperate[0]);
+        const trimmedPhone= await this.checkPhone(seperate[1]);
         //put them back together
         return trimmedEmail+'\n'+trimmedPhone;
     },
