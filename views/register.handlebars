@@ -1,41 +1,43 @@
 <form id="registrationForm" method="post" action="/api/users/register">
-  <label>
-    First Name
-    <input required type="" name="firstName">
-  </label>
 
-  <label>
-    Last Name
-    <input required type="" name="lastName">
-  </label>
+  <div id="textInputs">
+    <label>
+      First Name
+      <input required type="" name="firstName">
+    </label>
 
-  <label>
-    Password
-    <input id="password" required type="password" name="password">
-  </label>
+    <label>
+      Last Name
+      <input required type="" name="lastName">
+    </label>
 
-  <label>
-    Confirm Password
-    <input id="confirmPassword" required type="password">
-  </label>
+    <label>
+      Password
+      <input id="password" required type="password" name="password">
+    </label>
 
-  <label>
-    Email
-    <input required type="email" name="email">
-  </label>
+    <label>
+      Confirm Password
+      <input id="confirmPassword" required type="password">
+    </label>
 
-  <label>
-    Phone Number
-    <input type="tel" name="phoneNumber">
-  </label>
+    <label>
+      Email
+      <input required type="email" name="email">
+    </label>
 
+    <label>
+      Phone Number
+      <input type="tel" name="phoneNumber">
+    </label>
 
+  </div>
 
   <div id="tagSelection">
     <h2>Select Tags:</h2>
 
     {{#each knownTags}}
-    
+
     <label>
       <input type="checkbox" value="{{this}}" name="tags">
       {{this}}

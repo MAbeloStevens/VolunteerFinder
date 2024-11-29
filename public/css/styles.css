@@ -141,10 +141,6 @@ form {
     flex-direction: column;
 }
 
-/* form * {
-    display: inline-block;
-} */
-
 form button {
     border: solid 2px var(--btn-color);
     border-radius: 4px;
@@ -153,4 +149,22 @@ form button {
 form button:hover {
     color: var(--txtalt-color);
     background-color: var(--bnnr-color);
+}
+
+form div#textInputs {
+    vertical-align: auto;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+form div#textInputs label{
+    text-align: right;
+
+}
+
+form div#textInputs label input {
+    align-self: left;
+    margin-left: 10px;
+    padding-left: 5px;
 }
