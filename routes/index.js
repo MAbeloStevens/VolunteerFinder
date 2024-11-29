@@ -1,9 +1,11 @@
 import viewRoutes from './views.js';
+import apiRoutes from './api.js';
 import {static as staticDir} from 'express';
 
 const constructorMethod = (app) => {
     // defined routes
     app.use('/', viewRoutes);
+    app.use('/api', apiRoutes);
     app.use('/public', staticDir('public'));
     
     // undefined routes

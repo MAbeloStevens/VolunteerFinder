@@ -1,4 +1,4 @@
-<form id="registrationForm">
+<form id="registrationForm" method="post" action="/api/users/register">
   <label>
     First Name
     <input required type="" name="firstName">
@@ -33,25 +33,15 @@
 
   <div id="tagSelection">
     <h2>Select Tags:</h2>
+
+    {{#each knownTags}}
+    
     <label>
-      <input type="checkbox" name="Afterschool Programs">
-      Afterschool Programs
+      <input type="checkbox" value="{{this}}" name="tags">
+      {{this}}
     </label>
 
-    <label>
-      <input type="checkbox" name="Assisting People with Disabilities">
-      Assisting People with Disabilities
-    </label>
-
-    <label>
-      <input type="checkbox" name="Blood Donation Drives">
-      Blood Donation Drives
-    </label>
-
-    <label>
-      <input type="checkbox" name="Clothing Drives">
-      Clothing Drives
-    </label>
+    {{/each}}
   </div>
 
 

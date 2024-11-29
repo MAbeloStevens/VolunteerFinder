@@ -19,9 +19,12 @@ router.route('/login').get(async (req, res) => {
 
 
 router.route('/register').get(async (req, res) => {
+  // TODO: swap out for list from database
+  const knownTags = ["Afterschool Programs", "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"]
   res.render('register', {
     title: 'Register an account',
-    script_partial: 'register_script'
+    script_partial: 'register_script',
+    knownTags: knownTags
   })
 })
 
