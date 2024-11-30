@@ -10,13 +10,13 @@ addTagButton.addEventListener('click', (evt) => {
     if (tagTitle === "") {
       throw `No tag input`
     }
-    const existing = document.querySelector(`[name="${tagTitle}"]`)
+    const existing = document.querySelector(`[value="${tagTitle}"][name="tags"]`)
     if (existing) {
       throw `Option already exists`
     }
     
     const newTagElement = `<label>
-      <input checked type="checkbox" name="${tagTitle}">
+      <input type="checkbox" value="${tagTitle}" name="tags">
       ${tagTitle}
     </label>`
     tagSelection.innerHTML += newTagElement
