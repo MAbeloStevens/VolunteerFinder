@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/MAbeloStevens/CS546_final_project#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
     "express": "^4.21.1",
     "express-handlebars": "^8.0.1",
     "handlebars": "^4.7.8",

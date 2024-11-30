@@ -7,6 +7,7 @@ const constructorMethod = (app) => {
     app.use('/', viewRoutes);
     app.use('/api', apiRoutes);
     app.use('/public', staticDir('public'));
+    app.use('/helpers', staticDir('helpers'))
     
     // undefined routes
     app.use('*', (req, res) => {
