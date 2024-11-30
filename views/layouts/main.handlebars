@@ -21,8 +21,8 @@
         <div class="nav_elem" id="nav_account">
             <button class="dropbtn" id="accountNameNav">New Account</button>
             <div id="dropdown-content">
-                <a href="/login">Log in</a>
-                <a href="/register">Register</a>
+                <a id="drop_opt1" href="/login">Log in</a>
+                <a id="drop_opt2" href="/register">Register</a>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
     </div>
 
     {{> (lookup . 'script_partial') }}
-    <script src="/public/js/nav_bar.js"></script>
+    <script type="module" src="/public/js/nav_bar.js"></script>
 </body>
 
 </html>

@@ -5,6 +5,7 @@ const constructorMethod = (app) => {
     // defined routes
     app.use('/', viewRoutes);
     app.use('/public', staticDir('public'));
+    app.use('/helpers', staticDir('helpers'))
     
     // undefined routes
     app.use('*', (req, res) => {
