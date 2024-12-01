@@ -6,6 +6,7 @@ const organizationFunctions ={
     async getOrganizationPageData(o_id){
         //Given o_id, return data required for organization page elements
         console.log("Implement Me")
+        //This is a test for fetch
     },
 
     async getOrganizationsInterest(o_idList){
