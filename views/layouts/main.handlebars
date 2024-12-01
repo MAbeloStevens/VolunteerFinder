@@ -31,7 +31,9 @@
     {{{body}}}
     </div>
 
-    {{> (lookup . 'script_partial') }}
+    {{#if (lookup . 'script_partial')}}
+        {{> (lookup . 'script_partial') }}
+    {{/if}}
     <script type="module" src="/public/js/nav_bar.js"></script>
 </body>
 

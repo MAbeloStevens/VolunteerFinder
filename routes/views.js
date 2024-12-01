@@ -1,4 +1,4 @@
-import express from 'express'
+import express from 'express';
 const router = express.Router();
 
 
@@ -6,16 +6,16 @@ router.route('/').get(async (req, res) => {
   res.render('landing', {
     title: '',
     script_partial: 'landing_script'
-  })
+  });
 });
 
 
 router.route('/login').get(async (req, res) => {
   res.render('login', {
     title: 'Log in',
-    script_partial: 'login_script',
-  })
-})
+    script_partial: 'login_script'
+  });
+});
 
 
 router.route('/register').get(async (req, res) => {
@@ -25,8 +25,8 @@ router.route('/register').get(async (req, res) => {
     title: 'Register an account',
     script_partial: 'register_script',
     knownTags: knownTags
-  })
-})
+  });
+});
 
 
 router.route('/account').get(async (req, res) => { 
@@ -36,8 +36,14 @@ router.route('/account').get(async (req, res) => {
     title: 'Welcome ...',
     script_partial: 'account_script'
     // user: user
-  })
-})
+  });
+});
+
+router.route('/not-logged-in').get(async (req, res) => {
+  res.render('not-logged-in', {
+    title: 'Please Log In To Use This Feature'
+  });
+});
 
 
-export default router
+export default router;
