@@ -1,6 +1,9 @@
 import express from 'express';
 const router = express.Router();
 
+import validation from '../helpers/validation.js';
+import organizationData from '../data/index.js';
+
 
 router.route('/').get(async (req, res) => {
   res.render('landing', {
@@ -37,6 +40,46 @@ router.route('/account').get(async (req, res) => {
     script_partial: 'account_script'
     // user: user
   });
+});
+
+router.route('/organization:id').get(async (req, res) => {
+  // validate o_id
+  try{
+    req.params.id = validation.checkID(req.params.id, 'organization id');
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      class: "error",
+      error: e
+    });
+  }
+
+  // get organization data
+  try {
+    const orgFound = await organizationData.getOrganizationPageData(req.params.id);
+    if(!orgFound) {
+      res.status(404).render('error', {
+        title: "Error",
+        class: "error",
+        error: "organization not found"
+      });
+    }
+
+    // render page
+    res.render('organization', {
+      title: orgFound.name,
+      orgData: orgFound,
+      script_partial: 'organization_script'
+    });
+      
+  } catch (e) {
+    res.status(500).render('error', {
+        title: "Error",
+        class: "error",
+        error: e
+    });
+  }
+  
 });
 
 router.route('/not-logged-in').get(async (req, res) => {
