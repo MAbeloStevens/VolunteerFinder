@@ -99,8 +99,18 @@ const organizationFunctions ={
         return true //not sure, will change this
     },
     
-    async updateOrganization(o_id){
-        //update Organization, i am assuming you need the o_id 
+    /*
+        These are mostly assumptions from the Page Blue print files.
+        o_id: required
+        org_name: string required
+        tags: array (required)
+        bannerImg: image file type (seems optional)
+        description: string (required)
+        contact: string (required)
+        link: string (url) (optional)
+    */
+    async updateOrganization(o_id, org_name, tags, bannerImg, description, contact, link){
+        //update Organization,
         console.log("Implement Me")
     },
 
