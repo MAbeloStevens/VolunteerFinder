@@ -98,6 +98,19 @@ const validation = {
     async checkImg(bannerImg){
       //TODO make function that verifies file is an image
       //currently avoiding this, I will come back I need to test if I can add these entries to the db first
+    },
+
+    async checkPositiveNumber(number){
+        //basic checks to see if we are sending a number, and that it is positive
+        if (typeof number !== 'number') throw 'Given number is not a number';
+        if (number < 0) throw 'Given number must be positive';
+        return number;
+    },
+
+    async validRating(number){
+        //checks to see if the rating is a number between 1 and 10
+        if (typeof number !== 'number') throw 'Rating must be a number';
+        if (number < 1 || number > 10) throw 'Rating must be between 1 and 10';
     }
 
 };
