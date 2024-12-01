@@ -101,12 +101,12 @@ const organizationFunctions ={
     
     /*
         These are mostly assumptions from the Page Blue print files.
-        o_id: required
-        org_name: string required
-        tags: array (required)
+        o_id: Object ID required
+        org_name: string (optional)
+        tags: array (optional)
         bannerImg: image file type (seems optional)
-        description: string (required)
-        contact: string (required)
+        description: string (optionak)
+        contact: string (optional)
         link: string (url) (optional)
     */
     async updateOrganization(o_id, org_name, tags, bannerImg, description, contact, link){
