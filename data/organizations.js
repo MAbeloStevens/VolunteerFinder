@@ -1,6 +1,7 @@
 import {organizations} from "../config/mongoCollections.js";
 import validation from '../helpers/validation.js';
 import knownTagsFunctions from './knownTags.js';
+
 const organizationFunctions ={
     async getOrganizationPageData(o_id){
         //Given o_id, return data required for organization page elements
