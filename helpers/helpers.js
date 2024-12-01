@@ -1,4 +1,3 @@
-
 // gets a cookie by name by parsing through document cookies 
 function getCookie(name) {
     const cookies = document.cookie.split(';');
@@ -10,6 +9,5 @@ function getCookie(name) {
     }
     return null; // Cookie not found
 };
-
 
 export { getCookie };

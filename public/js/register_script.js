@@ -6,7 +6,7 @@ const tagSelection = document.getElementById("tagSelection")
 
 addTagButton.addEventListener('click', (evt) => {
   try {
-    const tagTitle = addTagInput.value.trim()
+    const tagTitle = addTagInput.value.trim();
     if (tagTitle === "") {
       throw `No tag input`
     }
