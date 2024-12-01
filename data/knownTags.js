@@ -13,7 +13,7 @@ const knownTagsFunctions  ={
     },
     
     async addToKnownTags (listOfTags) {
-        //check listOfTags, which will be appended to the 
+        //check listOfTags, which will be appended to the existing tags
         if(!listOfTags) throw  'No additonal tags were provided'
         
         const tagsCollection = await knownTags();
@@ -58,7 +58,7 @@ const knownTagsFunctions  ={
             {},
             {$pull: {tags: trimTag}}
         );
-        if (!tagList.modifiedCount) throw new Error("Failed to update known tags");
+        if (!tagList.modifiedCount) throw new Error("Failed to update known tags, or these tags already exist in ");
         //this seems alright
         return await this.getKnownTags();
     }
