@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 import validation from '../helpers/validation.js';
-import organizationData from '../data/index.js';
+import { organizationData } from '../data/index.js';
 
 
 router.route('/').get(async (req, res) => {
@@ -49,7 +49,7 @@ router.route('/organization:id').get(async (req, res) => {
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
-      class: "error",
+      ecode: 500,
       error: e
     });
   }
@@ -60,7 +60,7 @@ router.route('/organization:id').get(async (req, res) => {
     if(!orgFound) {
       res.status(404).render('error', {
         title: "Error",
-        class: "error",
+        ecode: 404,
         error: "organization not found"
       });
     }
@@ -75,7 +75,7 @@ router.route('/organization:id').get(async (req, res) => {
   } catch (e) {
     res.status(500).render('error', {
         title: "Error",
-        class: "error",
+        ecode: 500,
         error: e
     });
   }

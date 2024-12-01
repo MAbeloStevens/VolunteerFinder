@@ -127,6 +127,11 @@ a.nav_active {
 
 h1 {
     font-weight: bold;
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.5rem;
 }
 
 p {
@@ -138,6 +143,10 @@ p {
     margin: auto;
     width: fit-content;
     text-align: center;
+}
+
+.errors{
+    color:red;
 }
 
 /* forms */
