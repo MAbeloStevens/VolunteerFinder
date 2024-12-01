@@ -1,6 +1,3 @@
-import {organizations} from "../config/mongoCollections.js";
-import validation from '../helpers/validation.js';
-import knownTagsFunctions from './knownTags.js';
 
 const organizationFunctions ={
     async getOrganizationPageData(o_id){
@@ -28,12 +25,18 @@ const organizationFunctions ={
         console.log("Implement Me")
     },
 
-    async createOrganziation(newOrganization){
-        //Create organization function with required information and optional information
-        console.log("Mostly Implemented, check branch")
-    },
-    async updateOrganization(o_id){
-        //update Organization, i am assuming you need the o_id 
+    /*
+        These are mostly assumptions from the Page Blue print files.
+        o_id: Object ID required
+        org_name: string (optional)
+        tags: array (optional)
+        bannerImg: image file type (seems optional)
+        description: string (optionak)
+        contact: string (optional)
+        link: string (url) (optional)
+    */
+    async updateOrganization(o_id, org_name, tags, bannerImg, description, contact, link){
+        //update Organization,
         console.log("Implement Me")
     },
 
