@@ -1,32 +1,138 @@
+import { ObjectId } from "mongodb";
 import { organizations } from "../config/mongoCollections.js";
 import validation from '../helpers/validation.js';
 import knownTagsFunctions from './knownTags.js';
 
 const organizationFunctions ={
-    async getOrganizationPageData(o_id){
+    async getOrganizationPageData(o_id){ //an extra parameter currentUser_id
         //Given o_id, return data required for organization page elements
-        console.log("Implement Me")
-        //This is a test for fetch
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await validation.checkOrganizationID(o_id);
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOne({_id: new ObjectId(o_id)});
+        if(!organizationData) throw 'No organization with that ID'
+        //this is the stuff we are going to return based on the document.
+        const pageData={
+            name: organizationData.name,
+            bannerImg: organizationData.bannerImg,
+            interestCount: organizationData.interestCount,
+            tags: organizationData.tags,
+            description: organizationData.description,
+            contact: organizationData.contact,
+            link: organizationData.link,
+            comments: organizationData.comments.map((comment)=>({
+                author:comment.author,
+                body:comment.body,
+                //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
+                //canDelete: currentUser ? (currentUser_id === comment.author ||  currentUser._id === organizationData.adminAccount) : false,
+            })),
+            reviews: organizationData.reviews.map((review) => ({
+                author:review.author,
+                rating: review.rating,
+                body:review.body,
+                //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
+                //canDelete: currentUser ? (currentUser._id === review.author || currentUser._id === organizationData.adminAccount) : false,
+            }))
+        };
+        return pageData;
     },
 
     async getOrganizationsInterest(o_idList){
         //Given list of o_ids, return list of projections containing o_id, name, interestedAccounts
-        console.log("Implement Me")
+        //this is some error checking 
+        if(!o_idList) throw  'Organization ids are not provided, please input ID!'
+        if(!Array.isArray(o_idList)) throw "Organization ids must be type array"
+        if (o_idList.length === 0) return [];
+        //seems like if I want to do it via a map thing i need to use Promise.all
+        o_idList= await Promise.all(o_idList.map((o_id)=> validation.checkOrganizationID(o_id)))
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        let organizationsList= await organizationCollection
+        .find(
+            {_id: {$in: o_idList.map((o_id) => new ObjectId(o_id))}}
+        )
+        .project({_id: 1, name: 1, interestedAccounts: 1})
+        .toArray();
+        //turn them id's into strings
+        if (organizationsList.length===0) throw "No organizations from the list exists!";
+        organizationsList= organizationsList.map((org) =>{
+            org._id= org._id.toString();
+            return org;
+        });
+        return organizationsList
     },
     
     async getOrganizationsTags(o_idList) {
         //Given list of o_ids, return list of projections containing, o_id, name, tags
-        console.log("Implement Me")
+        //this is some error checking 
+        if(!o_idList) throw  'Organization ids are not provided, please input ID!'
+        if(!Array.isArray(o_idList)) throw "Organization ids must be type array"
+        if (o_idList.length === 0) return [];
+        //seems like if I want to do it via a map thing i need to use Promise.all
+        o_idList= await Promise.all(o_idList.map((o_id)=> validation.checkOrganizationID(o_id)))
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        let organizationsList= await organizationCollection
+        .find(
+            {_id: {$in: o_idList.map((o_id) => new ObjectId(o_id))}}
+        )
+        .project({_id: 1, name: 1, tags: 1})
+        .toArray();
+        //turn them ids into strings
+        if (organizationsList.length===0) throw "No organizations from the list exists!";
+        organizationsList = organizationsList.map((org) => {
+            org._id = org._id.toString();
+            return org;
+        });
+        return organizationsList;
     },
 
     async getOrganizationsWithTags(tags){
         //Given list of tags, return a list of organization ids that contain ANY of the tags
-        console.log("Implement Me")
+        //this is some error checking 
+        if(!tags) throw  'Organization tags are not provided, please input tags!'
+        if(!Array.isArray(tags)) throw "Organization tags must be type array"
+        if (tags.length === 0) return [];
+        tags= await validation.checkTags(tags)
+        tags= validation.properCaseTags(tags)
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        let organizationsList= await organizationCollection
+            .find({tags:{$in :tags}})
+            .project({_id: 1})
+            .toArray();
+        //could be one of the two
+        if (organizationsList.length===0) return [] //throw "No organizations hold any of these tags!";
+        //turn them ids into strings
+        organizationsList= organizationsList.map((org) =>{
+            org._id= org._id.toString()
+            return org;
+        });
+        return organizationsList
     },
 
     async getOrganizationsWithAllTags(tags){
         //Given list of tags, return a list of organization ids that contain ALL of the tags
-        console.log("Implement Me")
+        if(!tags) throw  'Organization tags are not provided, please input tags!'
+        if(!Array.isArray(tags)) throw "Organization tags must be type array"
+        if (tags.length === 0) return [];
+        tags= await validation.checkTags(tags)
+        tags= validation.properCaseTags(tags)
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        let organizationsList= await organizationCollection
+            .find({tags:{$all :tags}})
+            .project({_id: 1})
+            .toArray();
+        //could be one of the two
+        if (organizationsList.length===0) return [] //throw "No organizations hold any of these tags!";
+        //turn them ids into strings
+        organizationsList= organizationsList.map((org) =>{
+            org._id= org._id.toString()
+            return org;
+        });
+        return organizationsList
     },
 
     /*
@@ -83,7 +189,7 @@ const organizationFunctions ={
             adminAccount:newOrganization.adminAccount,
             name:newOrganization.name,
             tags:newOrganization.tags,
-            comment:[],
+            comments:[],
             reviews:[],
             interestedAccounts:[],
             interestCount:0,
@@ -116,7 +222,13 @@ const organizationFunctions ={
 
     async deleteOrganization(o_id){
         //delete Organization given o_id
-        console.log("Implement Me")
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await validation.checkOrganizationID(o_id);
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOneAndDelete({_id: new ObjectId(o_id)});
+        if(!organizationData) throw 'Cannot delete organization';
+        return `${organizationData.name} have been successfully deleted!`;
     }
 }
 export default organizationFunctions;

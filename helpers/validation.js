@@ -3,12 +3,21 @@ import { ObjectId } from "mongodb";
 const validation = {
     //I am not sure how we are sending the adminAccount info this might be unnecessarry but oh well 
 
+    async checkOrganizationID(o_id){
+        //basic checks to see if we recieving a string, that is also a valid objectID
+        if (typeof o_id !== 'string') throw 'Organization ID is not a string!';
+        const trimmedO_ID = o_id.trim();
+        if(trimmedO_ID.length===0) throw 'Organization ID is empty!';
+        if(!ObjectId.isValid(trimmedO_ID)) throw 'Admin Account ID is an invalid object';
+        return trimmedO_ID;
+    },
+
     async checkAdminAccount (adminAccount_ID){
         //basic checks to see if we recieving a string, that is also a valid objectID
         if (typeof adminAccount_ID !== 'string') throw 'Admin Account ID is not a string!';
         const trimmedAdminAccount_ID = adminAccount_ID.trim();
         if(trimmedAdminAccount_ID.length===0) throw 'Admin Account ID is empty!';
-        if(!ObjectId.isValid(adminAccount_ID)) throw 'Admin Account ID is an invalid object';
+        if(!ObjectId.isValid(trimmedAdminAccount_ID)) throw 'Admin Account ID is an invalid object';
         return trimmedAdminAccount_ID;
     },
 
