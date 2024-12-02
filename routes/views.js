@@ -71,7 +71,8 @@ router.route('/account').get(async (req, res) => {
   })
 })
 
-router.route('/organization:id').get(async (req, res) => {
+router.route('/organizations/:id').get(async (req, res) => {
+  console.log(req.params.id)
   // validate o_id
   try{
     req.params.id = validation.checkID(req.params.id, 'organization id');
