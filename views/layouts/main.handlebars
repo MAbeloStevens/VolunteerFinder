@@ -17,12 +17,12 @@
         </a>
         <a class="nav_elem" id="nav_profile" href="/account">Account Profile</a>
         <a class="nav_elem" id="nav_search" href="/search">Organization Search</a>
-        <a class="nav_elem" id="nav_admin" href="/organizations">Organization Admin</a>
+        <a class="nav_elem" id="nav_admin" href="/orgAdmin">Organization Admin</a>
         <div class="nav_elem" id="nav_account">
             <button class="dropbtn" id="accountNameNav">New Account</button>
             <div id="dropdown-content">
-                <a href="/login">Log in</a>
-                <a href="/register">Register</a>
+                <a id="drop_opt1" href="/login">Log in</a>
+                <a id="drop_opt2" href="/register">Register</a>
             </div>
         </div>
     </div>
@@ -31,8 +31,10 @@
     {{{body}}}
     </div>
 
-    {{> (lookup . 'script_partial') }}
-    <script src="/public/js/nav_bar.js"></script>
+    {{#if (lookup . 'script_partial')}}
+        {{> (lookup . 'script_partial') }}
+    {{/if}}
+    <script type="module" src="/public/js/nav_bar.js"></script>
 </body>
 
 </html>

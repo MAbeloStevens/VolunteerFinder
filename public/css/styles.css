@@ -127,6 +127,26 @@ a.nav_active {
 
 h1 {
     font-weight: bold;
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+p {
+    margin: 0;
+    padding: 5px;
+}
+
+.centered {
+    margin: auto;
+    width: fit-content;
+    text-align: center;
+}
+
+.errors{
+    color:red;
 }
 
 /* forms */
@@ -141,12 +161,12 @@ form {
     flex-direction: column;
 }
 
-form button {
+button {
     border: solid 2px var(--btn-color);
     border-radius: 4px;
 }
 
-form button:hover {
+button:hover {
     color: var(--txtalt-color);
     background-color: var(--bnnr-color);
 }
@@ -156,6 +176,7 @@ form div#textInputs {
     margin: auto;
     display: flex;
     flex-direction: column;
+    margin-bottom: 5px;
 }
 
 form div#textInputs label{
