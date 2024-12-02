@@ -72,6 +72,7 @@ router.route('/account').get(async (req, res) => {
 })
 
 router.route('/organizations/:id').get(async (req, res) => {
+  // console.log(req.params.id)
   // validate o_id
   try{
     req.params.id = validation.checkID(req.params.id, 'organization id');
@@ -81,6 +82,7 @@ router.route('/organizations/:id').get(async (req, res) => {
       ecode: 500,
       error: e
     });
+    return
   }
 
   // get organization data
@@ -92,6 +94,7 @@ router.route('/organizations/:id').get(async (req, res) => {
         ecode: 404,
         error: "organization not found"
       });
+      return
     }
 
     // render page
