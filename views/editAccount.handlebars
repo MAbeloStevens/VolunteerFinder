@@ -1,0 +1,49 @@
+<form id="registrationForm" method="post" action="/api/users?_method=PATCH">
+  <div id="textInputs">
+    <label>
+      First Name
+      <input required type="" name="firstName" value="{{user.firstName}}">
+    </label>
+
+    <label>
+      Last Name
+      <input required type="" name="lastName" value="{{user.lastName}}">
+    </label>
+
+
+    <label>
+      Phone Number
+      <input type="tel" name="phone" value="{{user.phone}}">
+    </label>
+
+  </div>
+
+  <div id="tagSelection">
+    <h2>Select Tags:</h2>
+
+    {{#each knownTags}}
+
+    <label>
+      <input type="checkbox" value="{{label}}" name="tags" {{checked}}>
+      {{label}}
+    </label>
+
+    {{/each}}
+
+    {{#each userTags}}
+
+    <label>
+      <input type="checkbox" value="{{this}}" name="tags" checked>
+      {{this}}
+    </label>
+
+    {{/each}}
+  </div>
+
+  <div>
+    <input id="addTagInput">
+    <button type="button" id="addTagButton">Add Tag</button>
+  </div>
+
+  <button>Save</button>
+</form>

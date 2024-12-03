@@ -5,11 +5,13 @@ import configRoutes from './routes/index.js';
 import cookieParser from 'cookie-parser';
 import exphbs from 'express-handlebars';
 import Handlebars from 'handlebars';
+import methodOverride from 'method-override';
 
 app.use(cookieParser())
 app.use(express.json());
 app.use('/public', express.static('public'));
 app.use(express.urlencoded({extended: true}));
+app.use(methodOverride('_method'))
 
 app.engine('handlebars', exphbs.engine({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
@@ -22,10 +24,7 @@ app.set('view engine', 'handlebars');
 //     res.cookie('user', 'anewuser', {expires: expiresAt});
 //     next();
 // });
-app.use('/account', (req, res, next) => {
-    res.redirect('/not-logged-in');
-    next();
-});
+
 
 configRoutes(app);
 
