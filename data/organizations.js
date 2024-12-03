@@ -173,17 +173,21 @@ const organizationFunctions ={
         newOrganization.description= await validation.checkDescription(newOrganization.description);
         newOrganization.contact = await validation.checkContact(newOrganization.contact);
     
-        let bannerImg= null;
+        let bannerImg= undefined;
         //optional fields
         if(newOrganization.bannerImg!==undefined) {
-            //TODO maybe some valiation needs to happen here not sure yet
-            bannerImg=newOrganization.bannerImg;
+            //this should be a file object, we will be using some middleware named Multer during the route to put this file 
+            try{
+                await validation.checkImg(newOrganization.bannerImg);
+                bannerImg=`/public/images/${newOrganization.bannerImg.filename}`;
+            }catch(e){
+                throw `Image validation failed: ${e}`;
+            }
         }
         
-        let link= null;
+        let link= undefined;
         if(newOrganization.link!==undefined) {
-            //TODO maybe some validation is needs to happen to check if this even is a url
-            link=newOrganization.link;
+            link= await (validation.checkLink(newOrganization.link));
         }
         const organization={
             adminAccount:newOrganization.adminAccount,
@@ -208,17 +212,67 @@ const organizationFunctions ={
     /*
         These are mostly assumptions from the Page Blue print files.
         o_id: Object ID required
-        org_name: string (optional)
-        tags: array (optional)
+        name: string (required)
+        tags: array (required)
         bannerImg: image file type (seems optional)
-        description: string (optionak)
-        contact: string (optional)
+        description: string (required)
+        contact: string (required)
         link: string (url) (optional)
     */
-    async updateOrganization(o_id, org_name, tags, bannerImg, description, contact, link){
-        //update Organization,
-        console.log("Implement Me")
+    async updateOrganization(o_id, name, tags, bannerImg, description, contact, link) {
+        //checking ID name, and tags, description and contact since they are required.
+        if (!o_id) throw 'Organization ID is not provided. Please input a valid ID!';
+        o_id = await validation.checkOrganizationID(o_id);
+        name = await validation.checkName(name);
+        tags = await validation.checkTags(tags);
+        const allTags = await knownTagsFunctions.getKnownTags();
+        //ensure at least one tag is in knownTags
+        tags = validation.properCaseTags(tags);
+        const containsKnownTags = tags.filter((tag) => allTags.includes(tag));
+        if (containsKnownTags.length === 0) throw "Must include at least one tag from known tags.";
+        description = await validation.checkDescription(description);
+        contact = await validation.checkContact(contact);
+    
+        //optional tags now 
+        let processedBannerImg = undefined;
+        if (bannerImg !== undefined) {
+            try {
+                await validation.checkImg(bannerImg);
+                processedBannerImg = `/public/images/${bannerImg.filename}`;
+            } catch (e) {
+                throw `Image validation failed: ${e}`;
+            }
+        }
+    
+        let processedLink = undefined;
+        if (link !== undefined) {
+            processedLink = await validation.checkLink(link);
+        }
+    
+        // Create the update object dynamically
+        const updateFields = {
+            name,
+            tags,
+            description,
+            contact,
+        };
+    
+        if (processedBannerImg) updateFields.bannerImg = processedBannerImg;
+        if (processedLink) updateFields.link = processedLink;
+    
+        // Update the organization in the database
+        const organizationCollection = await organizations();
+        const updateInfo = await organizationCollection.findOneAndUpdate(
+            { _id: new ObjectId(o_id) },
+            { $set: updateFields },
+            { returnDocument: 'after' }
+        );
+    
+        if (!updateInfo.value) throw 'Could not update the organization successfully.';
+        //not sure but this seems fine
+        return await getOrganizationPageData(o_id);
     },
+        
 
     async deleteOrganization(o_id){
         //delete Organization given o_id

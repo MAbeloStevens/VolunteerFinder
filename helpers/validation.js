@@ -12,6 +12,15 @@ const validation = {
         return trimmedO_ID;
     },
 
+    async checkID(id, category){
+        //basic checks to see if we recieving a string, that is also a valid objectID
+        if (typeof id !== 'string') throw `${category} ID is not a string!`;
+        id = id.trim();
+        if(id.length===0) throw `${category} ID is empty!`;
+        if(!ObjectId.isValid(id)) throw `${category} ID is an invalid object`;
+        return id;
+    },
+
     async checkAdminAccount (adminAccount_ID){
         //basic checks to see if we recieving a string, that is also a valid objectID
         if (typeof adminAccount_ID !== 'string') throw 'Admin Account ID is not a string!';
@@ -68,6 +77,13 @@ const validation = {
         return trimmedDescription;
     },
 
+    async checkString(string, category){
+        if(typeof string !=='string') throw `${category} is not a string!`;
+        string= string.trim();
+        if(string.length===0) throw `${category} cannot be empty!`;
+        return string;
+    },
+
     async checkEmail(email){
         //basic string checks
         if(typeof email !== 'string') throw 'Email is not a string!';
@@ -103,10 +119,33 @@ const validation = {
         //put them back together
         return trimmedEmail+'\n'+trimmedPhone;
     },
-    
+    async checkLink(link){
+        if(typeof link !=='string') throw 'Link is not a string!';
+        link= link.trim();
+        if(link.length===0) throw 'Link cannot be empy!';
+        try{
+            new URL (link);
+            return link
+        }catch(e){
+            throw 'Link is not a valid URL!';
+        }
+    },
+
+
     async checkImg(bannerImg){
-      //TODO make function that verifies file is an image
-      //currently avoiding this, I will come back I need to test if I can add these entries to the db first
+        //These are some allowed image types
+        const allowedImageTypes =['image/jpeg', 'image/png'];
+        const maxImageSize = 5*1024*1024; //its just 5MB
+
+        if(!bannerImg) throw "No image provided!"
+        const {mimetype, size} = bannerImg
+        if (!allowedImageTypes.includes(mimetype)) {
+            throw `Invalid file type! Allowed types are ${allowedImageTypes.join(',')}. `;
+        }
+        if (size> maxImageSize){
+            throw `File is too large! Maximum image size allowed is 5MB!`
+        }
+        return true;
     },
 
     async checkPositiveNumber(number){
