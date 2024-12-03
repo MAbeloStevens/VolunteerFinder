@@ -22,10 +22,6 @@ app.set('view engine', 'handlebars');
 //     res.cookie('user', 'anewuser', {expires: expiresAt});
 //     next();
 // });
-app.use('/account', (req, res, next) => {
-    res.redirect('/not-logged-in');
-    next();
-});
 
 configRoutes(app);
 
