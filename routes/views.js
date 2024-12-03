@@ -120,5 +120,31 @@ router.route('/not-logged-in').get(async (req, res) => {
   });
 });
 
+router.route('/account/edit').get(async (req, res) => {
+  // TODO: swap out for list from database
+  const knownTags = ["Afterschool Programs", "Animals", "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"]
+  const dummyUser = {
+    "a_id": '6734f46960512626d9f23016',
+    "firstName": 'Mark',
+    "lastName": 'Abelo',
+    "tags": ['Animals', 'Children', 'Elderly'],
+    "phone": '123-456-7890',
+  }
+
+  res.render('editAccount', {
+    title: 'Edit Account',
+    user: dummyUser,
+    knownTags: knownTags.map(elem => {
+      return {
+        label: elem,
+        checked: dummyUser.tags.includes(elem) ? "checked" : ""
+      }
+    }),
+    userTags: dummyUser.tags.filter(elem => {
+      return !knownTags.includes(elem)
+    })
+  });
+});
+
 
 export default router;
