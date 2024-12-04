@@ -1,12 +1,10 @@
 <form id="registrationForm" method="post" action="/api/users/">
-  <div id="text">
+  <div id="textInputs">
     <label>
       Comment
-      {{!-- input >> allows user to enter comment paragraph --}}
-      <input required type="text" name="Comment">
+      <input required type="text" name="comment">
     </label>
-    {{!--  logic >> ensures all info is valid, updates info in DB --}}
-    {{!-- link >> redirects to org page --}}
-    <a href="/organizations/:id"><button>Post</button></a>
+    <button>Post</button>
+    <a href="/organizations/:id"></a>
   </div>
 </form>
