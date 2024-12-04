@@ -169,7 +169,7 @@ router.route('/account/edit').get(async (req, res) => {
   });
 });
 
-router.route('/accountDeletion').get(async (req, res) => {
+router.route('/account/delete').get(async (req, res) => {
   res.render('accountDeletion', {
     title: 'Delete Account'
   });
