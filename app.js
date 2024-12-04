@@ -32,7 +32,6 @@ app.set('view engine', 'handlebars');
 //     next();
 // });
 
-
 configRoutes(app);
 
 app.listen(3000, () => {

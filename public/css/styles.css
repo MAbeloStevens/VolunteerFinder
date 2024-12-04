@@ -2,6 +2,7 @@
 :root {
     --bg1-color: white;
     --txt-color: black;
+    --subtxt-color: rgb(77, 77, 77);
     --txtalt-color: white;
     --bnnr-color: olivedrab;
     --bnnr-hover: darkolivegreen;
@@ -10,6 +11,8 @@
     --mnu-color: aliceblue;
     --mnu-hover: lightgray;
     --btn-color: gray;
+    --txt-select-color: royalblue;
+    --err-color: red;
 }
 
 * {
@@ -21,6 +24,13 @@ body{
     padding: 0;
     background-color: var(--bg1-color);
     color: var(--txt-color);
+}
+
+.spansPage {
+    margin: 0;
+    overflow: hidden;
+    top: 0;
+    width: 100%;
 }
 
 /* nav bar */
@@ -84,7 +94,7 @@ div#nav_account .dropbtn {
     margin: 0;
 }
 
-#dropdown-content {
+.dropdown-content {
     display: none;
     position: absolute;
     background-color: var(--mnu-color);
@@ -93,7 +103,7 @@ div#nav_account .dropbtn {
     z-index: 1;
 }
 
-#dropdown-content a {
+.dropdown-content a {
     float: none;
     color: var(--txt-color);
     padding: 12px 18px;
@@ -101,11 +111,11 @@ div#nav_account .dropbtn {
     text-align: left;
 }
 
-#dropdown-content a:hover {
+.dropdown-content a:hover {
     background-color: var(--mnu-hover);
 }
 
-div#nav_account:hover #dropdown-content {
+div#nav_account:hover .dropdown-content {
     display: block;
 }
 
@@ -121,8 +131,7 @@ a.nav_active {
 
 /* page content */
 #pageContent {
-    margin: 10px;
-    padding: 10px;
+    padding: 5px;
 }
 
 h1 {
@@ -134,9 +143,17 @@ h2 {
     font-size: 1.5rem;
 }
 
+h3 {
+    font-size: 1.2rem;
+}
+
 p {
     margin: 0;
-    padding: 5px;
+    padding: 2px;
+}
+
+p.subtext {
+    color: var(--subtxt-color);
 }
 
 .centered {
@@ -145,8 +162,24 @@ p {
     text-align: center;
 }
 
+.leftBar {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    left: 0;
+    width: fit-content;
+}
+
 .errors{
-    color:red;
+    color:var(--err-color);
+}
+
+.errors#errorDiv {
+    margin-top: 5px;
+    padding: 2px;
+    border: 1px solid var(--err-color);
+    border-radius: 10px;
+    background-color: var(--mnu-hover);
 }
 
 /* forms */
@@ -159,6 +192,11 @@ form {
     width: fit-content;
     display: flex;
     flex-direction: column;
+}
+
+form *{
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 button {
