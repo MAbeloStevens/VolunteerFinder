@@ -1,0 +1,18 @@
+<form id="registrationForm" method="post" action="/api/users/">
+  <div id="textInputs">
+
+    <label>
+      Review
+      <input required type="text" name="review">
+    </label>
+    <label>
+      Rating
+      <input required type="number" name="review" min="0" max="10">
+    </label>
+    
+    {{!-- https://www.w3schools.com/tags/att_input_type_number.asp --}}
+    {{!-- Do both of these inputs need to be required? --}}
+
+    <a href="/organizations/:id"><button>Post</button></a>
+  </div>
+</form>

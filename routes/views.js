@@ -169,5 +169,10 @@ router.route('/account/edit').get(async (req, res) => {
   });
 });
 
+router.route('/review').get(async (req, res) => {
+  res.render('reviewCreation', {
+    title: 'Leave a Review'
+  });
+});
 
 export default router;
