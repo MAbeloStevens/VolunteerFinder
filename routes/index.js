@@ -11,7 +11,11 @@ const constructorMethod = (app) => {
     
     // undefined routes
     app.use('*', (req, res) => {
-        res.status(404).json({error: 'Route not Found'});
+        res.status(404).render('error', {
+            title: "Error",
+            ecode: 404,
+            error: 'Route not Found'
+        });
     });
 };
 

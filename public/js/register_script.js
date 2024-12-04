@@ -3,25 +3,31 @@
 const addTagButton = document.getElementById("addTagButton")
 const addTagInput = document.getElementById("addTagInput")
 const tagSelection = document.getElementById("tagSelection")
+const errorDiv = document.getElementById("errorDiv")
+const errorMessage = document.getElementById("errorMessage")
 
 addTagButton.addEventListener('click', (evt) => {
+  if(!errorDiv.hidden) {
+    errorDiv.hidden = true;
+  }
   try {
     const tagTitle = addTagInput.value.trim();
     if (tagTitle === "") {
       throw `No tag input`
     }
-    const existing = document.querySelector(`[value="${tagTitle}"][name="tags"]`)
+    const existing = document.querySelector(`[value="${tagTitle}"]`)
     if (existing) {
-      throw `Option already exists`
+      throw `Tag option already exists`
     }
     
-    const newTagElement = `<label>
-      <input type="checkbox" value="${tagTitle}" name="tags">
-      ${tagTitle}
-    </label>`
-    tagSelection.innerHTML += newTagElement
+    let newTagElement = document.createElement('option')
+    newTagElement.value = `${tagTitle}`
+    newTagElement.innerText = tagTitle
+    tagSelection.appendChild(newTagElement)
+
   } catch (e) {
-    alert(e)
+    errorDiv.hidden = false;
+    errorMessage.innerText = `Input Error: ${e}`;
   }
 
 
@@ -34,8 +40,12 @@ const password = document.getElementById("password")
 const confirmPassword = document.getElementById("confirmPassword")
 
 registrationForm.addEventListener('submit', (evt) => {
- if (password.value !== confirmPassword.value) {
-  alert("Passwords must match")
-  evt.preventDefault()
- }
+  if(!errorDiv.hidden) {
+    errorDiv.hidden = true;
+  }
+  if (password.value !== confirmPassword.value) {
+    errorDiv.hidden = false;
+    errorMessage.innerText = "Input Error Passwords must match";
+    evt.preventDefault()
+  }
 })

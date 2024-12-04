@@ -32,23 +32,24 @@
 
   </div>
 
-  <div id="tagSelection">
-    <h2>Select Tags:</h2>
-
-    {{#each knownTags}}
-
-    <label>
-      <input type="checkbox" value="{{this}}" name="tags">
-      {{this}}
-    </label>
-
-    {{/each}}
+  <div class="centered">
+    <h3>Select Tags:</h3>
+    <p class="subtext">hold ctrl/cmd to select multiple</p>
+    <select id="tagSelection" name="tags" multiple size="5">
+        {{#each knownTags}}
+        <option value="{{this}}"/>{{this}}</option>
+        {{/each}}
+    </select>
   </div>
 
-  <div>
+  <div class="centered">
     <input id="addTagInput">
     <button type="button" id="addTagButton">Add Tag</button>
   </div>
 
   <button>Register</button>
 </form>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
+</div>

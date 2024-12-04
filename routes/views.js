@@ -1,8 +1,8 @@
-import express from 'express';
-const router = express.Router();
+import {Router} from 'express'
+const router = Router();
 
 import validation from '../helpers/validation.js';
-import { organizationData } from '../data/index.js';
+import { organizationData, knownTagsData } from '../data/index.js';
 
 
 router.route('/').get(async (req, res) => {
@@ -65,11 +65,34 @@ router.route('/account').get(async (req, res) => {
   // get id of currently logged in user from authentication system.
   // Validate Id -> trade for user
   res.render('account', {
-    title: 'Welcome ...',
+    title: `${dummyUser.firstName} ${dummyUser.lastName}`,
     script_partial: 'account_script',
     user: dummyUser
   })
 })
+
+router.route('/search').get(async (req, res) => {
+  // get all known tags
+  let knownTags;
+  try {
+    // knownTags = await knownTagsData.getKnownTags();
+    // knownTags = knownTags.tags;
+    knownTags = ["Afterschool Programs", "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"];
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+  // render the search page asking for parameters
+  res.render('search', {
+    title: 'Search Organization',
+    script_partial: 'search_script',
+    knownTags: knownTags
+  });
+});
 
 router.route('/organizations/:id').get(async (req, res) => {
   // console.log(req.params.id)
@@ -82,7 +105,7 @@ router.route('/organizations/:id').get(async (req, res) => {
       ecode: 500,
       error: e
     });
-    return
+    return;
   }
 
   // get organization data
