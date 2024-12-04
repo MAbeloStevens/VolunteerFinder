@@ -169,5 +169,12 @@ router.route('/account/edit').get(async (req, res) => {
   });
 });
 
+router.route('/comment').get(async (req, res) => {
+  res.render('createComment', {
+    title: 'Post a comment'
+  });
+});
+
+
 
 export default router;
