@@ -30,4 +30,9 @@ router.route('/users').delete(async (req, res) =>{
   res.send("Account Deleted!")
 });
 
+router.route('/organizations/:o_id').delete(async (req, res) =>{
+  //TODO Delete the organization by o_id of the currently logged in user
+  res.send(`Organization ${req.params.o_id} Deleted!`)
+});
+
 export default router
