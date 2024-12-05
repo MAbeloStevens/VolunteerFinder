@@ -1,0 +1,11 @@
+<div class="centered">
+  <form id="registrationForm" method="post" action="/api/organizations/{{organization.o_id}}/comment">
+    <h1>Comment</h1>
+    <textarea required name="comment"></textarea>
+    <button>Post</button>
+  </form>
+
+  <a href="/organizations/{{organization.o_id}}">
+    <button>Back to "{{organization.name}}"</button>
+  </a>
+</div>

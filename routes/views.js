@@ -1,4 +1,4 @@
-import {Router} from 'express'
+import { Router } from 'express'
 const router = Router();
 
 import validation from '../helpers/validation.js';
@@ -45,12 +45,12 @@ router.route('/account').get(async (req, res) => {
       {
         "o_id": "6734f61c5f097d890337fc69",
         "name": "Care For Cats"
-      }, 
+      },
       {
         "o_id": '6734f61c5f097d890337fc6d',
         "name": "Care For Dogs"
       }
-      
+
     ],
     "organizations": [
       {
@@ -97,7 +97,7 @@ router.route('/search').get(async (req, res) => {
 router.route('/organizations/:id').get(async (req, res) => {
   // console.log(req.params.id)
   // validate o_id
-  try{
+  try {
     req.params.id = validation.checkID(req.params.id, 'organization id');
   } catch (e) {
     res.status(500).render('error', {
@@ -111,7 +111,7 @@ router.route('/organizations/:id').get(async (req, res) => {
   // get organization data
   try {
     const orgFound = await organizationData.getOrganizationPageData(req.params.id);
-    if(!orgFound) {
+    if (!orgFound) {
       res.status(404).render('error', {
         title: "Error",
         ecode: 404,
@@ -126,15 +126,15 @@ router.route('/organizations/:id').get(async (req, res) => {
       orgData: orgFound,
       script_partial: 'organization_script'
     });
-      
+
   } catch (e) {
     res.status(500).render('error', {
-        title: "Error",
-        ecode: 500,
-        error: e
+      title: "Error",
+      ecode: 500,
+      error: e
     });
   }
-  
+
 });
 
 router.route('/not-logged-in').get(async (req, res) => {
@@ -172,6 +172,19 @@ router.route('/account/edit').get(async (req, res) => {
 router.route('/account/delete').get(async (req, res) => {
   res.render('accountDeletion', {
     title: 'Delete Account'
+  });
+});
+
+router.route('/organizations/:o_id/comment').get(async (req, res) => {
+  //TODO swap out for organization from database
+  const dummyOrganization = {
+    "o_id" : '6734f61c5f097d890337fc6b',
+    "name" : 'Care For Cats'
+  }
+
+  res.render('createComment', {
+    title: 'Post a comment',
+    organization : dummyOrganization
   });
 });
 
