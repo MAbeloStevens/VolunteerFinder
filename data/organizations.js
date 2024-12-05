@@ -208,6 +208,45 @@ const organizationFunctions ={
         if(!insertOrganization.acknowledged || !insertOrganization.insertedId) throw "Could not add Organization"
         return true //not sure, will change this
     },
+
+    async getRecommendedOrgs(tags){
+        //Given list of tags, return list of o_ids for the top 10 organizations. Prioritizing organizations with more matching tags, then of higher interest count (call the function getRecommendedOrgs(tags)) 
+
+        if(!tags) throw  'Organization tags are not provided, please input tags!'
+        if(!Array.isArray(tags)) throw "Organization tags must be type array"
+        if (tags.length === 0) throw "Please provide tags!" //could be return []
+        //validate these tags 
+        tags= await validation.checkTags(tags)
+        tags= validation.properCaseTags(tags)
+        const organizationCollection= await organizations()
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        let organizationsList= await organizationCollection
+        .aggregate([
+            //basically makes a field seeing how many of tags match  in the organization to the list 
+            {$addFields:{numberOfTagsMatch: {$size: {$setIntersection: ["$tags", tags]}}}}, 
+            //first sort by number of matching tags then by interest count
+            {$sort: {numberOfTagsMatch: -1, interestCount:-1}},
+            //only o_ids
+            {$project:{_id:1}},
+            //give me 10
+            {$limit:10},
+        ]).toArray()
+        return organizationsList.map((org)=> org._id.toString())
+    },
+
+    async getMostInterestedOrgs(){
+        // Given nothing, return 10 organizations with the highest interest count (call the function getMostInterestedOrgs() )
+        //grab collections
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection';
+        const organizationsList = await organizationCollection
+            .find({})
+            .sort({interestCount:-1}) //we want to highest to lowest
+            .limit(10)  //following Mark's instructions
+            .project({_id:1})  
+            .toArray();
+        return organizationsList.map((org)=> org._id.toString())
+    },
     
     /*
         These are mostly assumptions from the Page Blue print files.
@@ -262,6 +301,7 @@ const organizationFunctions ={
     
         // Update the organization in the database
         const organizationCollection = await organizations();
+        if (!organizationCollection) throw 'Failed to connect to organization collection.';
         const updateInfo = await organizationCollection.findOneAndUpdate(
             { _id: new ObjectId(o_id) },
             { $set: updateFields },
