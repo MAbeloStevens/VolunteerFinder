@@ -1,6 +1,13 @@
 import { Router } from 'express'
 const router = Router();
 
+router.route('/session-data').get(async (req, res) => {
+  if (req.session.user) {
+    res.json(req.session.user)
+  } else {
+    res.json(false);
+  }
+});
 router.route('/users/register').post(async (req, res) => {
   //TODO: replace with saving entry to database
   res.send(req.body)
@@ -35,4 +42,18 @@ router.route('/organizations/:o_id').delete(async (req, res) =>{
   res.send(`Organization ${req.params.o_id} Deleted!`)
 });
 
-export default router
+router.route('/logout').get(async (req, res) => {
+  req.session.destroy((e) => {
+    if (e) {
+      res.status(500).render('error', {
+        title: "Error",
+        ecode: 500,
+        error: e
+      });
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
+export default router;

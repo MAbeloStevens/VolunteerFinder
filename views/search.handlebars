@@ -1,23 +1,29 @@
-<div class="leftBar">
-    <form "searchForm" method="post" action="/api/search">
-        <h3 class="centered">Organization Search</h3>
+<div id="searchPage">
+    <div class="leftBar">
+        <form "searchForm" method="post" action="/api/search">
+            <h3 class="centered">Organization Search</h3>
 
-        <input name="searchTxt" id="searchInput" placeholder="search by name">
+            <input name="searchTxt" id="searchInput" placeholder="search by name">
 
-        <div id="tagSelect" class="centered">
-            <h3>Select Tags:</h3>
-            <p class="subtext">hold ctrl/cmd to select multiple</p>
-            <select name="tags" multiple size="5">
-                {{#each knownTags}}
-                <option value="{{this}}"/>{{this}}</option>
-                {{/each}}
-            </select>
+            <div id="tagSelect" class="centered">
+                <h3>Select Tags:</h3>
+                <p class="subtext">hold ctrl/cmd to select multiple</p>
+                <select name="tags" multiple size="5">
+                    {{#each knownTags}}
+                    <option value="{{this}}"/>{{this}}</option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="errors" hidden>
+            <p>errors here</p>
         </div>
+    </div>
 
-        <button type="submit">Search</button>
-    </form>
-
-    <div class="errors" hidden>
-        <p>errors here</p>
+    <div class="searchResults">
+        <p id="noResults">No Results. Use the search bar and/or tags to specify your search</p>
     </div>
 </div>

@@ -19,11 +19,19 @@
         <a class="nav_elem" id="nav_search" href="/search">Organization Search</a>
         <a class="nav_elem" id="nav_admin" href="/orgAdmin">Organization Admin</a>
         <div class="nav_elem" id="nav_account">
-            <button class="dropbtn" id="accountNameNav">New Account</button>
+            {{#if user_name}}
+            <button class="dropbtn" id="accountNameNav">{{user_name}}</button>
+            <div class="dropdown-content">
+                <a id="drop_opt1" href="/api/logout">Log out</a>
+                <a id="drop_opt2" href="/account/delete">Delete Account</a>
+            </div>
+            {{else}}
+            <button class="dropbtn" id="accountNameNav">New User</button>
             <div class="dropdown-content">
                 <a id="drop_opt1" href="/login">Log in</a>
                 <a id="drop_opt2" href="/register">Register</a>
             </div>
+            {{/if}}
         </div>
     </div>
 

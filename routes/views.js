@@ -6,10 +6,52 @@ import { organizationData, knownTagsData } from '../data/index.js';
 
 
 router.route('/').get(async (req, res) => {
-  res.render('landing', {
-    title: '',
-    script_partial: 'landing_script'
-  });
+  //testing constructed recommendedOrgs mostInterestedOrgs
+  let recommendedOrgs = [
+    {
+      o_id: '123' ,
+      name: 'Org1',
+      tags: ["Afterschool Programs", "Assisting People with Disabilities"]
+    }
+  ];
+  let mostInterestedOrgs = [
+    {
+      o_id: '123' ,
+      name: 'Org1',
+      tags: ["Afterschool Programs", "Assisting People with Disabilities"]
+    },
+    {
+      o_id: '321' ,
+      name: 'Org2',
+      tags: ["Blood Donation Drives", "Clothing Drives"]
+    }
+  ];
+  // REMOVE WHEN DB FUNCTIONS ARE READY /\/\/\
+
+  if(!req.session.user) {
+    // if not logged in, render default landing page
+    res.render('landing', {
+      title: '',
+      script_partial: 'landing_script',
+      mostInterestedOrgs: mostInterestedOrgs
+    });
+  } else {
+    // if logged in, render templated landing page
+    // get user data
+    // let userData = await accountData.getAccountDisplayData(res.session.user.a_id);
+    // get user recommended orgs
+    // let recommendedOrgs = await organizationData.getOrganizationsTags(await organizationData.getRecommendedOrgs(userData.tags));
+    // get most interested orgs
+    // let mostInterestedOrgs = await organizationData.getOrganizationsTags(await organizationData.getMostInterestedOrgs());
+    
+    res.render('landing', {
+      title: '',
+      script_partial: 'landing_script',
+      user_name: `${req.session.user.firstName} ${req.session.user.lastName}`,
+      recommendedOrgs: recommendedOrgs,
+      mostInterestedOrgs: mostInterestedOrgs
+    });
+  }
 });
 
 
@@ -67,6 +109,7 @@ router.route('/account').get(async (req, res) => {
   res.render('account', {
     title: `${dummyUser.firstName} ${dummyUser.lastName}`,
     script_partial: 'account_script',
+    user_name: `${req.session.user.firstName} ${req.session.user.lastName}`,
     user: dummyUser
   })
 })

@@ -25,12 +25,33 @@ app.set('view engine', 'handlebars');
 
 // middleware functions
 
-// app.use(async (req, res, next) => {
-//     req.session.
-//     expiresAt.setHours(expiresAt.getMinutes() + 10);
-//     res.cookie('user', 'anewuser', {expires: expiresAt});
-//     next();
-// });
+app.use(async (req, res, next) => {
+    // when logged in, session.user would have these fields
+    req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'};
+    next();
+}); 
+
+// redirect to not-logged-in when not logged in and trying to access these pages:
+// user profile, organization admin, create organization, edit user profile, edit org page, create comment, create review, deletion page
+const redirectRoutes_notLoggedIn = [];
+app.use(async (req, res, next) => {
+    if (redirectRoutes_notLoggedIn.includes(req.path) && !req.session.user) {
+        return res.redirect('/not-logged-in');
+    } else {
+    next();
+    }
+});
+
+// redirect to landing page when logged in and trying to access these pages
+// sign in, sign up, not-logged-in
+const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
+app.use(async (req, res, next) => {
+    if (redirectRoutes_loggedIn.includes(req.path) && req.session.user) {
+        return res.redirect('/');
+    } else {
+    next();
+    }
+});
 
 configRoutes(app);
 

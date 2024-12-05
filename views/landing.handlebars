@@ -1,3 +1,61 @@
-<p>Thank you for visiting! Lorem ipsum, dolor sit amet consectetur adipisicing elit. Possimus, explicabo fuga qui
-  recusandae illo provident suscipit quidem tempora ipsam repellendus velit. Hic quos doloremque tempore temporibus?
-  Magnam excepturi necessitatibus voluptate?</p>
+{{#if user_name}}
+  <h3>Welcome, {{user_name}}!</h3>
+  <p> Here are some organizations we think you'd love.</p>
+  <br>
+  <div id="recommendedOrgsDiv" class="displayOrgsDiv">
+    <h2>Recommended Organizations</h2>
+    {{#each recommendedOrgs}}
+    <a href="/organizations/:{{o_id}}">
+    <div class="displayOrg">
+      <h3>{{name}}</h3>
+      <label>Tags:</label>
+        <ul class="tagList">
+          {{#each tags}}<li>{{this}}</li>{{/each}}
+        </ul>
+    </div>
+    </a>
+    {{/each}}
+  </div>
+  <br>
+  <div id="mostInterestedOrgsDiv" class="displayOrgsDiv">
+    <h2>Most Popular Organizations</h2>
+    {{#each mostInterestedOrgs}}
+    <a href="/organizations/:{{o_id}}">
+    <div class="displayOrg">
+      <h3>{{name}}</h3>
+      <label>Tags:</label>
+        <ul class="tagList">
+          {{#each tags}}<li>{{this}}</li>{{/each}}
+        </ul>
+    </div>
+    </a>
+    {{/each}}
+  </div>
+
+{{else}}
+  <h3>Welcome to Volunteer Finder!</h3>
+  <p>Here you can specify what makes you passionate about volunteer work and connect with non-profit organizations with aligning interests. If you work with an organization and would like to connect with willing volunteers, make an organization profile and find people interested. 
+    <br>
+    <br>First, navigate to 'New User' in the top-right corner of the screen and click 'log in'. Don't have an account? Click 'register' instead.</p>
+  <br>
+  <div id="recommendedOrgsDiv" class="displayOrgsDiv">
+    <h2>Recommended Organizations</h2>
+    <p> You must sign in to see recommended organizations</p>
+  </div>
+  <br>
+  <div id="mostInterestedOrgsDiv" class="displayOrgsDiv">
+    <h2>Most Popular Organizations</h2>
+    {{#each mostInterestedOrgs}}
+    <a href="/organizations/:{{o_id}}">
+    <div class="displayOrg">
+      <h3>{{name}}</h3>
+      <label>Tags:</label>
+        <ul class="tagList">
+          {{#each tags}}<li>{{this}}</li>{{/each}}
+        </ul>
+    </div>
+    </a>
+    {{/each}}
+  </div>
+{{/if}}
+

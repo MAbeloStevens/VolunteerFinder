@@ -3,6 +3,7 @@
     --bg1-color: white;
     --txt-color: black;
     --subtxt-color: rgb(77, 77, 77);
+    --link-color: rgb(98, 0, 98);
     --txtalt-color: white;
     --bnnr-color: olivedrab;
     --bnnr-hover: darkolivegreen;
@@ -135,15 +136,21 @@ a.nav_active {
 }
 
 h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-weight: bold;
     font-size: 2rem;
 }
 
 h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-size: 1.5rem;
 }
 
 h3 {
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-size: 1.2rem;
 }
 
@@ -160,14 +167,6 @@ p.subtext {
     margin: auto;
     width: fit-content;
     text-align: center;
-}
-
-.leftBar {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    left: 0;
-    width: fit-content;
 }
 
 .errors{
@@ -226,4 +225,85 @@ form div#textInputs label input {
     align-self: left;
     margin-left: 10px;
     padding-left: 5px;
+}
+
+/* landing page */
+div.displayOrgsDiv {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 70%;
+}
+
+div.displayOrgsDiv *{
+    margin: 5px;
+}
+
+div.displayOrgsDiv a:link{
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    color: var(--link-color);
+}
+
+div.displayOrgsDiv a:visited{
+    color: var(--link-color);
+}
+
+div.displayOrgsDiv a:hover{
+    color: var(--txt-select-color);
+}
+
+div.displayOrgsDiv a:active{
+    color: var(--txt-select-color);
+}
+
+div.displayOrg {
+    margin: 5px;
+    padding-top: 10px;
+    padding-left: 10px;
+    border: 2px solid var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+div.displayOrg h3 {
+    text-decoration: underline;
+}
+
+ul.tagList li {
+    display: inline-block;
+    padding-right: 10px;
+}
+
+/* search page */
+div#searchPage {
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    height: 100%;
+    min-height: 500px;
+}
+
+.leftBar {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    left: 0;
+    width: fit-content;
+    display: inline-block;
+    flex: 0 1 auto;
+}
+
+.searchResults {
+    margin-left: 5px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 1 1 auto;
 }
