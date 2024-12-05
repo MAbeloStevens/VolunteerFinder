@@ -169,14 +169,16 @@ router.route('/account/edit').get(async (req, res) => {
   });
 });
 
-router.route('/organizations/:o_id/delete').get(async (req, res) => {
+router.route('/organizations/:o_id/review').get(async (req, res) => {
+  //TODO swap out for organization from database
   const dummyOrganization = {
-    "o_id": '6734f61c5f097d890337fc6b',
-    "name": 'Care For Cats'
+    "o_id" : '6734f61c5f097d890337fc6b',
+    "name" : 'Care For Cats'
   }
 
-  res.render('organizationDeletion', {
-    title: 'Delete Organization',
+  res.render('reviewCreation', {
+    title: 'Leave a Review',
+
     organization : dummyOrganization
   });
 });

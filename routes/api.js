@@ -10,9 +10,9 @@ router.route('/search').post(async (req, res) =>{
   res.send(req.body);
 });
 
-router.route('/organizations/:o_id').delete(async (req, res) =>{
-  //TODO Delete the organization by o_id of the currently logged in user
-  res.send(`Organization ${req.params.o_id} Deleted!`)
+router.route('/organizations/:o_id/review').post(async (req, res) => {
+  //TODO Replace with saving review to database
+  res.send(req.body);
 });
 
 export default router
