@@ -159,6 +159,12 @@ const validation = {
         //checks to see if the rating is a number between 1 and 10
         if (typeof number !== 'number') throw 'Rating must be a number';
         if (number < 1 || number > 10) throw 'Rating must be between 1 and 10';
+    },
+
+    async checkPassword(password) {
+        //checks to see if the password is a string, and that it is at least 8 characters long
+        if (typeof password!=='string') throw 'Password must be a string';
+        if (password.length < 8) throw 'Password must be at least 8 characters long';
     }
 
 };
