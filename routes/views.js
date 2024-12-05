@@ -178,14 +178,38 @@ router.route('/account/delete').get(async (req, res) => {
 router.route('/organizations/:o_id/comment').get(async (req, res) => {
   //TODO swap out for organization from database
   const dummyOrganization = {
-    "o_id" : '6734f61c5f097d890337fc6b',
-    "name" : 'Care For Cats'
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
   }
-
   res.render('createComment', {
     title: 'Post a comment',
-    organization : dummyOrganization
+    organization: dummyOrganization
   });
 });
+
+router.route('/organizations/:o_id/review').get(async (req, res) => {
+  //TODO swap out for organization from database
+  const dummyOrganization = {
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
+  }
+  res.render('reviewCreation', {
+    title: 'Leave a Review',
+    organization: dummyOrganization
+  });
+});
+
+router.route('/organizations/:o_id/delete').get(async (req, res) => {
+  const dummyOrganization = {
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
+  }
+  res.render('organizationDeletion', {
+    title: 'Delete Organization',
+    organization: dummyOrganization
+  });
+});
+
+
 
 export default router;
