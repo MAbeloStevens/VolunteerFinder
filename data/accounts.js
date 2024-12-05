@@ -1,6 +1,6 @@
-import {accounts} from "../config/mongoCollections.js";
+import { ObjectId } from 'mongodb';
+import { accounts } from '../config/mongoCollections.js';
 import validation from '../helpers/validation.js';
-
 const accountsFunctions = {
 
     async getAccountIdandPassword(email) {
@@ -18,9 +18,9 @@ const accountsFunctions = {
         //given a user's a_id, return the associated user's profile elements
         if(!a_id) throw  'a_id is not provided, please input ID!'
         a_id = await validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: a_id});
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         return accountData;
     },
@@ -33,10 +33,10 @@ const accountsFunctions = {
             id = await validation.checkID(id,"Account");
             return id;
         });
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
         //search for each account for each a_id
-        const accountData = await accounts.find({_id: {$in: a_ids}}).toArray();
+        const accountData = await accountsInfo.find({_id: {$in: a_ids}}).toArray();
         if(accountData.length!== a_ids.length) throw 'Not all account ids exist!'
         return accountData.map((account) => ({a_id: account._id, first_name: account.first_name, last_name: account.last_name}));
     },
@@ -64,8 +64,8 @@ const accountsFunctions = {
             tags = validation.properCaseTags(tags)
         }
 
-        interestedOrgs = [];
-        organizations = [];
+        const interestedOrgs = [];
+        const organizations = [];
 
         email = await validation.checkEmail(email);
 
@@ -73,16 +73,16 @@ const accountsFunctions = {
             phone = await validation.checkPhone(phone);
         }
 
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
         //create a hashed version of the password
 
         //check if email is already used in another account in the collection
-        const existingAccount = await accounts.findOne({email: email});
+        const existingAccount = await accountsInfo.findOne({email: email});
         if(existingAccount && existingAccount._id.toString()!== a_id.toString()) throw 'Email already exists!';
 
-        const result = await accounts.insertOne({first_name, last_name, password, tags, interestedOrgs, organizations, email, phone});
-        return result.insertedId;
+        const result = await accountsInfo.insertOne({first_name, last_name, password, tags, interestedOrgs, organizations, email, phone});
+        return result.insertedId.toString();
     },
 
     async updateAccount(a_id, a_first_name, a_last_name, a_password, a_tags, a_interestedOrgs, a_email, a_phone) {
@@ -101,8 +101,9 @@ const accountsFunctions = {
        //find the account to be updated (if it exists)
         if(!a_id) throw 'Account ID is required!';
         a_id = await validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
+        console.log(typeof a_id);
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
         //logging update information
         let updateDoc = {};
 
@@ -150,7 +151,7 @@ const accountsFunctions = {
             //validated a_email
             email = await validation.checkEmail(a_email);
             //check if email is already used in another account in the collection
-            const existingAccount = await accounts.findOne({email: a_email});
+            const existingAccount = await accountsInfo.findOne({email: a_email});
             if(existingAccount && existingAccount._id.toString()!== a_id.toString()) throw 'Email already exists!';
             updateDoc.email = a_email;
         }
@@ -162,7 +163,7 @@ const accountsFunctions = {
             updateDoc.phone = a_phone;
         }
         //setting the new updated information
-        const result = await accounts.updateOne({_id: a_id}, {$set: updateDoc});
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: updateDoc});
         //checks for if the update was successful
         if(result.modifiedCount === 0) throw 'No account found with that ID!';
         return a_id;
@@ -173,9 +174,9 @@ const accountsFunctions = {
         //returns the id of the account that was deleted
         if(!a_id) throw 'Account ID is required!';
         a_id = await validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const result = await accounts.deleteOne({_id: a_id});
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const result = await accountsInfo.deleteOne({_id: new ObjectId(a_id)});
         //checks for if the delete was successful
         if(result.deletedCount === 0) throw 'No account found with that ID!';
         return a_id;

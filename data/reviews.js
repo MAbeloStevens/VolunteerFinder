@@ -60,8 +60,8 @@ const reviewFunctions = {
 
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
-        const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{reviews:{id:review_id}}});
-        if (!updateResult.acknowledged || updateResult.modifiedCount === 0) {
+        const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{reviews:{id:new ObjectId(review_id)}}});
+        if (!updateResult.acknowledged|| updateResult.modifiedCount === 0) {
             throw 'Failed to delete review to the organization.';
         }
         return true;

@@ -55,8 +55,8 @@ const commentsFunctions = {
 
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!'; 
-        const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{comments:{id:comment_id}}});
-        if (!updateResult.acknowledged || updateResult.modifiedCount === 0) {
+        const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{comments:{id:new ObjectId(comment_id)}}});
+        if (!updateResult.acknowledged || !updateResult.modifiedCount === 0) {
             throw 'Failed to delete comment to the organization!';
         }
         return true;

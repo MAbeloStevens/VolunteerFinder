@@ -160,8 +160,7 @@ const organizationFunctions ={
         if(newOrganization.contact===undefined) throw "Organization contact information required!";
     
         //validation checks for required fields
-         //skip that for now
-        //newOrganization.adminAccount= await validation.checkAdminAccount(newOrganization.adminAccount);
+        newOrganization.adminAccount= await validation.checkAdminAccount(newOrganization.adminAccount);
         newOrganization.name= await validation.checkName(newOrganization.name);
         newOrganization.tags= await validation.checkTags(newOrganization.tags);
         const allTags = await knownTagsFunctions.getKnownTags();
@@ -187,7 +186,7 @@ const organizationFunctions ={
         
         let link= undefined;
         if(newOrganization.link!==undefined) {
-            link= await (validation.checkLink(newOrganization.link));
+            link= await validation.checkLink(newOrganization.link);
         }
         const organization={
             adminAccount:newOrganization.adminAccount,
@@ -206,7 +205,7 @@ const organizationFunctions ={
         if(!organizationCollection) throw 'Failed to connect to organization collection';
         const insertOrganization= await organizationCollection.insertOne(organization);
         if(!insertOrganization.acknowledged || !insertOrganization.insertedId) throw "Could not add Organization"
-        return true //not sure, will change this
+        return insertOrganization.insertedId.toString() //not sure, will change this
     },
 
     async getRecommendedOrgs(tags){
@@ -308,9 +307,9 @@ const organizationFunctions ={
             { returnDocument: 'after' }
         );
     
-        if (!updateInfo.value) throw 'Could not update the organization successfully.';
+        if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
         //not sure but this seems fine
-        return await getOrganizationPageData(o_id);
+        return await this.getOrganizationPageData(o_id);
     },
         
 
