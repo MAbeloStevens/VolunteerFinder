@@ -25,4 +25,9 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
   res.send(req.body);
 });
 
+router.route('/users').delete(async (req, res) =>{
+  //TODO Delete the account by a_id of the currently logged in user
+  res.send("Account Deleted!")
+});
+
 export default router

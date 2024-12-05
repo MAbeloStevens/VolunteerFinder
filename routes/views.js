@@ -169,6 +169,12 @@ router.route('/account/edit').get(async (req, res) => {
   });
 });
 
+router.route('/account/delete').get(async (req, res) => {
+  res.render('accountDeletion', {
+    title: 'Delete Account'
+  });
+});
+
 router.route('/organizations/:o_id/comment').get(async (req, res) => {
   //TODO swap out for organization from database
   const dummyOrganization = {
