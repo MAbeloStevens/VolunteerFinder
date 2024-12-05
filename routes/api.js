@@ -1,4 +1,4 @@
-import {Router} from 'express'
+import { Router } from 'express'
 const router = Router();
 
 router.route('/users/register').post(async (req, res) => {
@@ -11,7 +11,17 @@ router.route('/users').patch(async (req, res) => {
   res.send(req.body)
 })
 
-router.route('/search').post(async (req, res) =>{
+router.route('/search').post(async (req, res) => {
+  res.send(req.body);
+});
+
+router.route('/organizations/:o_id/comment').post(async (req, res) => {
+  //TODO Replace with saving comment to database
+  res.send(req.body);
+});
+
+router.route('/organizations/:o_id/review').post(async (req, res) => {
+  //TODO Replace with saving review to database
   res.send(req.body);
 });
 
