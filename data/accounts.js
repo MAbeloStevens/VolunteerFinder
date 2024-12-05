@@ -56,7 +56,7 @@ const accountsFunctions = {
         if(!first_name ||!last_name ||!password) throw 'First name, last name, and password are required!';
         first_name = await validation.checkName(first_name);
         last_name = await validation.checkName(last_name);
-        password = await validation.checkPassword(password); //should be implemented?
+        password = await validation.checkPassword(password);
         
         if(tags && tags.length > 0)
         {
