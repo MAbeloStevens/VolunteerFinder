@@ -1,4 +1,4 @@
-import {accounts, accounts} from "../config/mongoCollections.js";
+import {accounts} from "../config/mongoCollections.js";
 import validation from '../helpers/validation.js';
 
 const accountsFunctions = {
@@ -41,15 +41,15 @@ const accountsFunctions = {
         return accountData.map((account) => ({a_id: account._id, first_name: account.first_name, last_name: account.last_name}));
     },
 
-    async createAccount(first_name, last_name, password, tags, interestedOrgs, organizations, email, phone) {
+    async createAccount(first_name, last_name, password, tags, email, phone) {
         //makes a new account with the specified information
         /*
         first_name: string,
         last_name: string,
         password: string,
         tags: Array<string> (optional),
-        interestedOrgs: Array<string> (optional),
-        organizations: Array<string> (optional),
+        interestedOrgs: Array<string> (empty),
+        organizations: Array<string> (empty),
         email: string,
         phone: string (optional)
         */
@@ -64,20 +64,8 @@ const accountsFunctions = {
             tags = validation.properCaseTags(tags)
         }
 
-        if(interestedOrgs && interestedOrgs.length > 0)
-        {
-          interestedOrgs = interestedOrgs.map(async (o_id) => {
-                o_id = await validation.checkOrganizationID(o_id);
-                return o_id;
-            });  
-        }
-
-        if(organizations && organizations.length > 0){
-            organizations = organizations.map(async (o_id) => {
-                o_id = await validation.checkOrganizationID(o_id);
-                return o_id;
-            });
-        }
+        interestedOrgs = [];
+        organizations = [];
 
         email = await validation.checkEmail(email);
 
@@ -93,7 +81,7 @@ const accountsFunctions = {
         const existingAccount = await accounts.findOne({email: email});
         if(existingAccount && existingAccount._id.toString()!== a_id.toString()) throw 'Email already exists!';
 
-        const result = await accounts.insertOne({first_name, last_name, password, tags, interestedOrgs, email, phone});
+        const result = await accounts.insertOne({first_name, last_name, password, tags, interestedOrgs, organizations, email, phone});
         return result.insertedId;
     },
 
