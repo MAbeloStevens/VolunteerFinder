@@ -169,16 +169,15 @@ router.route('/account/edit').get(async (req, res) => {
   });
 });
 
-router.route('/organizations/:o_id/review').get(async (req, res) => {
+router.route('/organizations/:o_id/comment').get(async (req, res) => {
   //TODO swap out for organization from database
   const dummyOrganization = {
     "o_id" : '6734f61c5f097d890337fc6b',
     "name" : 'Care For Cats'
   }
 
-  res.render('reviewCreation', {
-    title: 'Leave a Review',
-
+  res.render('createComment', {
+    title: 'Post a comment',
     organization : dummyOrganization
   });
 });
