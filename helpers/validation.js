@@ -8,7 +8,7 @@ const validation = {
         if (typeof o_id !== 'string') throw 'Organization ID is not a string!';
         const trimmedO_ID = o_id.trim();
         if(trimmedO_ID.length===0) throw 'Organization ID is empty!';
-        if(!ObjectId.isValid(trimmedO_ID)) throw 'Admin Account ID is an invalid object';
+        if(!ObjectId.isValid(trimmedO_ID)) throw 'Organization ID is an invalid object id';
         return trimmedO_ID;
     },
 
@@ -17,7 +17,7 @@ const validation = {
         if (typeof id !== 'string') throw `${category} ID is not a string!`;
         id = id.trim();
         if(id.length===0) throw `${category} ID is empty!`;
-        if(!ObjectId.isValid(id)) throw `${category} ID is an invalid object`;
+        if(!ObjectId.isValid(id)) throw `${category} ID is an invalid object id`;
         return id;
     },
 
@@ -26,7 +26,7 @@ const validation = {
         if (typeof adminAccount_ID !== 'string') throw 'Admin Account ID is not a string!';
         const trimmedAdminAccount_ID = adminAccount_ID.trim();
         if(trimmedAdminAccount_ID.length===0) throw 'Admin Account ID is empty!';
-        if(!ObjectId.isValid(trimmedAdminAccount_ID)) throw 'Admin Account ID is an invalid object';
+        if(!ObjectId.isValid(trimmedAdminAccount_ID)) throw 'Admin Account ID is an invalid object id';
         return trimmedAdminAccount_ID;
     },
 
@@ -35,7 +35,7 @@ const validation = {
         if(typeof organizationName !=='string') throw 'Organization name is not a string!';
         const trimmedOrganizationName= organizationName.trim();
         if(trimmedOrganizationName.length===0) throw 'Organization name cannot be empty!';
-        if(trimmedOrganizationName.length>100) throw  'Organaization name is too long, please it under 100 characters!'
+        if(trimmedOrganizationName.length>100) throw  'Organaization name is too long, please keep it under 100 characters!'
         return trimmedOrganizationName;
     },
     //Helper function because strings are stupid.

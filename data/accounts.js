@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { accounts } from '../config/mongoCollections.js';
 import validation from '../helpers/validation.js';
+import bcrypt from 'bcrypt';
+const saltRounds = 10;
 const accountsFunctions = {
 
     async getAccountIdandPassword(email) {
@@ -75,7 +77,6 @@ const accountsFunctions = {
 
         const accountsInfo = await accounts();
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
-        //create a hashed version of the password
 
         //check if email is already used in another account in the collection
         const existingAccount = await accountsInfo.findOne({email: email});

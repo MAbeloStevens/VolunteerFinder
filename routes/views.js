@@ -136,7 +136,7 @@ router.route('/organizations/:id').get(async (req, res) => {
   // TODO implement comment and review display
   // validate o_id
   try {
-    req.params.id = validation.checkID(req.params.id, 'organization id');
+    req.params.id = validation.checkOrganizationID(req.params.id);
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
