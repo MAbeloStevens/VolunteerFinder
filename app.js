@@ -24,17 +24,27 @@ app.use(session({
 app.engine('handlebars', exphbs.engine({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
 
+// handlebars functions
+
+// returns true if the item is in the list
+Handlebars.registerHelper("listContains", function(item, List) {
+    return List.includes(item);
+});
+
 // middleware functions
 
-app.use(async (req, res, next) => {
-    // when logged in, session.user would have these fields
-    req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'};
-    next();
-}); 
+// to test logged in functionality, REMOVE when log in works
+// app.use(async (req, res, next) => {
+//     // when logged in, session.user would have these fields
+//     req.session.user = {a_id: '6734f46960512626d9f23016'};
+//     res.locals.user_name =  `${firstName} ${lastName}`;
+//     next();
+// }); 
 
-const redirectRoutes_notLoggedIn = []; // user profile, organization admin, create organization, edit user profile, edit org page, create comment, create review, deletion page
+// not-logged-in and logged-in redirection
+const redirectRoutes_notLoggedIn = ['/account', '/account/edit', '/organizations/:o_id/comment', '/account/delete', '/organizations/:o_id/review'];
+// user profile, organization admin(need route), create organization(need route), edit user profile, edit org page(need route), create comment, create review, deletion page
 const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
-
 app.use('/', async (req, res, next) => {
 
     // redirect to not-logged-in when not logged in and trying to access these pages:

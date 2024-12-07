@@ -1,5 +1,4 @@
-// Add tags
-
+// Add tag button
 const addTagButton = document.getElementById("addTagButton")
 const addTagInput = document.getElementById("addTagInput")
 const tagSelection = document.getElementById("tagSelection")
@@ -29,8 +28,6 @@ addTagButton.addEventListener('click', (evt) => {
     errorDiv.hidden = false;
     errorMessage.innerText = `Input Error: ${e}`;
   }
-
-
 })
 
 // Confirm Password Validation

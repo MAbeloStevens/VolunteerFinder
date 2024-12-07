@@ -1,16 +1,20 @@
 <div class="centered">
-  <form "loginForm" method="post">
+  <form id="loginForm" method="post" action="/api/users/login">
     <div id="textInputs" class="centered">
-      <label for="">Email 
-        <input type="" name="" id="">
+      <label for="email">Email 
+        <input required type="email" name="email">
       </label>
-      <label for="">Password
-        <input type="" name="" id="">
+      <label for="password">Password
+        <input required type="password" name="password">
       </label>
     </div>
     <button>Login</button>
   </form>
-  <p>Don't have an account?</p>
-  <a href="/register"><button>Register</button></a>
+
+  <p>Don't have an account? <a href="/register"><button>Register</button></a></p>
+</div>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
 </div>
 

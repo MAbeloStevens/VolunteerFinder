@@ -18,26 +18,16 @@
 
   </div>
 
-  <div id="tagSelection">
-    <h2>Select Tags:</h2>
-
-    {{#each knownTags}}
-
-    <label>
-      <input type="checkbox" value="{{label}}" name="tags" {{checked}}>
-      {{label}}
-    </label>
-
-    {{/each}}
-
-    {{#each userTags}}
-
-    <label>
-      <input type="checkbox" value="{{this}}" name="tags" checked>
-      {{this}}
-    </label>
-
-    {{/each}}
+  <div class="centered">
+    <h3>Select Tags:</h3>
+    <p class="subtext">hold ctrl/cmd to select multiple</p>
+    <select id="tagSelection" name="tags" multiple size="5">
+        {{#each knownTags}}
+        <option value="{{this}}" {{#if (listContains this ../userTags)}}selected{{/if}}>
+        {{this}}
+        </option>
+        {{/each}}
+    </select>
   </div>
 
   <div>
@@ -47,3 +37,7 @@
 
   <button>Save</button>
 </form>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
+</div>

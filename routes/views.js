@@ -32,11 +32,9 @@ router.route('/').get(async (req, res) => {
     // if not logged in, render default landing page
     res.render('landing', {
       title: '',
-      script_partial: 'landing_script',
       mostInterestedOrgs: mostInterestedOrgs
     });
   } else {
-    // if logged in, render templated landing page
     // get user data
     // let userData = await accountData.getAccountDisplayData(res.session.user.a_id);
     // get user recommended orgs
@@ -46,8 +44,6 @@ router.route('/').get(async (req, res) => {
     
     res.render('landing', {
       title: '',
-      script_partial: 'landing_script',
-      user_name: `${req.session.user.firstName} ${req.session.user.lastName}`,
       recommendedOrgs: recommendedOrgs,
       mostInterestedOrgs: mostInterestedOrgs
     });
@@ -109,7 +105,6 @@ router.route('/account').get(async (req, res) => {
   res.render('account', {
     title: `${dummyUser.firstName} ${dummyUser.lastName}`,
     script_partial: 'account_script',
-    user_name: `${req.session.user.firstName} ${req.session.user.lastName}`,
     user: dummyUser
   })
 })
@@ -138,7 +133,7 @@ router.route('/search').get(async (req, res) => {
 });
 
 router.route('/organizations/:id').get(async (req, res) => {
-  // console.log(req.params.id)
+  // TODO implement comment and review display
   // validate o_id
   try {
     req.params.id = validation.checkID(req.params.id, 'organization id');
@@ -188,7 +183,7 @@ router.route('/not-logged-in').get(async (req, res) => {
 
 router.route('/account/edit').get(async (req, res) => {
   // TODO: swap out for list from database
-  const knownTags = ["Afterschool Programs", "Animals", "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"]
+  const knownTags = ["Afterschool Programs", 'Animals', 'Children', 'Elderly', "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"]
   const dummyUser = {
     "a_id": '6734f46960512626d9f23016',
     "firstName": 'Mark',
@@ -200,15 +195,9 @@ router.route('/account/edit').get(async (req, res) => {
   res.render('editAccount', {
     title: 'Edit Account',
     user: dummyUser,
-    knownTags: knownTags.map(elem => {
-      return {
-        label: elem,
-        checked: dummyUser.tags.includes(elem) ? "checked" : ""
-      }
-    }),
-    userTags: dummyUser.tags.filter(elem => {
-      return !knownTags.includes(elem)
-    })
+    knownTags: knownTags,
+    userTags: dummyUser.tags,
+    script_partial: 'editAccount_script'
   });
 });
 

@@ -132,7 +132,8 @@ a.nav_active {
 
 /* page content */
 #pageContent {
-    padding: 5px;
+    padding-top: 20px;
+    padding-left: 5px;
 }
 
 h1 {

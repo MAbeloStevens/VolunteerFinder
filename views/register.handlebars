@@ -1,33 +1,33 @@
 <form id="registrationForm" method="post" action="/api/users/register">
   <div id="textInputs">
-    <label>
+    <label for="firstName">
       First Name
-      <input required type="" name="firstName">
+      <input required type="text" name="firstName" id="firstName">
     </label>
 
-    <label>
+    <label for="lastName">
       Last Name
-      <input required type="" name="lastName">
+      <input required type="text" name="lastName" id="lastName">
     </label>
 
-    <label>
+    <label for="password">
       Password
-      <input id="password" required type="password" name="password">
+      <input required type="password" name="password" id="password">
     </label>
 
-    <label>
+    <label for="confirmPassword">
       Confirm Password
-      <input id="confirmPassword" required type="password">
+      <input required type="password" id="confirmPassword">
     </label>
 
-    <label>
+    <label for="email">
       Email
-      <input required type="email" name="email">
-    </label>
+      <input required type="email" name="email" id="email">
+    </label for="">
 
-    <label>
+    <label for="phoneNumber">
       Phone Number
-      <input type="tel" name="phoneNumber">
+      <input type="tel" name="phoneNumber" id="phoneNumber">
     </label>
 
   </div>
