@@ -293,6 +293,75 @@ router.route('/organizations/:o_id/review').get(async (req, res) => {
   });
 });
 
+router.route('/orgAdmin').get(async (req, res) => {
+  try {
+    // get user's organization list
+    // let user_organizations = await accountData.getAccountOrganizations(req.session.user.a_id);
+
+    // call getOrganizationsInterest
+    // let ownedOrgs = organizationData.getOrganizationsInterest(user_organizations);
+
+    // for all organizations in the list, map interestedAccounts to be the projection returned by getAccountNames
+    // ownedOrgs = ownedOrgs.map(async (org) => {
+    //   org.interestedAccounts = await accountData.getAccountNames(org.interestedAccounts);
+    //   return org;
+    // });
+
+    // testing:
+    let ownedOrgs = [
+      {
+        o_id: '6734f61c5f097d890337fc66',
+        name: "Care For Birds",
+        interestedAccounts: [
+          {
+            a_id: '6734f61c5f097d890337fc65',
+            firstName: 'Paul',
+            lastName: 'Dini'
+          },
+          {
+            a_id: '6734f61c5f097d890337fc64',
+            firstName: 'Kevin',
+            lastName: 'Conroy'
+          }
+        ]
+      }
+    ];
+
+    // render page
+    res.render('orgAdmin', {
+      title: 'Organization Admin',
+      ownedOrgs: ownedOrgs
+    });
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+  }
+});
+
+router.route('/createOrg').get(async (req, res) => {
+  // get all known tags
+  let knownTags;
+  try {
+    knownTags = await knownTagsData.getKnownTags();
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+  
+  res.render('createOrg', {
+    title: 'Create an organization',
+    script_partial: 'createOrg_script',
+    knownTags: knownTags
+  });
+});
+
 router.route('/organizations/:o_id/delete').get(async (req, res) => {
   const dummyOrganization = {
     "o_id": '6734f61c5f097d890337fc6b',

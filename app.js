@@ -32,8 +32,8 @@ Handlebars.registerHelper("listContains", function(item, List) {
 // middleware functions
 
 // not-logged-in and logged-in redirection
-const redirectRoutes_notLoggedIn = ['/account', '/account/edit', '/organizations/:o_id/comment', '/account/delete', '/organizations/:o_id/review'];
-// user profile, organization admin(need route), create organization(need route), edit user profile, edit org page(need route), create comment, create review, deletion page
+const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/account/edit', '/organizations/:o_id/comment', '/account/delete', '/organizations/:o_id/review'];
+// user profile, organization admin, create organization(need route), edit user profile, edit org page(need route), create comment, create review, deletion page
 const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
 app.use('/', async (req, res, next) => {
     // if logged in, set local variable user name for navBar rendering

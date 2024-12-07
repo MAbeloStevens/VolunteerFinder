@@ -1,54 +1,58 @@
-<form id="registrationForm" method="post" action="/api/users/register">
-  <div id="textInputs">
-    <label for="firstName">
-      First Name
-      <input required type="text" name="firstName" id="firstName">
-    </label>
+<div class="centered">
+  <form id="registrationForm" method="post" action="/api/users/register">
+    <div id="textInputs">
+      <label for="firstName">
+        First Name
+        <input required type="text" name="firstName" id="firstName">
+      </label>
 
-    <label for="lastName">
-      Last Name
-      <input required type="text" name="lastName" id="lastName">
-    </label>
+      <label for="lastName">
+        Last Name
+        <input required type="text" name="lastName" id="lastName">
+      </label>
 
-    <label for="password">
-      Password
-      <input required type="password" name="password" id="password">
-    </label>
+      <label for="password">
+        Password
+        <input required type="password" name="password" id="password">
+      </label>
 
-    <label for="confirmPassword">
-      Confirm Password
-      <input required type="password" id="confirmPassword">
-    </label>
+      <label for="confirmPassword">
+        Confirm Password
+        <input required type="password" id="confirmPassword">
+      </label>
 
-    <label for="email">
-      Email
-      <input required type="email" name="email" id="email">
-    </label for="">
+      <label for="email">
+        Email
+        <input required type="email" name="email" id="email">
+      </label for="">
 
-    <label for="phoneNumber">
-      Phone Number
-      <input type="tel" name="phoneNumber" id="phoneNumber">
-    </label>
+      <label for="phoneNumber">
+        Phone Number
+        <input type="tel" name="phoneNumber" id="phoneNumber">
+      </label>
 
-  </div>
+    </div>
 
-  <div class="centered">
-    <h3>Select Tags:</h3>
-    <p class="subtext">hold ctrl/cmd to select multiple</p>
-    <select id="tagSelection" name="tags" multiple size="5">
-        {{#each knownTags}}
-        <option value="{{this}}"/>{{this}}</option>
-        {{/each}}
-    </select>
-  </div>
+    <div class="centered">
+      <h3>Select Tags:</h3>
+      <p class="subtext">hold ctrl/cmd to select multiple</p>
+      <select id="tagSelection" name="tags" multiple size="5">
+          {{#each knownTags}}
+          <option value="{{this}}"/>{{this}}</option>
+          {{/each}}
+      </select>
+    </div>
 
-  <div class="centered">
-    <input id="addTagInput">
-    <button type="button" id="addTagButton">Add Tag</button>
-  </div>
+    <div class="centered">
+      <input id="addTagInput">
+      <button type="button" id="addTagButton">Add Tag</button>
+    </div>
 
-  <button>Register</button>
-</form>
+    <button>Register</button>
+  </form>
+
+  <p>Already have an account? <a href="/login"><button>Log in</button></a></p>
+</div>
 
 <div id="errorDiv" class="errors centered" hidden>
   <p id="errorMessage"></p>

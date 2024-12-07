@@ -164,6 +164,10 @@ p.subtext {
     color: var(--subtxt-color);
 }
 
+p.important {
+    font-weight: bold;
+}
+
 .centered {
     margin: auto;
     width: fit-content;

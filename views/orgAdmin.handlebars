@@ -1,0 +1,16 @@
+<a href="/createOrg"><button>Create Organization</button></a>
+
+<div id="ownedOrganizations" class="displayOrgsDiv">
+    <h2>Your Organizations</h2>
+    {{#each ownedOrgs}}
+    <a href="/organizations/:{{o_id}}">
+    <div class="displayOrg">
+      <h3>{{name}}</h3>
+      <label>Tags:</label>
+        <ul class="tagList">
+          {{#each tags}}<li>{{this}}</li>{{/each}}
+        </ul>
+    </div>
+    </a>
+    {{/each}}
+  </div>

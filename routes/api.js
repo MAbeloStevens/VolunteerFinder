@@ -14,16 +14,12 @@ router.route('/users/login').post(async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   
-  // testing: just logs in with these credentials
-  req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'};
+  // validate inputs, rerender page if errors
 
-  // validate inputs
-
-  // call db function 
+  // call db function, rerender page if can't validate
 
   // set session user
-  // ex. 
-  // req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo};
+  req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'}; // testing user
 
   // redirect to root
   
