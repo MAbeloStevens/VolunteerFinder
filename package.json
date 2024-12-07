@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
-    "seed": "node seed.js",
+    "seed": "node ./tasks/seed.js",
     "dev": "npx nodemon ."
   },
   "repository": {
