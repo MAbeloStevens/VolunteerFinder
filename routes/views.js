@@ -60,8 +60,19 @@ router.route('/login').get(async (req, res) => {
 
 
 router.route('/register').get(async (req, res) => {
-  // TODO: swap out for list from database
-  const knownTags = ["Afterschool Programs", "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"]
+  // get all known tags
+  let knownTags;
+  try {
+    knownTags = await knownTagsData.getKnownTags();
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+  
   res.render('register', {
     title: 'Register an account',
     script_partial: 'register_script',
@@ -155,9 +166,7 @@ router.route('/search').get(async (req, res) => {
   // get all known tags
   let knownTags;
   try {
-    // knownTags = await knownTagsData.getKnownTags();
-    // knownTags = knownTags.tags;
-    knownTags = ["Afterschool Programs", "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"];
+    knownTags = await knownTagsData.getKnownTags();
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -224,8 +233,19 @@ router.route('/not-logged-in').get(async (req, res) => {
 });
 
 router.route('/account/edit').get(async (req, res) => {
-  // TODO: swap out for list from database
-  const knownTags = ["Afterschool Programs", 'Animals', 'Children', 'Elderly', "Assisting People with Disabilities", "Blood Donation Drives", "Clothing Drives"]
+  // get all known tags
+  let knownTags;
+  try {
+    knownTags = await knownTagsData.getKnownTags();
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+  // TODO: swap out for db call
   const dummyUser = {
     "a_id": '6734f46960512626d9f23016',
     "firstName": 'Mark',

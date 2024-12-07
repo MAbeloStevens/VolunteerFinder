@@ -26,7 +26,7 @@ To Run:
     
     Step 2. Seed database
         While in project directory,
-        Run 'npm seed'
+        Run 'npm run seed' or 'npm seed'
         This seeds the database with accounts, organizations, comments, and reviews for viewing purposes. These may not all be real organizations.
     
     Step 3. Start Server

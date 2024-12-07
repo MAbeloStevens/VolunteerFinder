@@ -7,7 +7,7 @@ await db.dropDatabase();
 // Create accounts
 let act_1=undefined
 try {
-    act_1 = await accountData.default.createAccount('John', 'Doe', '12345678', [], 'JohnDoe@gmail.com', '1234567890');
+    act_1 = await accountData.createAccount('John', 'Doe', '12345678', [], 'JohnDoe@gmail.com', '1234567890');
 } catch(e) {
     console.log(e);
 }
@@ -32,7 +32,7 @@ const tags=
     ];
 
 try{
-    const addTags= await knownTagsData.default.addToKnownTags(tags);
+    const addTags= await knownTagsData.addToKnownTags(tags);
 }catch(e){
     console.log(e);
 }
@@ -50,7 +50,7 @@ const org_1 = {
 
 let orgTest= undefined
 try{
-    orgTest = await organizationData.default.createOrganziation(org_1);
+    orgTest = await organizationData.createOrganziation(org_1);
 }catch(e){
     console.log(e);
 }
@@ -58,13 +58,13 @@ try{
 //update account
 let updated_acc_1 = undefined
 try{
-    updated_acc_1 = await accountData.default.updateAccount(act_1,undefined,undefined,undefined,["Politics"],undefined,undefined,undefined)
+    updated_acc_1 = await accountData.updateAccount(act_1,undefined,undefined,undefined,["Politics"],undefined,undefined,undefined)
 }catch(e){
     console.log(e);
 }
 let updateOrg = undefined;
 try{
-    updateOrg = await organizationData.default.updateOrganization(orgTest,"Cat", [ 'Animals', 'Community'], undefined, "We really love cats!",'volunteers@care4cats.org\n228-228-2287', "https://www.care4cats.org/home" )
+    updateOrg = await organizationData.updateOrganization(orgTest,"Cat", [ 'Animals', 'Community'], undefined, "We really love cats!",'volunteers@care4cats.org\n228-228-2287', "https://www.care4cats.org/home" )
 }catch(e){
     console.log(e)
 }
@@ -72,7 +72,7 @@ try{
 //add comment
 let comment= undefined
 try{
-    comment = await commentData.default.createComment(orgTest, act_1, "I am not the owner of this org, but i sure do love cats!")
+    comment = await commentData.createComment(orgTest, act_1, "I am not the owner of this org, but i sure do love cats!")
 }catch(e){
     console.log(e)
 }
@@ -80,7 +80,7 @@ try{
 //add review
 let review = undefined
 try{
-    review= await reviewData.default.createReview(orgTest, 10, act_1, "I am not the owner of this org, but i sure do love cats!")
+    review= await reviewData.createReview(orgTest, 10, act_1, "I am not the owner of this org, but i sure do love cats!")
 }catch(e){
     console.log(e)
 }
@@ -89,7 +89,7 @@ console.log(comment);
 //delete comment
 let deleteComment = undefined
 try{
-    deleteComment= await commentData.default.deleteComment(orgTest,comment);
+    deleteComment= await commentData.deleteComment(orgTest,comment);
 }catch(e){
     console.log(e)
 }
@@ -97,7 +97,7 @@ try{
 //delete review
 let deleteReview = undefined
 try{
-    deleteReview=await reviewData.default.deleteReview(orgTest,review);
+    deleteReview=await reviewData.deleteReview(orgTest,review);
 }catch(e){
     console.log(e)
 }
@@ -105,14 +105,14 @@ console.log('Done seeding database');
 
 //delete account
 try{
-    const deleteAccount=await accountData.default.deleteAccount(act_1);
+    const deleteAccount=await accountData.deleteAccount(act_1);
     console.log(deleteAccount)
 }catch(e){
     console.log(e)
 }
 //delete org
 try{
-    const deleteOrg=await organizationData.default.deleteOrganization(orgTest)
+    const deleteOrg=await organizationData.deleteOrganization(orgTest)
     console.log(deleteOrg);    
 }catch(e){
     console.log(e)
