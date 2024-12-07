@@ -307,6 +307,7 @@ div#searchPage {
 
 .searchResults {
     margin-left: 5px;
+    margin-right: 5px;
     padding: 5px;
     border: solid var(--btn-color);
     border-radius: 10px;

@@ -13,24 +13,30 @@ router.route('/users/login').post(async (req, res) => {
   //TODO: Need DB functions
   let email = req.body.email;
   let password = req.body.password;
+  
+  // testing: just logs in with these credentials
+  req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'};
 
   // validate inputs
 
   // call db function 
 
   // set session user
-  // set local user_name variable
   // ex. 
-  // req.session.user = {a_id: '6734f46960512626d9f23016'};
-  // res.locals.user_name =  `${firstName} ${lastName}`;
+  // req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo};
 
   // redirect to root
   
-  res.send(req.body);
+  res.redirect('/');
 })
 
 router.route('/users/register').post(async (req, res) => {
   //TODO: replace with saving entry to database
+  // validate inputs
+
+  // create user in database
+
+  // redirect to login
   res.send(req.body)
 })
 

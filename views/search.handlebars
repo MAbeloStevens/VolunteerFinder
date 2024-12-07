@@ -13,6 +13,12 @@
                     <option value="{{this}}"/>{{this}}</option>
                     {{/each}}
                 </select>
+                <div class="radioSelect">
+                <input id="any" type="radio" name="anyOrAll" value="any">
+                <label for="any">Any Tag</label>
+                <input id="all" type="radio" name="anyOrAll" value="all">
+                <label for="all">All Tags</label>
+                </div>
             </div>
 
             <button type="submit">Search</button>
