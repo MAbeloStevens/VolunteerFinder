@@ -209,6 +209,11 @@ button:hover {
     background-color: var(--bnnr-color);
 }
 
+button.important:hover {
+    color: var(--txtalt-color);
+    background-color: var(--err-color);
+}
+
 form div#textInputs {
     vertical-align: auto;
     margin: auto;
@@ -307,4 +312,14 @@ div#searchPage {
     border-radius: 10px;
     overflow: hidden;
     flex: 1 1 auto;
+}
+
+/* account page */
+div.infoBox {
+    margin: 10px;
+    border: solid 2px var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: fit-content;
+    width: 60%;
 }

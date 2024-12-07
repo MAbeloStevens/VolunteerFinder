@@ -9,8 +9,6 @@ import methodOverride from 'method-override';
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use('/public', express.static('public'));
-app.use('/helpers', express.static('helpers'));
 app.use(methodOverride('_method'))
 
 // express session config
@@ -36,6 +34,8 @@ Handlebars.registerHelper("listContains", function(item, List) {
 // to test logged in functionality, REMOVE when log in works
 // app.use(async (req, res, next) => {
 //     // when logged in, session.user would have these fields
+//     let firstName = 'Mark';
+//     let lastName = 'Abelo';
 //     req.session.user = {a_id: '6734f46960512626d9f23016'};
 //     res.locals.user_name =  `${firstName} ${lastName}`;
 //     next();
@@ -59,13 +59,12 @@ app.use('/', async (req, res, next) => {
     next();
 });
 
-// sign in, sign up, not-logged-in
-app.use(async (req, res, next) => {
-    if (redirectRoutes_loggedIn.includes(req.path) && req.session.user) {
-        return res.redirect('/');
-    } else {
-    next();
+// if trying to go to an account page that is user's own account, redirect to /account 
+app.use('/account/accountPage/:a_id', async (req, res, next) => {
+    if (req.params.a_id === req.session.user.a_id) {
+        return res.redirect('/account');
     }
+    next();
 });
 
 configRoutes(app);

@@ -2,7 +2,7 @@ import { Router } from 'express'
 const router = Router();
 
 import validation from '../helpers/validation.js';
-import { organizationData, knownTagsData } from '../data/index.js';
+import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
 
 
 router.route('/').get(async (req, res) => {
@@ -105,9 +105,51 @@ router.route('/account').get(async (req, res) => {
   res.render('account', {
     title: `${dummyUser.firstName} ${dummyUser.lastName}`,
     script_partial: 'account_script',
+    owner: true,
     user: dummyUser
   })
 })
+
+router.route('/account/accountPage/:a_id').get(async (req, res) => {
+  // validate a_id
+  try {
+    req.params.id = validation.checkID(req.params.id, 'Account');
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+
+  // get organization data
+  try {
+    const accountFound = await accountData.getAccount(req.params.id);
+    if (!accountFound) {
+      res.status(404).render('error', {
+        title: "Error",
+        ecode: 404,
+        error: "Account not found"
+      });
+      return
+    }
+
+    // render page
+    res.render('account', {
+      title: `${accountFound.firstName} ${accountFound.lastName}`,
+      script_partial: 'account_script',
+      user: accountFound,
+    });
+
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+  }
+});
 
 router.route('/search').get(async (req, res) => {
   // get all known tags
@@ -132,7 +174,7 @@ router.route('/search').get(async (req, res) => {
   });
 });
 
-router.route('/organizations/:id').get(async (req, res) => {
+router.route('/organizations/:o_id').get(async (req, res) => {
   // TODO implement comment and review display
   // validate o_id
   try {
@@ -153,7 +195,7 @@ router.route('/organizations/:id').get(async (req, res) => {
       res.status(404).render('error', {
         title: "Error",
         ecode: 404,
-        error: "organization not found"
+        error: "Organization not found"
       });
       return
     }
@@ -241,7 +283,6 @@ router.route('/organizations/:o_id/delete').get(async (req, res) => {
     organization: dummyOrganization
   });
 });
-
 
 
 export default router;

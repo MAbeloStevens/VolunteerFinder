@@ -1,6 +1,13 @@
 <h1>{{user.firstName}} {{user.lastName}}</h1>
-<a href="/account/edit">Edit Account</a>
-<a href="/account/delete">Delete Account</a>
+{{#if owner}}
+<a href="/account/edit"><button>Edit Account</button></a>
+{{/if}}
+
+<h3>Contact Info</h3>
+{{#if user.phone}}
+<label>Phone: <p>{{user.phone}}</p></label>
+{{/if}}
+<label>Email: <p>{{user.email}}</p></label>
 
 <h2>Your Tags</h2>
 <ul>
@@ -9,16 +16,20 @@
   {{/each}}
 </ul>
 
-<h2>Your Organizations</h2>
-<ul>
-  {{#each user.organizations}}
-  <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
-  {{/each}}
-</ul>
+<div class="infoBox">
+  <h2>Your Organizations</h2>
+  <ul>
+    {{#each user.organizations}}
+    <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
+    {{/each}}
+  </ul>
+</div>
 
-<h2>Organizations You're Interested In</h2>
-<ul>
-  {{#each user.interestedOrgs}}
-  <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
-  {{/each}}
-</ul>
+<div class="infoBox">
+  <h2>Organizations You're Interested In</h2>
+  <ul>
+    {{#each user.interestedOrgs}}
+    <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
+    {{/each}}
+  </ul>
+</div>
