@@ -1,11 +1,55 @@
-<a href="/">Home page</a>
+<form id="registrationForm" method="post" action="/api/users/register">
+  <div id="textInputs">
+    <label>
+      First Name
+      <input required type="" name="firstName">
+    </label>
 
-<form id="">
-  <label for="">Email</label>
-  <input type="" name="" id="">
-  <label for="">Password</label>
-  <input type="" name="" id="">
-  <label for="">Confirm Password</label>
-  <input type="" name="" id="">
+    <label>
+      Last Name
+      <input required type="" name="lastName">
+    </label>
+
+    <label>
+      Password
+      <input id="password" required type="password" name="password">
+    </label>
+
+    <label>
+      Confirm Password
+      <input id="confirmPassword" required type="password">
+    </label>
+
+    <label>
+      Email
+      <input required type="email" name="email">
+    </label>
+
+    <label>
+      Phone Number
+      <input type="tel" name="phoneNumber">
+    </label>
+
+  </div>
+
+  <div class="centered">
+    <h3>Select Tags:</h3>
+    <p class="subtext">hold ctrl/cmd to select multiple</p>
+    <select id="tagSelection" name="tags" multiple size="5">
+        {{#each knownTags}}
+        <option value="{{this}}"/>{{this}}</option>
+        {{/each}}
+    </select>
+  </div>
+
+  <div class="centered">
+    <input id="addTagInput">
+    <button type="button" id="addTagButton">Add Tag</button>
+  </div>
+
   <button>Register</button>
 </form>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
+</div>

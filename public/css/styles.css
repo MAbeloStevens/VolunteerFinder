@@ -1,3 +1,21 @@
+/* color palette */
+:root {
+    --bg1-color: white;
+    --txt-color: black;
+    --subtxt-color: rgb(77, 77, 77);
+    --link-color: rgb(98, 0, 98);
+    --txtalt-color: white;
+    --bnnr-color: olivedrab;
+    --bnnr-hover: darkolivegreen;
+    --bnnr-curr: green;
+    --shdw-color: black;
+    --mnu-color: aliceblue;
+    --mnu-hover: lightgray;
+    --btn-color: gray;
+    --txt-select-color: royalblue;
+    --err-color: red;
+}
+
 * {
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
@@ -5,48 +23,287 @@
 body{
     margin: 0;
     padding: 0;
+    background-color: var(--bg1-color);
+    color: var(--txt-color);
 }
 
-ul#nav_bar {
-    list-style-type: none;
+.spansPage {
     margin: 0;
-    padding: 0;
     overflow: hidden;
-    background-color: olivedrab;
     top: 0;
     width: 100%;
 }
 
-li.nav_link a {
+/* nav bar */
+div#nav_bar {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--bnnr-color);
+    top: 0;
+    width: 100%;
+}
+
+a.nav_elem {
     display: block;
-    color: white;
+    color: var(--txtalt-color);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-}
-
-li.nav_link {
     float: left;
 }
 
-li#nav_account {
+#nav_logo{
+    padding-left: 14px 16px;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+}
+
+#nav_logo .logo {
+    float: left;
+    object-fit: cover;
+    height: 45px;
+    width: auto;
+}
+
+#nav_logo .logotext {
+    padding: 14px 16px;
+    display: inline-block;
+}
+
+
+
+/* nav bar dropdown menu */
+div#nav_account {
     float: right;
+    overflow: hidden;
+    min-width: fit-content;
+    width: 10%; 
+    height: 100%;
 }
 
-li.nav_active {
-    background-color: green;
+div#nav_account .dropbtn {
+    border: none;
+    outline: none;
+    color: var(--txtalt-color);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
 }
 
-li a:hover,
-li.nav_active a:hover {
-    background-color: darkolivegreen;
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--mnu-color);
+    width: fit-content;
+    box-shadow: 0px 8px 16px 0px var(--shdw-color);
+    z-index: 1;
 }
 
-div#pageContent {
-    margin: 10px;
-    padding: 10px;
+.dropdown-content a {
+    float: none;
+    color: var(--txt-color);
+    padding: 12px 18px;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--mnu-hover);
+}
+
+div#nav_account:hover .dropdown-content {
+    display: block;
+}
+
+/* nav bar active tab */
+a.nav_active {
+    background-color: var(--bnnr-curr);
+}
+
+.nav_elem:hover,
+.nav_active:hover {
+    background-color: var(--bnnr-hover);
+}
+
+/* page content */
+#pageContent {
+    padding: 5px;
 }
 
 h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-weight: bold;
+    font-size: 2rem;
+}
+
+h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+p {
+    margin: 0;
+    padding: 2px;
+}
+
+p.subtext {
+    color: var(--subtxt-color);
+}
+
+.centered {
+    margin: auto;
+    width: fit-content;
+    text-align: center;
+}
+
+.errors{
+    color:var(--err-color);
+}
+
+.errors#errorDiv {
+    margin-top: 5px;
+    padding: 2px;
+    border: 1px solid var(--err-color);
+    border-radius: 10px;
+    background-color: var(--mnu-hover);
+}
+
+/* forms */
+form {
+    border: solid var(--btn-color);
+    border-radius: 10px;
+    padding: 10px;
+    vertical-align: auto;
+    margin: auto;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+form *{
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+button {
+    border: solid 2px var(--btn-color);
+    border-radius: 4px;
+}
+
+button:hover {
+    color: var(--txtalt-color);
+    background-color: var(--bnnr-color);
+}
+
+form div#textInputs {
+    vertical-align: auto;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+form div#textInputs label{
+    text-align: right;
+
+}
+
+form div#textInputs label input {
+    align-self: left;
+    margin-left: 10px;
+    padding-left: 5px;
+}
+
+/* landing page */
+div.displayOrgsDiv {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 70%;
+}
+
+div.displayOrgsDiv *{
+    margin: 5px;
+}
+
+div.displayOrgsDiv a:link{
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    color: var(--link-color);
+}
+
+div.displayOrgsDiv a:visited{
+    color: var(--link-color);
+}
+
+div.displayOrgsDiv a:hover{
+    color: var(--txt-select-color);
+}
+
+div.displayOrgsDiv a:active{
+    color: var(--txt-select-color);
+}
+
+div.displayOrg {
+    margin: 5px;
+    padding-top: 10px;
+    padding-left: 10px;
+    border: 2px solid var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+div.displayOrg h3 {
+    text-decoration: underline;
+}
+
+ul.tagList li {
+    display: inline-block;
+    padding-right: 10px;
+}
+
+/* search page */
+div#searchPage {
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    height: 100%;
+    min-height: 500px;
+}
+
+.leftBar {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    left: 0;
+    width: fit-content;
+    display: inline-block;
+    flex: 0 1 auto;
+}
+
+.searchResults {
+    margin-left: 5px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 1 1 auto;
 }

@@ -1,0 +1,8 @@
+{{!-- Description --}}
+<p>Are you sure you want to delete your account? This action is permanent and cannot be undone. All related data will be
+  lost. Please confirm if you wish to proceed</p>
+
+<form method="post" action="/api/users/?_method=DELETE">
+  <button>Delete</button>
+  <a href="/account"><button type="button">Cancel</button></a>
+</form>

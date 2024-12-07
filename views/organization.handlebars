@@ -1,0 +1,41 @@
+<div id="orgBanner">
+    <img src="{{orgData.bannerImg}}" alt="{{orgData.name}} Banner">
+</div>
+
+<div id="orgInfo">
+    <h1>{{orgData.name}}</h1>
+    <a id="editOrgBtn" href="/editOrg:{{orgData.o_id}}" hidden><button>Edit Page</button></a>
+    <button id="interestBtn"> {{orgData.interestCount}} Interested </button>
+
+    <div id="orgTags">
+        <ul id="orgTagsList" ></ul>
+    </div>
+
+    {{#if orgData.description}}
+    <p id="desc"></p>
+    {{/if}}
+    {{#if orgData.contact}}
+    <p id="contact">{}</p>
+    {{/if}}
+    {{#if orgData.link}}
+        <a href="{{orgData.link}}">{{orgData.name}} External Site</a>
+    {{/if}}
+</div>
+
+<div id="comments">
+    <h2>Comments</h2>
+</div>
+
+<div id="reviews">
+    <h2>Comments</h2>
+</div>
+
+
+
+
+
+
+
+
+
+

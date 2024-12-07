@@ -10,19 +10,39 @@
 
 <body>
 
-    <ul id="nav_bar">
-        <li class="nav_link" id="nav_logo"><a href="/">VolunteerFinderLogo</a></li>
-        <li class="nav_link" id="nav_profile"><a href="/accounts">Profile</a></li>
-        <li class="nav_link" id="nav_search"><a href="/search">Organization Search</a></li>
-        <li class="nav_link" id="nav_admin"><a href="/organizations">Organization Admin</a></li>
-        <li class="nav_link" id="nav_account"> <a>AccountName/Login/Logout/DeleteAccount</a></li>
-    </ul>
+    <div id="nav_bar">
+        <a class="nav_elem" id="nav_logo" href="/">
+            <img class="logo" src="/public/images/VF.jpg" alt="VF_logo">
+            <div class="logotext">VolunteerFinder</div>
+        </a>
+        <a class="nav_elem" id="nav_profile" href="/account">Account Profile</a>
+        <a class="nav_elem" id="nav_search" href="/search">Organization Search</a>
+        <a class="nav_elem" id="nav_admin" href="/orgAdmin">Organization Admin</a>
+        <div class="nav_elem" id="nav_account">
+            {{#if user_name}}
+            <button class="dropbtn" id="accountNameNav">{{user_name}}</button>
+            <div class="dropdown-content">
+                <a id="drop_opt1" href="/api/logout">Log out</a>
+                <a id="drop_opt2" href="/account/delete">Delete Account</a>
+            </div>
+            {{else}}
+            <button class="dropbtn" id="accountNameNav">New User</button>
+            <div class="dropdown-content">
+                <a id="drop_opt1" href="/login">Log in</a>
+                <a id="drop_opt2" href="/register">Register</a>
+            </div>
+            {{/if}}
+        </div>
+    </div>
 
     <div id="pageContent">
     {{{body}}}
     </div>
 
-    {{> (lookup . 'script_partial') }}
+    {{#if (lookup . 'script_partial')}}
+        {{> (lookup . 'script_partial') }}
+    {{/if}}
+    <script type="module" src="/public/js/nav_bar.js"></script>
 </body>
 
 </html>
