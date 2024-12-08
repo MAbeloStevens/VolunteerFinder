@@ -115,7 +115,6 @@ router.route('/account').get(async (req, res) => {
   // Validate Id -> trade for user
   res.render('account', {
     title: `${dummyUser.firstName} ${dummyUser.lastName}`,
-    script_partial: 'account_script',
     owner: true,
     user: dummyUser
   })
@@ -124,7 +123,7 @@ router.route('/account').get(async (req, res) => {
 router.route('/account/accountPage/:a_id').get(async (req, res) => {
   // validate a_id
   try {
-    req.params.id = validation.checkID(req.params.id, 'Account');
+    req.params.a_id = await validation.checkID(req.params.a_id, 'Account');
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -136,7 +135,7 @@ router.route('/account/accountPage/:a_id').get(async (req, res) => {
 
   // get organization data
   try {
-    const accountFound = await accountData.getAccount(req.params.id);
+    const accountFound = await accountData.getAccount(req.params.a_id);
     if (!accountFound) {
       res.status(404).render('error', {
         title: "Error",
@@ -149,7 +148,6 @@ router.route('/account/accountPage/:a_id').get(async (req, res) => {
     // render page
     res.render('account', {
       title: `${accountFound.firstName} ${accountFound.lastName}`,
-      script_partial: 'account_script',
       user: accountFound,
     });
 
@@ -187,7 +185,7 @@ router.route('/organizations/:o_id').get(async (req, res) => {
   // TODO implement comment and review display
   // validate o_id
   try {
-    req.params.id = validation.checkOrganizationID(req.params.id);
+    req.params.o_id = await validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -199,7 +197,7 @@ router.route('/organizations/:o_id').get(async (req, res) => {
 
   // get organization data
   try {
-    const orgFound = await organizationData.getOrganizationPageData(req.params.id);
+    const orgFound = await organizationData.getOrganizationPageData(req.params.o_id);
     if (!orgFound) {
       res.status(404).render('error', {
         title: "Error",
@@ -210,10 +208,19 @@ router.route('/organizations/:o_id').get(async (req, res) => {
     }
 
     // render page
+    if (req.session.user && req.session.user.a_id === orgFound.adminAccount) {
+      // if the current user is the owner of this organization
+      res.render('organization', {
+        title: orgFound.name,
+        o_id: req.params.o_id,
+        orgData: orgFound,
+        owner: true
+      });
+    }
     res.render('organization', {
       title: orgFound.name,
+      o_id: req.params.o_id,
       orgData: orgFound,
-      script_partial: 'organization_script'
     });
 
   } catch (e) {
@@ -324,14 +331,23 @@ router.route('/orgAdmin').get(async (req, res) => {
             lastName: 'Conroy'
           }
         ]
+      },
+      {
+        o_id: '675543ec0ea783c261bebd49',
+        name: "Care For Reptiles",
+        interestedAccounts: []
       }
     ];
 
-    // render page
-    res.render('orgAdmin', {
-      title: 'Organization Admin',
-      ownedOrgs: ownedOrgs
-    });
+    if (ownedOrgs.length > 0) {
+      // render page
+      res.render('orgAdmin', {
+        title: 'Organization Admin',
+        ownedOrgs: ownedOrgs
+      });
+    } else {
+
+    }
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -363,6 +379,9 @@ router.route('/createOrg').get(async (req, res) => {
 });
 
 router.route('/organizations/:o_id/delete').get(async (req, res) => {
+  // validate parameter
+  
+  // get projection {o_id, name}
   const dummyOrganization = {
     "o_id": '6734f61c5f097d890337fc6b',
     "name": 'Care For Cats'

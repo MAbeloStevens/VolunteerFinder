@@ -1,5 +1,9 @@
 <div id="orgBanner">
+    {{#if orgData.bannerImg}}
     <img src="{{orgData.bannerImg}}" alt="{{orgData.name}} Banner">
+    {{else}}
+    <img src="/public/images/VF_Background.jpg" alt="Default VF Banner">
+    {{/if}}
 </div>
 
 <div id="orgInfo">
@@ -22,12 +26,36 @@
     {{/if}}
 </div>
 
-<div id="comments">
+<div class="commentsDiv">
     <h2>Comments</h2>
+    {{#if (listEmpty orgData.comments)}}
+    <p>No comments yet</p>
+    {{else}}
+    {{#each orgData.comments}}
+    <div class="comment">
+        <p>{{this.body}}</p>
+        <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
+    </div>
+    {{/each}}
+    {{/if}}
+    <a href="'/organizations/{{o_id}}/comment'"><button>Write a Comment</button></a>
+    
 </div>
 
-<div id="reviews">
-    <h2>Comments</h2>
+<div class="reviewsDiv">
+    <h2>Reviews</h2>
+    {{#if (listEmpty orgData.comments)}}
+    <p>No reviews yet</p>
+    {{else}}
+    {{#each orgData.reviews}}
+    <div class="review">
+        <h3>{{rating}}/10</h3>
+        <p>{{this.body}}</p>
+        <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
+    </div>
+    {{/each}}
+    {{/if}}
+    <a href="'/organizations/{{o_id}}/comment'"><button>Write a Review</button></a>
 </div>
 
 

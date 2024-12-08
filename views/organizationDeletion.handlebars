@@ -1,8 +1,12 @@
-{{!-- Description --}}
-<p>Are you sure you want to delete your organization? This action is permanent and cannot be undone. All related data
-  will be
-  lost. Please confirm if you wish to proceed</p>
 
+<div class="centered">
+<p>You are about to delete the organization "{{organization.name}}".</p>
+<p>Are you sure you want to delete this organization?</p>
+<p class="important">This action is permanent and cannot be undone.
+  <br>All related data will be lost.</p>
+<br>
+<p>Please confirm if you wish to proceed</p>
+</div>
 <form method="post" action="/api/organizations/{{organization.o_id}}?_method=DELETE">
   <button>Delete</button>
   <a href="/organization/{{organization.o_id}}"><button type="button">Cancel</button></a>

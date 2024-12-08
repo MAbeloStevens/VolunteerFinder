@@ -22,6 +22,7 @@ app.use(session({
 app.engine('handlebars', exphbs.engine({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
 
+
 // handlebars functions
 
 // returns true if the item is in the list
@@ -29,11 +30,24 @@ Handlebars.registerHelper("listContains", function(item, List) {
     return List.includes(item);
 });
 
+// returns true if the item is in the list
+Handlebars.registerHelper("listEmpty", function(List) {
+    return List.length == 0;
+});
+
+// given a name string, returns their name followed by 's or ' given if their name ends with an s
+Handlebars.registerHelper("nameApostrophe", function(name) {
+    if (name.slice(-1) == 's') {
+        return (name + '\'');
+    }
+    return (name + '\'s');
+});
+
+
 // middleware functions
 
 // not-logged-in and logged-in redirection
-const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/account/edit', '/organizations/:o_id/comment', '/account/delete', '/organizations/:o_id/review'];
-// user profile, organization admin, create organization(need route), edit user profile, edit org page(need route), create comment, create review, deletion page
+const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/createOrg', '/account/edit', '/organizations/:o_id/comment', '/account/delete', '/organizations/:o_id/review'];
 const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
 app.use('/', async (req, res, next) => {
     // if logged in, set local variable user name for navBar rendering

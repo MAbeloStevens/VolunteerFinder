@@ -21,6 +21,7 @@
 }
 
 body{
+    zoom:120%;
     margin: 0;
     padding: 0;
     background-color: var(--bg1-color);
@@ -133,7 +134,8 @@ a.nav_active {
 /* page content */
 #pageContent {
     padding-top: 20px;
-    padding-left: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 h1 {
@@ -184,6 +186,23 @@ p.important {
     border: 1px solid var(--err-color);
     border-radius: 10px;
     background-color: var(--mnu-hover);
+}
+
+div.halfDiv {
+    margin: 0;
+    padding: 0;
+}
+
+div.leftDiv {
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+div.rightDiv {
+    float: right;
+    margin: 0;
+    padding: 0;
 }
 
 /* forms */
@@ -281,12 +300,26 @@ div.displayOrg {
 }
 
 div.displayOrg h3 {
-    text-decoration: underline;
+    font-weight: bolder;
+}
+
+ul.tagList {
+    background-color: var(--mnu-color);
 }
 
 ul.tagList li {
     display: inline-block;
     padding-right: 10px;
+}
+
+ul.accountList {
+    list-style-type: circle;
+    background-color: var(--mnu-color);
+    width: 20em;
+    min-width: fit-content;
+    height: auto;
+    max-height: 8em;
+    overflow-y: auto;
 }
 
 /* search page */
@@ -322,6 +355,7 @@ div#searchPage {
 /* account page */
 div.infoBox {
     margin: 10px;
+    padding-left: 20px;
     border: solid 2px var(--btn-color);
     border-radius: 10px;
     overflow: hidden;

@@ -9,7 +9,7 @@
 {{/if}}
 <label>Email: <p>{{user.email}}</p></label>
 
-<h2>Your Tags</h2>
+<h2>{{#if owner}}Your{{else}}{{nameApostrophe user.firstName}}{{/if}} Tags</h2>
 <ul>
   {{#each user.tags}}
   <li>{{this}}</li>
@@ -17,7 +17,7 @@
 </ul>
 
 <div class="infoBox">
-  <h2>Your Organizations</h2>
+  <h2>{{#if owner}}Your{{else}}{{nameApostrophe user.firstName}}{{/if}} Organizations</h2>
   <ul>
     {{#each user.organizations}}
     <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
@@ -26,7 +26,7 @@
 </div>
 
 <div class="infoBox">
-  <h2>Organizations You're Interested In</h2>
+  <h2>Organizations {{#if owner}}You're{{else}}{{user.firstName}} Is{{/if}} Interested In</h2>
   <ul>
     {{#each user.interestedOrgs}}
     <li><a href="/organizations/{{o_id}}">{{name}}</a></li>

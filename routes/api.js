@@ -62,12 +62,34 @@ router.route('/account/edit').post(async (req, res) => {
 
 router.route('/users').delete(async (req, res) =>{
   //TODO Delete the account by a_id of the currently logged in user
-  res.send("Account Deleted!")
+
+  // destroy session
+  req.session.destroy((e) => {
+    if (e) {
+      res.status(500).render('error', {
+        title: "Error",
+        ecode: 500,
+        error: e
+      });
+    } else {
+      delete res.locals.user_name;
+      // render account deletion confirmation page
+      res.render('deletionConfirmation', {
+        title: "Account Deleted",
+        wasAccount: true,
+      });
+    }
+  });
 });
 
 router.route('/organizations/:o_id').delete(async (req, res) =>{
   //TODO Delete the organization by o_id of the currently logged in user
-  res.send(`Organization ${req.params.o_id} Deleted!`)
+  
+  // render organization deletion confirmation page
+  res.render('deletionConfirmation', {
+    title: "Organization Deleted",
+    wasAccount: false,
+  });
 });
 
 router.route('/logout').get(async (req, res) => {

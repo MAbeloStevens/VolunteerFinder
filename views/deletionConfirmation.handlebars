@@ -1,0 +1,9 @@
+<div class="centered">
+    <p>{{#if wasAccount}}Account{{else}}Organization{{/if}} successfully deleted.</p>
+    <br>
+    {{#if wasAccount}}
+    <a href="/"><button>Return Home</button></a>
+    {{else}}
+    <a href="/orgAdmin"><button>Return to Organization Admin</button></a>
+    {{/if}}
+</div>

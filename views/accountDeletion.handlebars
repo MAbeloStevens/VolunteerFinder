@@ -1,12 +1,11 @@
-{{!-- Description --}}
 <div class="centered">
-<p class="important">Are you sure you want to delete your account?</p>
-<p>This action is permanent and cannot be undone.
+<p>Are you sure you want to delete your account?</p>
+<p class="important">This action is permanent and cannot be undone.
   <br>All related data will be lost.</p>
-<p class="important">Please confirm if you wish to proceed</p>
-</div>
 <br>
+<p>Please confirm if you wish to proceed</p>
+</div>
 <form method="post" action="/api/users/?_method=DELETE">
   <button class="important">Delete</button>
-  <a href="/"><button type="button">Cancel</button></a>
+  <a href="/account"><button type="button">Cancel</button></a>
 </form>
