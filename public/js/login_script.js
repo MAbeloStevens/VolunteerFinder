@@ -1,1 +1,1 @@
-import { validation } from '/helpers/validation.js';
+import validation from '/validation';

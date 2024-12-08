@@ -1,6 +1,10 @@
 import { Router } from 'express'
 const router = Router();
 
+import validation from '../helpers/validation.js';
+import id_validation from '../helpers/id_validation.js';
+import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
+
 router.route('/session-data').get(async (req, res) => {
   if (req.session.user) {
     res.json(req.session.user)

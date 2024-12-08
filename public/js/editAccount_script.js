@@ -1,4 +1,4 @@
-import { validation } from '/helpers/validation.js';
+import validation from '/validation';
 
 // Add tag button
 const addTagButton = document.getElementById("addTagButton");

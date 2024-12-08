@@ -2,6 +2,7 @@ import { Router } from 'express'
 const router = Router();
 
 import validation from '../helpers/validation.js';
+import id_validation from '../helpers/id_validation.js';
 import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
 
 
@@ -48,6 +49,13 @@ router.route('/').get(async (req, res) => {
       mostInterestedOrgs: mostInterestedOrgs
     });
   }
+});
+
+
+router.route('/not-logged-in').get(async (req, res) => {
+  res.render('not-logged-in', {
+    title: 'Please Log In To Use This Feature'
+  });
 });
 
 
@@ -120,10 +128,50 @@ router.route('/account').get(async (req, res) => {
   })
 })
 
+
+router.route('/account/edit').get(async (req, res) => {
+  // get all known tags
+  let knownTags;
+  try {
+    knownTags = await knownTagsData.getKnownTags();
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+  // TODO: swap out for db call
+  const dummyUser = {
+    "a_id": '6734f46960512626d9f23016',
+    "firstName": 'Mark',
+    "lastName": 'Abelo',
+    "tags": ['Animals', 'Children', 'Elderly'],
+    "phone": '123-456-7890',
+  }
+
+  res.render('editAccount', {
+    title: 'Edit Account',
+    user: dummyUser,
+    knownTags: knownTags,
+    userTags: dummyUser.tags,
+    script_partial: 'editAccount_script'
+  });
+});
+
+
+router.route('/account/delete').get(async (req, res) => {
+  res.render('accountDeletion', {
+    title: 'Delete Account'
+  });
+});
+
+
 router.route('/account/accountPage/:a_id').get(async (req, res) => {
   // validate a_id
   try {
-    req.params.a_id = await validation.checkID(req.params.a_id, 'Account');
+    req.params.a_id = await id_validation.checkId(req.params.a_id, 'Account');
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -160,6 +208,7 @@ router.route('/account/accountPage/:a_id').get(async (req, res) => {
   }
 });
 
+
 router.route('/search').get(async (req, res) => {
   // get all known tags
   let knownTags;
@@ -181,11 +230,12 @@ router.route('/search').get(async (req, res) => {
   });
 });
 
+
 router.route('/organizations/:o_id').get(async (req, res) => {
   // TODO implement comment and review display
   // validate o_id
   try {
-    req.params.o_id = await validation.checkOrganizationID(req.params.o_id);
+    req.params.o_id = await id_validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -233,13 +283,67 @@ router.route('/organizations/:o_id').get(async (req, res) => {
 
 });
 
-router.route('/not-logged-in').get(async (req, res) => {
-  res.render('not-logged-in', {
-    title: 'Please Log In To Use This Feature'
+
+router.route('/organizations/:o_id/comment').get(async (req, res) => {
+  //TODO swap out for organization from database
+  const dummyOrganization = {
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
+  }
+  res.render('createComment', {
+    title: 'Post a comment',
+    organization: dummyOrganization,
+    script_partial: 'createComment_script'
   });
 });
 
-router.route('/account/edit').get(async (req, res) => {
+
+router.route('/organizations/:o_id/review').get(async (req, res) => {
+  //TODO swap out for organization from database
+  const dummyOrganization = {
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
+  }
+  res.render('createReview', {
+    title: 'Leave a Review',
+    organization: dummyOrganization,
+    script_partial: 'createReview_script'
+  });
+});
+
+
+router.route('/organizations/:o_id/delete').get(async (req, res) => {
+  // validate parameter
+  
+  // get projection {o_id, name}
+  const dummyOrganization = {
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
+  }
+  res.render('organizationDeletion', {
+    title: 'Delete Organization',
+    organization: dummyOrganization
+  });
+});
+
+
+router.route('/organizations/:o_id/edit').get(async (req, res) => {
+  // validate parameter
+  
+  // get projection {o_id, name}
+  const dummyOrganization = {
+    "o_id": '6734f61c5f097d890337fc6b',
+    "name": 'Care For Cats'
+  }
+  res.render('editOrg', {
+    title: 'Edit Organization',
+    organization: dummyOrganization,
+    script_partial: 'editOrg_script'
+  });
+});
+
+
+router.route('/createOrg').get(async (req, res) => {
   // get all known tags
   let knownTags;
   try {
@@ -252,53 +356,14 @@ router.route('/account/edit').get(async (req, res) => {
     });
     return;
   }
-  // TODO: swap out for db call
-  const dummyUser = {
-    "a_id": '6734f46960512626d9f23016',
-    "firstName": 'Mark',
-    "lastName": 'Abelo',
-    "tags": ['Animals', 'Children', 'Elderly'],
-    "phone": '123-456-7890',
-  }
-
-  res.render('editAccount', {
-    title: 'Edit Account',
-    user: dummyUser,
-    knownTags: knownTags,
-    userTags: dummyUser.tags,
-    script_partial: 'editAccount_script'
+  
+  res.render('createOrg', {
+    title: 'Create an organization',
+    script_partial: 'createOrg_script',
+    knownTags: knownTags
   });
 });
 
-router.route('/account/delete').get(async (req, res) => {
-  res.render('accountDeletion', {
-    title: 'Delete Account'
-  });
-});
-
-router.route('/organizations/:o_id/comment').get(async (req, res) => {
-  //TODO swap out for organization from database
-  const dummyOrganization = {
-    "o_id": '6734f61c5f097d890337fc6b',
-    "name": 'Care For Cats'
-  }
-  res.render('createComment', {
-    title: 'Post a comment',
-    organization: dummyOrganization
-  });
-});
-
-router.route('/organizations/:o_id/review').get(async (req, res) => {
-  //TODO swap out for organization from database
-  const dummyOrganization = {
-    "o_id": '6734f61c5f097d890337fc6b',
-    "name": 'Care For Cats'
-  }
-  res.render('reviewCreation', {
-    title: 'Leave a Review',
-    organization: dummyOrganization
-  });
-});
 
 router.route('/orgAdmin').get(async (req, res) => {
   try {
@@ -355,41 +420,6 @@ router.route('/orgAdmin').get(async (req, res) => {
       error: e
     });
   }
-});
-
-router.route('/createOrg').get(async (req, res) => {
-  // get all known tags
-  let knownTags;
-  try {
-    knownTags = await knownTagsData.getKnownTags();
-  } catch (e) {
-    res.status(500).render('error', {
-      title: "Error",
-      ecode: 500,
-      error: e
-    });
-    return;
-  }
-  
-  res.render('createOrg', {
-    title: 'Create an organization',
-    script_partial: 'createOrg_script',
-    knownTags: knownTags
-  });
-});
-
-router.route('/organizations/:o_id/delete').get(async (req, res) => {
-  // validate parameter
-  
-  // get projection {o_id, name}
-  const dummyOrganization = {
-    "o_id": '6734f61c5f097d890337fc6b',
-    "name": 'Care For Cats'
-  }
-  res.render('organizationDeletion', {
-    title: 'Delete Organization',
-    organization: dummyOrganization
-  });
 });
 
 
