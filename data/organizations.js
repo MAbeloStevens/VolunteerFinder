@@ -6,15 +6,18 @@ import accountsFunctions from "./accounts.js";
 import knownTagsFunctions from './knownTags.js';
 
 const organizationFunctions ={
-    async getOrganizationPageData(o_id,currentUser_id){ //an extra parameter currentUser_id
+    async getOrganizationPageData(o_id, currentUser_id){
+        //an extra parameter currentUser_id for comment and review deletion permissions
         //Given o_id, return data required for organization page elements
         if(!o_id) throw  'Organization id is not provided, please input ID!'
         o_id= await id_validation.checkOrganizationID(o_id);
 
-        if(!currentUser_id) throw 'Current account id is not provided, please input ID!'
-        currentUser_id = await id_validation.checkID(currentUser_id,"Account");
-        //to make sure the account exist
-        const user= await accountsFunctions.getAccount(currentUser_id);
+        if(currentUser_id){
+            currentUser_id = await id_validation.checkID(currentUser_id,"Account");
+            //to make sure the account exist
+            const user= await accountsFunctions.getAccount(currentUser_id);
+        }
+
         //get organization
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 

@@ -232,6 +232,10 @@ router.route('/search').get(async (req, res) => {
 
 
 router.route('/organizations/:o_id').get(async (req, res) => {
+  let currentUser_id = undefined;
+  if (req.session.user) {
+    currentUser_id = req.session.user.a_id;
+  }
   // TODO implement comment and review display
   // validate o_id
   try {
