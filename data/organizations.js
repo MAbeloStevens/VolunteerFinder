@@ -25,6 +25,8 @@ const organizationFunctions ={
             name: organizationData.name,
             bannerImg: organizationData.bannerImg,
             interestCount: organizationData.interestCount,
+            //adding this new field isInterested
+            isInterested: organizationData.interestedAccounts.includes(currentUser_id),
             tags: organizationData.tags,
             description: organizationData.description,
             contact: organizationData.contact,
@@ -350,6 +352,30 @@ const organizationFunctions ={
         if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
         //not sure but this seems fine
         return o_id;
+    },
+    async removeInterestedAccount(o_id, a_id){
+        if(!o_id) throw 'Organization id is not provided, please input ID!'
+        if(!a_id) throw 'Account id is not provided, please input ID!'
+
+        o_id= await id_validation.checkOrganizationID(o_id);
+        a_id = await id_validation.checkID(a_id,"Account");
+        //to make sure the account exist
+        const user= await accountsFunctions.getAccount(a_id);
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection!';
+        //check to see if this account is in the array
+        const getOrg = await organizationCollection.findOne({_id: new ObjectId(o_id), interestedAccounts:{$in: [a_id]}})
+        if(!getOrg) throw "Account Id is not insterest in this organization!"
+        else{
+            const updateInfo = await organizationCollection.findOneAndUpdate(
+                { _id: new ObjectId(o_id) },
+                {$inc: {interestCount: -1},$pull: {interestedAccounts: a_id}},
+                { returnDocument: 'after' }
+            );
+            if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
+            //not sure but this seems fine
+            return o_id;
+        }
     }
 }
 export default organizationFunctions;
