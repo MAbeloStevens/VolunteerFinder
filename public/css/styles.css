@@ -313,13 +313,20 @@ ul.tagList li {
 }
 
 ul.accountList {
-    list-style-type: circle;
+    list-style-type: none;
     background-color: var(--mnu-color);
     width: 20em;
     min-width: fit-content;
     height: auto;
     max-height: 8em;
     overflow-y: auto;
+    border: solid 1px var(--btn-color);
+    padding-left: 0;
+}
+
+ul.accountList li {
+    border-bottom: dotted 1px var(--btn-color);
+    padding-left: 20px; 
 }
 
 /* search page */

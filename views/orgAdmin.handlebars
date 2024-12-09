@@ -2,6 +2,7 @@
 <br>
 <div id="ownedOrganizations" class="displayOrgsDiv">
     <h2>Your Organizations</h2>
+    {{#if ownedOrgs}}
     {{#each ownedOrgs}}
     <div class="displayOrg halfDiv">
       <div class="leftDiv">
@@ -26,6 +27,8 @@
       </div>
     </div>
     {{/each}}
-
+    {{else}}
+    <p>You do not have any of your own organizations right now.</p>
+    {{/if}}
     <a href="/createOrg"><button>Create Organization</button></a>
   </div>

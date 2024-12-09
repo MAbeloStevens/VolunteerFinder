@@ -12,19 +12,22 @@ router.route('/').get(async (req, res) => {
     {
       o_id: '123' ,
       name: 'Org1',
-      tags: ["Afterschool Programs", "Assisting People with Disabilities"]
+      tags: ["Afterschool Programs", "Assisting People with Disabilities"],
+      interestCount: 51
     }
   ];
   let mostInterestedOrgs = [
     {
       o_id: '123' ,
       name: 'Org1',
-      tags: ["Afterschool Programs", "Assisting People with Disabilities"]
+      tags: ["Afterschool Programs", "Assisting People with Disabilities"],
+      interestCount: 13
     },
     {
       o_id: '321' ,
       name: 'Org2',
-      tags: ["Blood Donation Drives", "Clothing Drives"]
+      tags: ["Blood Donation Drives", "Clothing Drives"],
+      interestCount: 12
     }
   ];
   // REMOVE WHEN DB FUNCTIONS ARE READY /\/\/\
@@ -171,7 +174,7 @@ router.route('/account/delete').get(async (req, res) => {
 router.route('/account/accountPage/:a_id').get(async (req, res) => {
   // validate a_id
   try {
-    req.params.a_id = await id_validation.checkId(req.params.a_id, 'Account');
+    req.params.a_id = await id_validation.checkID(req.params.a_id, 'Account');
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",
@@ -384,39 +387,47 @@ router.route('/orgAdmin').get(async (req, res) => {
     // });
 
     // testing:
+    let paulDini = {
+      a_id: '6734f61c5f097d890337fc65',
+      firstName: 'Paul',
+      lastName: 'Dini'
+    };
+    let kConroy = {
+      a_id: '6734f61c5f097d890337fc64',
+      firstName: 'Kevin',
+      lastName: 'Conroy'
+    };
     let ownedOrgs = [
       {
         o_id: '6734f61c5f097d890337fc66',
         name: "Care For Birds",
         interestedAccounts: [
-          {
-            a_id: '6734f61c5f097d890337fc65',
-            firstName: 'Paul',
-            lastName: 'Dini'
-          },
-          {
-            a_id: '6734f61c5f097d890337fc64',
-            firstName: 'Kevin',
-            lastName: 'Conroy'
-          }
-        ]
+          paulDini,
+          kConroy,
+          kConroy,
+          kConroy,
+          kConroy,
+          kConroy
+        ],
+        interestCount: 6
       },
       {
         o_id: '675543ec0ea783c261bebd49',
         name: "Care For Reptiles",
-        interestedAccounts: []
+        interestedAccounts: [],
+        interestCount: 0
       }
     ];
 
-    if (ownedOrgs.length > 0) {
-      // render page
-      res.render('orgAdmin', {
-        title: 'Organization Admin',
-        ownedOrgs: ownedOrgs
-      });
-    } else {
-
+    if (ownedOrgs.length == 0) {
+      ownedOrgs = undefined
     }
+    // render page
+    res.render('orgAdmin', {
+      title: 'Organization Admin',
+      ownedOrgs: ownedOrgs
+    });
+
   } catch (e) {
     res.status(500).render('error', {
       title: "Error",

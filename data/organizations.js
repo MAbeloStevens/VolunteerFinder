@@ -52,7 +52,7 @@ const organizationFunctions ={
     },
 
     async getOrganizationsInterest(o_idList){
-        //Given list of o_ids, return list of projections containing o_id, name, interestedAccounts
+        //Given list of o_ids, return list of projections containing o_id, name, interestedAccounts, interestCount
         //this is some error checking 
         if(!o_idList) throw  'Organization ids are not provided, please input ID!'
         if(!Array.isArray(o_idList)) throw "Organization ids must be type array"
@@ -65,7 +65,7 @@ const organizationFunctions ={
         .find(
             {_id: {$in: o_idList.map((o_id) => new ObjectId(o_id))}}
         )
-        .project({_id: 1, name: 1, interestedAccounts: 1})
+        .project({_id: 1, name: 1, interestedAccounts: 1, interestCount: 1})
         .toArray();
         //turn them id's into strings
         if (organizationsList.length===0) throw "No organizations from the list exists!";
@@ -77,7 +77,7 @@ const organizationFunctions ={
     },
     
     async getOrganizationsTags(o_idList) {
-        //Given list of o_ids, return list of projections containing, o_id, name, tags
+        //Given list of o_ids, return list of projections containing, o_id, name, tags, interestCount
         //this is some error checking 
         if(!o_idList) throw  'Organization ids are not provided, please input ID!'
         if(!Array.isArray(o_idList)) throw "Organization ids must be type array"
@@ -90,7 +90,7 @@ const organizationFunctions ={
         .find(
             {_id: {$in: o_idList.map((o_id) => new ObjectId(o_id))}}
         )
-        .project({_id: 1, name: 1, tags: 1})
+        .project({_id: 1, name: 1, tags: 1, interestCount: 1})
         .toArray();
         //turn them ids into strings
         if (organizationsList.length===0) throw "No organizations from the list exists!";
