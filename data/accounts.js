@@ -8,6 +8,7 @@ const accountsFunctions = {
 
     async getAccountIdandPassword(email) {
         //given a string email, return the associated user's a_id and password
+        //TODO
         if(!email) throw  'email is not provided, please input email!'
         email = await validation.checkEmail(email);
         const accounts = await accounts();
@@ -18,7 +19,7 @@ const accountsFunctions = {
     },
 
     async getAccount(a_id) {
-        //given a user's a_id, return the associated user's profile elements
+        //given a user's _id (referred as a_id), return the associated user's profile elements
         if(!a_id) throw  'a_id is not provided, please input ID!'
         a_id = await id_validation.checkID(a_id,"Account");
         const accountsInfo = await accounts();
@@ -29,7 +30,7 @@ const accountsFunctions = {
     },
 
     async getAccountNames(a_ids) {
-        //given a list of user's a_ids, return each associated user's a_id, first_name, and last_name
+        //given a list of user's a_ids, return each associated user's a_id, firstName, and lastName
         if(!a_ids || a_ids.length===0) throw 'No account ids from the list exists!';
         //validates each a_id in the list
         a_ids = a_ids.map(async (id) => {
@@ -41,14 +42,14 @@ const accountsFunctions = {
         //search for each account for each a_id
         const accountData = await accountsInfo.find({_id: {$in: a_ids}}).toArray();
         if(accountData.length!== a_ids.length) throw 'Not all account ids exist!'
-        return accountData.map((account) => ({a_id: account._id, first_name: account.first_name, last_name: account.last_name}));
+        return accountData.map((account) => ({a_id: account._id, firstName: account.firstName, lastName: account.lastName}));
     },
 
-    async createAccount(first_name, last_name, password, tags, email, phone) {
+    async createAccount(firstName, lastName, password, tags, email, phone) {
         //makes a new account with the specified information
         /*
-        first_name: string,
-        last_name: string,
+        firstName: string,
+        lastName: string,
         password: string,
         tags: Array<string> (optional),
         interestedOrgs: Array<string> (empty),
@@ -56,9 +57,10 @@ const accountsFunctions = {
         email: string,
         phone: string (optional)
         */
-        if(!first_name ||!last_name ||!password) throw 'First name, last name, and password are required!';
-        first_name = await validation.checkName(first_name);
-        last_name = await validation.checkName(last_name);
+        if(!firstName ||!lastName ||!password || !email) throw 'First name, last name, email, and password are required!';
+        firstName = await validation.checkName(firstName);
+        lastName = await validation.checkName(lastName);
+        //password hashing
         password = await validation.checkPassword(password);
         password = await bcrypt.hash(password, saltRounds);
 
@@ -82,18 +84,26 @@ const accountsFunctions = {
 
         //check if email is already used in another account in the collection
         const existingAccount = await accountsInfo.findOne({email: email});
-        if(existingAccount && existingAccount._id.toString()!== a_id.toString()) throw 'Email already exists!';
+        if(existingAccount) throw 'Email already exists!';
 
-        const result = await accountsInfo.insertOne({first_name, last_name, password, tags, interestedOrgs, organizations, email, phone});
+        const result = await accountsInfo.insertOne({
+            firstName: firstName, 
+            lastName: lastName, 
+            passwordHash: password, 
+            tags: tags, 
+            interestedOrgs: interestedOrgs, 
+            organizations: organizations, 
+            email: email, 
+            phone: phone});
         return result.insertedId.toString();
     },
 
-    async updateAccount(a_id, a_first_name, a_last_name, a_password, a_tags, a_interestedOrgs, a_email, a_phone) {
+    async updateAccount(a_id, a_firstName, a_lastName, a_password, a_tags, a_interestedOrgs, a_organizations, a_email, a_phone) {
         //updates the account with the specified information
         /*
         a_id: string,
-        a_first_name: string (optional),
-        a_last_name: string (optional),
+        a_firstName: string (optional),
+        a_lastName: string (optional),
         a_password: string (optional),
         a_tags: Array<string> (optional),
         a_interestedOrgs: Array<string> (optional),
@@ -109,18 +119,18 @@ const accountsFunctions = {
         //logging update information
         let updateDoc = {};
 
-        if(a_first_name) 
+        if(a_firstName) 
         {
-            //validated a_first_name
-            a_first_name = await validation.checkName(a_first_name);
-            updateDoc.first_name = a_first_name;
+            //validated a_firstName
+            a_firstName = await validation.checkName(a_firstName);
+            updateDoc.firstName = a_firstName;
         }
 
-        if(a_last_name)
+        if(a_lastName)
         {
-            //validated a_last_name
-            a_last_name = await validation.checkName(a_last_name);
-            updateDoc.last_name = a_last_name;
+            //validated a_lastName
+            a_lastName = await validation.checkName(a_lastName);
+            updateDoc.lastName = a_lastName;
         } 
 
         if(a_password)
@@ -130,7 +140,7 @@ const accountsFunctions = {
             updateDoc.password = a_password;
         }
 
-        if(a_tags && a_tags.length > 0)
+        if(a_tags)
         {
             //validated a_tags
             a_tags = await validation.checkTags(a_tags)
@@ -138,7 +148,7 @@ const accountsFunctions = {
             updateDoc.tags = a_tags;
         }
         
-        if(a_interestedOrgs && a_interestedOrgs.length > 0)
+        if(a_interestedOrgs)
         {
             //validated a_interestedOrgs
             a_interestedOrgs =  await Promise.all(a_interestedOrgs.map(async (o_id) => {
@@ -146,6 +156,16 @@ const accountsFunctions = {
                 return o_id;
             }));
             updateDoc.interestedOrgs = a_interestedOrgs;
+        }
+
+        if(a_organizations)
+        {
+            //validated a_organizations
+            a_organizations =  await Promise.all(a_organizations.map(async (o_id) => {
+                o_id = await id_validation.checkOrganizationID(o_id);
+                return o_id;
+            }));
+            updateDoc.organizations = a_organizations;
         }
 
         if(a_email)
@@ -190,7 +210,7 @@ const accountsFunctions = {
         a_id = await id_validation.checkID(a_id,"Account");
         const accounts = await accounts();
         if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: a_id});
+        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         return {tags: accountData.tags, interestedOrgs: accountData.interestedOrgs};
     }
