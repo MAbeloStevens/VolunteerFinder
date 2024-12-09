@@ -136,6 +136,7 @@ const validation = {
         //checks to see if the password is a string, and that it is at least 8 characters long
         if (typeof password!=='string') throw 'Password must be a string';
         if (password.length < 8) throw 'Password must be at least 8 characters long';
+        return password
     }
 
 };

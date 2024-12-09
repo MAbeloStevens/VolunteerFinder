@@ -1,7 +1,8 @@
+import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import { accounts } from '../config/mongoCollections.js';
+import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
-import bcrypt from 'bcrypt';
 const saltRounds = 10;
 const accountsFunctions = {
 
@@ -19,7 +20,7 @@ const accountsFunctions = {
     async getAccount(a_id) {
         //given a user's a_id, return the associated user's profile elements
         if(!a_id) throw  'a_id is not provided, please input ID!'
-        a_id = await validation.checkID(a_id,"Account");
+        a_id = await id_validation.checkID(a_id,"Account");
         const accountsInfo = await accounts();
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
@@ -32,7 +33,7 @@ const accountsFunctions = {
         if(!a_ids || a_ids.length===0) throw 'No account ids from the list exists!';
         //validates each a_id in the list
         a_ids = a_ids.map(async (id) => {
-            id = await validation.checkID(id,"Account");
+            id = await id_validation.checkID(id,"Account");
             return id;
         });
         const accountsInfo = await accounts();
@@ -59,7 +60,8 @@ const accountsFunctions = {
         first_name = await validation.checkName(first_name);
         last_name = await validation.checkName(last_name);
         password = await validation.checkPassword(password);
-        
+        password = await bcrypt.hash(password, saltRounds);
+
         if(tags && tags.length > 0)
         {
             tags = await validation.checkTags(tags)
@@ -101,8 +103,7 @@ const accountsFunctions = {
         */
        //find the account to be updated (if it exists)
         if(!a_id) throw 'Account ID is required!';
-        a_id = await validation.checkID(a_id,"Account");
-        console.log(typeof a_id);
+        a_id = await id_validation.checkID(a_id,"Account");
         const accountsInfo = await accounts();
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         //logging update information
@@ -140,10 +141,10 @@ const accountsFunctions = {
         if(a_interestedOrgs && a_interestedOrgs.length > 0)
         {
             //validated a_interestedOrgs
-            a_interestedOrgs = a_interestedOrgs.map(async (o_id) => {
-                o_id = await validation.checkOrganizationID(o_id);
+            a_interestedOrgs =  await Promise.all(a_interestedOrgs.map(async (o_id) => {
+                o_id = await id_validation.checkOrganizationID(o_id);
                 return o_id;
-            });
+            }));
             updateDoc.interestedOrgs = a_interestedOrgs;
         }
 
@@ -174,7 +175,7 @@ const accountsFunctions = {
         //deletes the account with the specified a_id
         //returns the id of the account that was deleted
         if(!a_id) throw 'Account ID is required!';
-        a_id = await validation.checkID(a_id,"Account");
+        a_id = await id_validation.checkID(a_id,"Account");
         const accountsInfo = await accounts();
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         const result = await accountsInfo.deleteOne({_id: new ObjectId(a_id)});
@@ -186,7 +187,7 @@ const accountsFunctions = {
     async getAccountDisplayData(a_id) {
         //given a_id, return account data {tage, interestedOrgs}
         if(!a_id) throw 'Account ID is required!';
-        a_id = await validation.checkID(a_id,"Account");
+        a_id = await id_validation.checkID(a_id,"Account");
         const accounts = await accounts();
         if(!accounts) throw 'Failed to connect to accounts collection';
         const accountData = await accounts.findOne({_id: a_id});

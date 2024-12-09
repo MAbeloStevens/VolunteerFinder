@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { organizations } from "../config/mongoCollections.js";
+import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
 import accountsFunctions from "./accounts.js";
-
 const reviewFunctions = {
 
     async createReview(o_id, rating, a_id, reviewBody) {
@@ -21,8 +21,8 @@ const reviewFunctions = {
         if(!rating) throw 'Rating number is not provided, please input rating!';
         if(!reviewBody) throw 'Review text is not provided, please input review!';
 
-        o_id= await validation.checkOrganizationID(o_id);
-        a_id = await validation.checkID(a_id,"Account");
+        o_id= await id_validation.checkOrganizationID(o_id);
+        a_id = await id_validation.checkID(a_id,"Account");
         //to make sure the account exist
         const user= await accountsFunctions.getAccount(a_id);
 
@@ -55,8 +55,8 @@ const reviewFunctions = {
         if(!o_id) throw 'Organization id is not provided, please input ID!'
         if(!review_id) throw 'Review id is not provided, please input ID!'
 
-        o_id= await validation.checkOrganizationID(o_id);
-        review_id = await validation.checkID(review_id,"Review");
+        o_id= await id_validation.checkOrganizationID(o_id);
+        review_id = await id_validation.checkID(review_id,"Review");
 
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 

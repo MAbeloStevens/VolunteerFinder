@@ -1,13 +1,21 @@
 import { ObjectId } from "mongodb";
 import { organizations } from "../config/mongoCollections.js";
+import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
+import accountsFunctions from "./accounts.js";
 import knownTagsFunctions from './knownTags.js';
 
 const organizationFunctions ={
-    async getOrganizationPageData(o_id){ //an extra parameter currentUser_id
+    async getOrganizationPageData(o_id,currentUser_id){ //an extra parameter currentUser_id
         //Given o_id, return data required for organization page elements
         if(!o_id) throw  'Organization id is not provided, please input ID!'
-        o_id= await validation.checkOrganizationID(o_id);
+        o_id= await id_validation.checkOrganizationID(o_id);
+
+        if(!currentUser_id) throw 'Current account id is not provided, please input ID!'
+        currentUser_id = await id_validation.checkID(currentUser_id,"Account");
+        //to make sure the account exist
+        const user= await accountsFunctions.getAccount(currentUser_id);
+        //get organization
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const organizationData =  await organizationCollection.findOne({_id: new ObjectId(o_id)});
@@ -25,14 +33,14 @@ const organizationFunctions ={
                 author:comment.author,
                 body:comment.body,
                 //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
-                //canDelete: currentUser ? (currentUser_id === comment.author ||  currentUser._id === organizationData.adminAccount) : false,
+                canDelete: currentUser ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
             })),
             reviews: organizationData.reviews.map((review) => ({
                 author:review.author,
                 rating: review.rating,
                 body:review.body,
                 //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
-                //canDelete: currentUser ? (currentUser._id === review.author || currentUser._id === organizationData.adminAccount) : false,
+                canDelete: currentUser ? (currentUser._id === review.author || currentUser_id === organizationData.adminAccount) : false,
             }))
         };
         return pageData;
@@ -45,7 +53,7 @@ const organizationFunctions ={
         if(!Array.isArray(o_idList)) throw "Organization ids must be type array"
         if (o_idList.length === 0) return [];
         //seems like if I want to do it via a map thing i need to use Promise.all
-        o_idList= await Promise.all(o_idList.map((o_id)=> validation.checkOrganizationID(o_id)))
+        o_idList= await Promise.all(o_idList.map((o_id)=> id_validation.checkOrganizationID(o_id)))
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         let organizationsList= await organizationCollection
@@ -70,7 +78,7 @@ const organizationFunctions ={
         if(!Array.isArray(o_idList)) throw "Organization ids must be type array"
         if (o_idList.length === 0) return [];
         //seems like if I want to do it via a map thing i need to use Promise.all
-        o_idList= await Promise.all(o_idList.map((o_id)=> validation.checkOrganizationID(o_id)))
+        o_idList= await Promise.all(o_idList.map((o_id)=> id_validation.checkOrganizationID(o_id)))
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         let organizationsList= await organizationCollection
@@ -160,7 +168,7 @@ const organizationFunctions ={
         if(newOrganization.contact===undefined) throw "Organization contact information required!";
     
         //validation checks for required fields
-        newOrganization.adminAccount= await validation.checkAdminAccount(newOrganization.adminAccount);
+        newOrganization.adminAccount= await id_validation.checkAdminAccount(newOrganization.adminAccount);
         newOrganization.name= await validation.checkName(newOrganization.name);
         newOrganization.tags= await validation.checkTags(newOrganization.tags);
         const allTags = await knownTagsFunctions.getKnownTags();
@@ -260,7 +268,7 @@ const organizationFunctions ={
     async updateOrganization(o_id, name, tags, bannerImg, description, contact, link) {
         //checking ID name, and tags, description and contact since they are required.
         if (!o_id) throw 'Organization ID is not provided. Please input a valid ID!';
-        o_id = await validation.checkOrganizationID(o_id);
+        o_id = await id_validation.checkOrganizationID(o_id);
         name = await validation.checkName(name);
         tags = await validation.checkTags(tags);
         const allTags = await knownTagsFunctions.getKnownTags();
@@ -309,19 +317,39 @@ const organizationFunctions ={
     
         if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
         //not sure but this seems fine
-        return await this.getOrganizationPageData(o_id);
+        return o_id;
     },
         
 
     async deleteOrganization(o_id){
         //delete Organization given o_id
         if(!o_id) throw  'Organization id is not provided, please input ID!'
-        o_id= await validation.checkOrganizationID(o_id);
+        o_id= await id_validation.checkOrganizationID(o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const organizationData =  await organizationCollection.findOneAndDelete({_id: new ObjectId(o_id)});
         if(!organizationData) throw 'Cannot delete organization';
         return `${organizationData.name} have been successfully deleted!`;
+    },
+
+    async addInterestedAccount(o_id, a_id){
+        if(!o_id) throw 'Organization id is not provided, please input ID!'
+        if(!a_id) throw 'Account id is not provided, please input ID!'
+
+        o_id= await id_validation.checkOrganizationID(o_id);
+        a_id = await id_validation.checkID(a_id,"Account");
+        //to make sure the account exist
+        const user= await accountsFunctions.getAccount(a_id);
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection!';
+        const updateInfo = await organizationCollection.findOneAndUpdate(
+            { _id: new ObjectId(o_id) },
+            {$inc: {interestCount: 1},$push: {interestedAccounts: a_id}},
+            { returnDocument: 'after' }
+        );
+        if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
+        //not sure but this seems fine
+        return o_id;
     }
 }
 export default organizationFunctions;

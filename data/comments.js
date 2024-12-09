@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { organizations } from "../config/mongoCollections.js";
+import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
 import accountsFunctions from "./accounts.js";
-
 const commentsFunctions = {
 
     // Function to create a new comment
@@ -19,8 +19,8 @@ const commentsFunctions = {
         if(!a_id) throw 'Account id is not provided, please input ID!'
         if(!comment) throw 'No account was provided, please input comment!'
 
-        o_id= await validation.checkOrganizationID(o_id);
-        a_id = await validation.checkID(a_id,"Account");
+        o_id= await id_validation.checkOrganizationID(o_id);
+        a_id = await id_validation.checkID(a_id,"Account");
         //to make sure the account exist
         const user= await accountsFunctions.getAccount(a_id);
         
@@ -50,8 +50,8 @@ const commentsFunctions = {
         if(!o_id) throw 'Organization id is not provided, please input ID!'
         if(!comment_id) throw 'Comment id is not provided, please input ID!'
 
-        o_id= await validation.checkOrganizationID(o_id);
-        comment_id = await validation.checkID(comment_id,"Comment");
+        o_id= await id_validation.checkOrganizationID(o_id);
+        comment_id = await id_validation.checkID(comment_id,"Comment");
 
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!'; 
