@@ -38,14 +38,14 @@ const organizationFunctions ={
                 author:comment.author,
                 body:comment.body,
                 //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
-                canDelete: currentUser ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
+                canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
             })),
             reviews: organizationData.reviews.map((review) => ({
                 author:review.author,
                 rating: review.rating,
                 body:review.body,
                 //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
-                canDelete: currentUser ? (currentUser._id === review.author || currentUser_id === organizationData.adminAccount) : false,
+                canDelete: currentUser_id ? (currentUser_id === review.author || currentUser_id === organizationData.adminAccount) : false,
             }))
         };
         return pageData;
