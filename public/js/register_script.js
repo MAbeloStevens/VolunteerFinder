@@ -8,7 +8,7 @@ const errorDiv = document.getElementById("errorDiv")
 const errorMessage = document.getElementById("errorMessage")
 
 addTagButton.addEventListener('click', (evt) => {
-  if(!errorDiv.hidden) {
+  if (!errorDiv.hidden) {
     errorDiv.hidden = true;
   }
   try {
@@ -20,7 +20,7 @@ addTagButton.addEventListener('click', (evt) => {
     if (existing) {
       throw `Tag option already exists`
     }
-    
+
     let newTagElement = document.createElement('option')
     newTagElement.value = `${tagTitle}`
     newTagElement.innerText = tagTitle
@@ -39,12 +39,34 @@ const password = document.getElementById("password")
 const confirmPassword = document.getElementById("confirmPassword")
 
 registrationForm.addEventListener('submit', (evt) => {
-  if(!errorDiv.hidden) {
+  if (!errorDiv.hidden) {
     errorDiv.hidden = true;
   }
-  if (password.value !== confirmPassword.value) {
+
+  try {
+    if (password.value !== confirmPassword.value) {
+      throw `Passwords must match`
+    }
+    if (registrationForm.firstName.value.trim() === "") {
+      throw `First Name is required`
+    }
+    if (registrationForm.lastName.value.trim() === "") {
+      throw `Last Name is required`
+    }
+    if (registrationForm.password.value.trim() === "") {
+      throw `Password is required`
+    }
+    if (registrationForm.email.value.trim() === "") {
+      throw `Email is required`
+    }
+    if ( !/^\w+@\w+\.\w+$/.test(registrationForm.email.value.trim()) ) {
+      throw `Email must be in valid format.`
+    }
+    
+  } catch (e) {
     errorDiv.hidden = false;
-    errorMessage.innerText = "Input Error Passwords must match";
+    errorMessage.innerText = e;
     evt.preventDefault()
   }
+
 })
