@@ -1,5 +1,3 @@
-import validation from '/validation';
-
 const loginForm = document.getElementById("loginForm")
 const errorDiv = document.getElementById("errorDiv")
 const errorMessage = document.getElementById("errorMessage")
