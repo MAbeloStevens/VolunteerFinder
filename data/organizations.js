@@ -25,6 +25,7 @@ const organizationFunctions ={
         if(!organizationData) throw 'No organization with that ID'
         //this is the stuff we are going to return based on the document.
         const pageData={
+            adminAccount: organizationData.adminAccount,
             name: organizationData.name,
             bannerImg: organizationData.bannerImg,
             interestCount: organizationData.interestCount,
@@ -160,7 +161,6 @@ const organizationFunctions ={
         interestCount: Number
         description: string
         bannerImg: string (path to image i am assuming we will do it during the post requst part)
-        contact: string
         link: string <- idk if we need to verify if the url is valid
     }
 */
@@ -211,6 +211,7 @@ const organizationFunctions ={
             interestCount:0,
             description:newOrganization.description,
             bannerImg:bannerImg,
+            contact:newOrganization.contact,
             link:link
         };
         //grab collection

@@ -32,7 +32,7 @@ try{
 // Create accounts we will be makring 4 different accounts for the groups members
 let Mark, Larc, Kendell, Kush
 try {
-    Mark = await accountData.createAccount('Mark', 'Abelo', ' Mabelo_123', ['Animals', 'Children','Elderly','Community'], 'mabelo@stevens.edu', '1234567890');
+    Mark = await accountData.createAccount('Mark', 'Abelo', 'Mabelo_123', ['Animals', 'Children','Elderly','Community'], 'mabelo@stevens.edu', '1234567890');
 } catch(e) {
     console.log(`Error creating Mark's Account:`, e);
 }

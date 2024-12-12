@@ -99,7 +99,6 @@ router.route('/account').get(async (req, res) => {
     "a_id": '6734f46960512626d9f23016',
     "firstName": 'Mark',
     "lastName": 'Abelo',
-    "passwordHash": 'b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86',
     "tags": ['Animals', 'Children', 'Elderly'],
     "interestedOrgs": [
       {
@@ -121,6 +120,10 @@ router.route('/account').get(async (req, res) => {
     "email": 'myemail@mail.com',
     "phone": '123-456-7890',
   }
+  // get account info
+  const user = await accountData.getAccount(req.session.user.a_id);
+
+  // get projections of interestedOrgs and organizations
 
   // get id of currently logged in user from authentication system.
   // Validate Id -> trade for user
@@ -264,20 +267,25 @@ router.route('/organizations/:o_id').get(async (req, res) => {
       return
     }
 
+    // get adminInfo
+    const adminInfo = await accountData.getAccountFullName(orgFound.adminAccount);
+
     // render page
     if (req.session.user && req.session.user.a_id === orgFound.adminAccount) {
       // if the current user is the owner of this organization
       res.render('organization', {
         title: orgFound.name,
         o_id: req.params.o_id,
-        orgData: orgFound,
+        organization: orgFound,
+        adminInfo: adminInfo,
         owner: true
       });
     }
     res.render('organization', {
       title: orgFound.name,
       o_id: req.params.o_id,
-      orgData: orgFound,
+      organization: orgFound,
+      adminInfo: adminInfo,
     });
 
   } catch (e) {
@@ -337,13 +345,15 @@ router.route('/organizations/:o_id/delete').get(async (req, res) => {
 router.route('/organizations/:o_id/edit').get(async (req, res) => {
   // validate parameter
   
-  // get projection {o_id, name}
+  // get organization info
   const dummyOrganization = {
     "o_id": '6734f61c5f097d890337fc6b',
     "name": 'Care For Cats'
   }
   res.render('editOrg', {
     title: 'Edit Organization',
+    knownTags: knownTags,
+    orgTags: orgFound.tags,
     organization: dummyOrganization,
     script_partial: 'editOrg_script'
   });
@@ -366,8 +376,8 @@ router.route('/createOrg').get(async (req, res) => {
   
   res.render('createOrg', {
     title: 'Create an organization',
-    script_partial: 'createOrg_script',
-    knownTags: knownTags
+    knownTags: knownTags,
+    script_partial: 'createOrg_script'
   });
 });
 

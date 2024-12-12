@@ -4,10 +4,14 @@
 {{/if}}
 
 <h3>Contact Info</h3>
-{{#if user.phone}}
-<label>Phone: <p>{{user.phone}}</p></label>
-{{/if}}
-<label>Email: <p>{{user.email}}</p></label>
+<dl>
+  <dt>Email:</dt>
+  <dd>{{user.email}}</dd>
+  {{#if user.phone}}
+  <dt>Phone:</dt>
+  <dd>{{user.phone}}</dd>
+  {{/if}}
+</dl>
 
 <h2>{{#if owner}}Your{{else}}{{nameApostrophe user.firstName}}{{/if}} Tags</h2>
 <ul>

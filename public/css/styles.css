@@ -237,7 +237,11 @@ button.important:hover {
     background-color: var(--err-color);
 }
 
-form div#textInputs {
+a button {
+    margin-top: 5px;
+}
+
+form div.textInputs {
     vertical-align: auto;
     margin: auto;
     display: flex;
@@ -245,15 +249,36 @@ form div#textInputs {
     margin-bottom: 5px;
 }
 
-form div#textInputs label{
+form div.textInputs label{
     text-align: right;
 
 }
 
-form div#textInputs label input {
+form div.textInputs label input {
     align-self: left;
     margin-left: 10px;
     padding-left: 5px;
+}
+
+form div.imgUpload {
+    width: 100%;
+}
+form div.imgUpload input {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: dashed 1px var(--btn-color);
+    border-bottom: dashed 1px var(--btn-color);
+}
+
+form textarea {
+    width: 100%;
+    height: 6em;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    border: 2px solid var(--btn-color);
+    border-radius: 4px;
+    resize: none;
 }
 
 /* landing page */

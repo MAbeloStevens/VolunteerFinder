@@ -18,15 +18,28 @@ router.route('/users/login').post(async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   
-  // validate inputs, rerender page if errors
+  let currentUser = undefined;
 
-  // call db function, rerender page if can't validate
+  try {
+    // validate inputs, rerender page if errors
+    email = await validation.checkEmail(email);
+    password = await validation.checkPassword(password);
+
+    // call db function, rerender page if can't validate
+    currentUser = await accountData.getLogInInfo(email, password);
+  } catch (e) {
+    console.trace(e);
+    res.render('login', {
+      title: 'Log in',
+      script_partial: 'login_script',
+      error: e
+    });
+    return;
+  }
 
   // set session user
-  req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'}; // testing user
-
+  req.session.user = currentUser;
   // redirect to root
-  
   res.redirect('/');
 })
 
@@ -46,6 +59,11 @@ router.route('/users').patch(async (req, res) => {
 })
 
 router.route('/search').post(async (req, res) => {
+  res.send(req.body);
+});
+
+router.route('/createOrg').post(async (req, res) => {
+  // IMPLEMENT ME
   res.send(req.body);
 });
 

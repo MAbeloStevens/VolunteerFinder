@@ -44,7 +44,26 @@ const validation = {
         if(typeof description !=='string') throw 'Organization description is not a string!';
         const trimmedDescription= description.trim();
         if(trimmedDescription.length===0) throw 'Organization description cannot be empty!';
+        if(trimmedDescription.length > 1000) throw 'Description is too long, please keep it under 1000 characters!'
         return trimmedDescription;
+    },
+
+    async checkComment(comment){
+        //basic string checks
+        if(typeof comment !=='string') throw 'Comment body is not a string!';
+        const trimmedComment= comment.trim();
+        if(trimmedComment.length===0) throw 'Comment body cannot be empty!';
+        if(trimmedComment.length > 1000) throw 'Comment is too long, please keep it under 1000 characters!'
+        return trimmedComment;
+    },
+
+    async checkReview(review){
+        //basic string checks
+        if(typeof review !=='string') throw 'Review body is not a string!';
+        const trimmedReview= review.trim();
+        if(trimmedReview.length===0) throw 'Review body cannot be empty!';
+        if(trimmedReview.length > 1000) throw 'Review is too long, please keep it under 1000 characters!'
+        return trimmedReview;
     },
 
     async checkString(string, category){
@@ -80,15 +99,10 @@ const validation = {
         if(typeof contactInfo !=='string') throw 'Organization contact information is not a string!';
         const trimmedContactInfo= contactInfo.trim();
         if(trimmedContactInfo.length===0) throw 'Organization contact information cannot be empty!';
-        //based on db proposal we are splitting by newline
-        const seperate = trimmedContactInfo.split('\n');
-        if(seperate.length!=2) throw'Contact information must include exactly one email and one phone number.';
-        //check each invidually
-        const trimmedEmail= await this.checkEmail(seperate[0]);
-        const trimmedPhone= await this.checkPhone(seperate[1]);
-        //put them back together
-        return trimmedEmail+'\n'+trimmedPhone;
+        if(trimmedContactInfo.length > 1000) throw 'Contact info body is too long, please keep it under 1000 characters!'
+        return trimmedContactInfo;
     },
+
     async checkLink(link){
         if(typeof link !=='string') throw 'Link is not a string!';
         link= link.trim();

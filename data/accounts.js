@@ -7,16 +7,27 @@ import validation from '../helpers/validation.js';
 const saltRounds = 10;
 const accountsFunctions = {
 
-    async getAccountIdandPassword(email) {
-        //given a string email, return the associated user's a_id and password
-        //TODO
+    async getLogInInfo(email, password) {
+        //given a string email and password, get the account asssociated with the email and bcrypt compare the hashed passwords
+        //if cannot validate, throw error saying the email or password is invalid
+        //if valid return {a_id, firstName, lastName}
         if(!email) throw  'email is not provided, please input email!'
         email = await validation.checkEmail(email);
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({email: email});
-        if(!accountData) throw 'No account with that email'
-        return {a_id: accountData._id, password: accountData.password};
+        if(!password) throw  'password is not provided, please input password!'
+        password = await validation.checkPassword(password);
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne(
+            {email: email},
+            {projection: {_id: 1, password: 1, firstName: 1, lastName: 1}}
+        );
+        // email not found
+        if(!accountData) throw 'Either the email or password is invalid';
+        // validate password
+        const match = await bcrypt.compare(password, accountData.password);
+        if (match){
+            return {a_id: accountData._id, firstName: accountData.firstName, lastName: accountData.lastName};
+        } else throw 'Either the email or password is invalid';
     },
 
     async getAccount(a_id) {
@@ -27,7 +38,18 @@ const accountsFunctions = {
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
-        return accountData;
+
+        const returnData = {
+            a_id: accountData._id,
+            firstName: accountData.firstName,
+            lastName: accountData.lastName,
+            tags: accountData.tags,
+            interestedOrgs: accountData.interestedOrgs,
+            organizations: accountData.organizations,
+            email: accountData.email,
+            phone: accountData.phone
+        };
+        return returnData;
     },
 
     async getAccountNames(a_ids) {
@@ -90,7 +112,7 @@ const accountsFunctions = {
         const result = await accountsInfo.insertOne({
             firstName: firstName, 
             lastName: lastName, 
-            passwordHash: password, 
+            password: password, 
             tags: tags, 
             interestedOrgs: interestedOrgs, 
             organizations: organizations, 
@@ -209,9 +231,9 @@ const accountsFunctions = {
         //given a_id, return account data {tage, interestedOrgs}
         if(!a_id) throw 'Account ID is required!';
         a_id = await id_validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         return {tags: accountData.tags, interestedOrgs: accountData.interestedOrgs};
     },
@@ -220,10 +242,10 @@ const accountsFunctions = {
         //given a_id, return full name of the account
         if(!a_id) throw 'Account ID is required!';
         a_id = await id_validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
-        if(!accountData) throw 'No account with that ID'
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID';
         return {a_id: accountData._id, firstName: accountData.firstName, lastName: accountData.lastName}
     },
 
@@ -231,9 +253,9 @@ const accountsFunctions = {
         //given a_id, return all organizations the account is associated with
         if(!a_id) throw 'Account ID is required!';
         a_id = await id_validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         return accountData.organizations;
     },
@@ -244,9 +266,9 @@ const accountsFunctions = {
         a_id = await id_validation.checkID(a_id,"Account");
         o_id = await id_validation.checkOrganizationID(o_id);
         //check for the account's existance
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         //check if organization exists 
         const organizations = await organizations();
@@ -255,7 +277,7 @@ const accountsFunctions = {
         if(!existingOrganization) throw 'No organization with that ID'
         //updating
         const updatedOrganizations = [...accountData.organizations, o_id];
-        const result = await accounts.updateOne({_id: new ObjectId(a_id)}, {$set: {organizations: updatedOrganizations}});
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {organizations: updatedOrganizations}});
         //checks for if the update was successful
         if(result.modifiedCount === 0) throw 'Failed to add organization!';
         return {orgAdded: true};
