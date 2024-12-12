@@ -1,11 +1,15 @@
 <div id="orgBanner">
+    {{#if organization.bannerImg}}
     <img src="{{organization.bannerImg}}" alt="{{organization.name}} Banner">
+    {{else}}
+    <img src="/public/images/VF_Background.jpg" alt="VF Default Banner">
+    {{/if}}
 </div>
 
 <div id="orgInfo">
     <h1>{{organization.name}}</h1>
     {{#if owner}}
-    <a id="editOrgBtn" href="/editOrg:{{organization.o_id}}"><button>Edit Page</button></a>
+    <a id="editOrgBtn" href="/organizations/{{o_id}}/edit"><button>Edit Page</button></a>
     {{/if}}
     <button id="interestBtn"> {{organization.interestCount}} Interested </button>
 
@@ -14,12 +18,13 @@
     </div>
 
     {{#if organization.description}}
-        <p>{{organization.description}}</p><br>
+        <p>{{breaklines organization.description}}</p><br>
         <br>
     {{/if}}
     {{#if organization.contact}}
-        <p>{{organization.contact}}</p><br>
+        <p>{{breaklines organization.contact}}</p><br>
         <br>
+    {{/if}}
     {{#if organization.link}}
         <a href="{{organization.link}}">{{organization.name}} External Site</a>
     {{/if}}
@@ -33,12 +38,12 @@
     {{else}}
     {{#each organization.comments}}
     <div class="comment">
-        <p>{{this.body}}</p>
+        <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
     </div>
     {{/each}}
     {{/if}}
-    <a href="'/organizations/{{o_id}}/comment'"><button>Write a Comment</button></a>
+    <a href="/organizations/{{o_id}}/comment"><button>Write a Comment</button></a>
     
 </div>
 
@@ -50,20 +55,10 @@
     {{#each organization.reviews}}
     <div class="review">
         <h3>{{rating}}/10</h3>
-        <p>{{this.body}}</p>
+        <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
     </div>
     {{/each}}
     {{/if}}
-    <a href="'/organizations/{{o_id}}/comment'"><button>Write a Review</button></a>
+    <a href="/organizations/{{o_id}}/review"><button>Write a Review</button></a>
 </div>
-
-
-
-
-
-
-
-
-
-

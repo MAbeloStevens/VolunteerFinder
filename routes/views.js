@@ -242,50 +242,50 @@ router.route('/organizations/:o_id').get(async (req, res) => {
   if (req.session.user) {
     currentUser_id = req.session.user.a_id;
   }
-  // TODO implement comment and review display
   // validate o_id
   try {
     req.params.o_id = await id_validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
-    res.status(500).render('error', {
+    res.status(400).render('error', {
       title: "Error",
-      ecode: 500,
+      ecode: 400,
       error: e
     });
     return;
   }
 
   // get organization data
+  let orgFound;
   try {
-    const orgFound = await organizationData.getOrganizationPageData(req.params.o_id);
-    if (!orgFound) {
-      res.status(404).render('error', {
-        title: "Error",
-        ecode: 404,
-        error: "Organization not found"
-      });
-      return
-    }
+    orgFound = await organizationData.getOrganizationPageData(req.params.o_id, currentUser_id);
+  } catch(e) {
+    console.trace(e);
+    res.status(404).render('error', {
+      title: "Error",
+      ecode: 404,
+      error: e
+    });
+    return
+  }
 
+  try {
     // get adminInfo
     const adminInfo = await accountData.getAccountFullName(orgFound.adminAccount);
 
-    // render page
-    if (req.session.user && req.session.user.a_id === orgFound.adminAccount) {
+    // if the current user is the owner, set owner to true
+    let owner = undefined;
+    if (currentUser_id === orgFound.adminAccount) {
       // if the current user is the owner of this organization
-      res.render('organization', {
-        title: orgFound.name,
-        o_id: req.params.o_id,
-        organization: orgFound,
-        adminInfo: adminInfo,
-        owner: true
-      });
+      owner = true;
     }
+
+    // render page
     res.render('organization', {
       title: orgFound.name,
       o_id: req.params.o_id,
       organization: orgFound,
       adminInfo: adminInfo,
+      owner: owner
     });
 
   } catch (e) {
@@ -343,18 +343,50 @@ router.route('/organizations/:o_id/delete').get(async (req, res) => {
 
 
 router.route('/organizations/:o_id/edit').get(async (req, res) => {
-  // validate parameter
-  
-  // get organization info
-  const dummyOrganization = {
-    "o_id": '6734f61c5f097d890337fc6b',
-    "name": 'Care For Cats'
+  // validate o_id
+  try {
+    req.params.o_id = await id_validation.checkOrganizationID(req.params.o_id);
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
   }
+
+  // get all known tags
+  let knownTags;
+  try {
+    knownTags = await knownTagsData.getKnownTags();
+  } catch (e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
+
+  // get organization data
+  let orgFound;
+  try {
+    orgFound = await organizationData.getOrganizationEditInfo(req.params.o_id);
+  } catch(e) {
+    console.trace(e);
+    res.status(404).render('error', {
+      title: "Error",
+      ecode: 404,
+      error: e
+    });
+    return
+  }
+
   res.render('editOrg', {
     title: 'Edit Organization',
     knownTags: knownTags,
     orgTags: orgFound.tags,
-    organization: dummyOrganization,
+    organization: orgFound,
     script_partial: 'editOrg_script'
   });
 });

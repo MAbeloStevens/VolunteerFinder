@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { organizations } from "../config/mongoCollections.js";
 import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
+import { o_idRenameField } from "../helpers/helpers.js";
 import accountsFunctions from "./accounts.js";
 import knownTagsFunctions from './knownTags.js';
 
@@ -39,17 +40,32 @@ const organizationFunctions ={
                 author:comment.author,
                 body:comment.body,
                 //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
-                canDelete: currentUser ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
+                canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
             })),
             reviews: organizationData.reviews.map((review) => ({
                 author:review.author,
                 rating: review.rating,
                 body:review.body,
                 //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
-                canDelete: currentUser ? (currentUser._id === review.author || currentUser_id === organizationData.adminAccount) : false,
+                canDelete: currentUser_id ? (currentUser_id === review.author || currentUser_id === organizationData.adminAccount) : false,
             }))
         };
         return pageData;
+    },
+
+    async getOrganizationEditInfo(o_id){
+        //given o_id, get organization info {name, tags, description, bannerImg, contact, link}
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await id_validation.checkOrganizationID(o_id);
+        //get organization
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOne(
+            {_id: new ObjectId(o_id)},
+            {projection: {_id: 1, name: 1, tags: 1, description: 1, bannerImg: 1, contact: 1, link: 1}}
+        );
+        if(!organizationData) throw 'No organization with that ID'
+        return o_idRenameField(organizationData);
     },
 
     async getOrganizationsInterest(o_idList){

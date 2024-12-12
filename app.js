@@ -43,6 +43,12 @@ Handlebars.registerHelper("nameApostrophe", function(name) {
     return (name + '\'s');
 });
 
+Handlebars.registerHelper("breaklines", function(textBody) {
+    textBody = Handlebars.Utils.escapeExpression(textBody);
+    textBody = textBody.replace(/(\r\n|\n|\r)/gm, '<br>');
+    return new Handlebars.SafeString(textBody);
+});
+
 
 // middleware functions
 
