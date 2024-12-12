@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import { accounts } from '../config/mongoCollections.js';
+import { organizations } from '../config/mongoCollections.js';
 import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
 const saltRounds = 10;
@@ -213,6 +214,51 @@ const accountsFunctions = {
         const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         return {tags: accountData.tags, interestedOrgs: accountData.interestedOrgs};
+    },
+
+    async getAccountFullName(a_id) {
+        //given a_id, return full name of the account
+        if(!a_id) throw 'Account ID is required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const accounts = await accounts();
+        if(!accounts) throw 'Failed to connect to accounts collection';
+        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        return {a_id: accountData._id, firstName: accountData.firstName, lastName: accountData.lastName}
+    },
+
+    async getAccountOrganizations(a_id) {
+        //given a_id, return all organizations the account is associated with
+        if(!a_id) throw 'Account ID is required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const accounts = await accounts();
+        if(!accounts) throw 'Failed to connect to accounts collection';
+        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        return accountData.organizations;
+    },
+
+    async addOrganizationForAccount(a_id, o_id) {
+        //given a_id and o_id, push the o_id into the account's organizations list. Return {orgAdded: true} if successful, error otherwise.
+        if(!a_id ||!o_id) throw 'Account ID and Organization ID are required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accounts = await accounts();
+        if(!accounts) throw 'Failed to connect to accounts collection';
+        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizations = await organizations();
+        if(!organizations) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //updating
+        const updatedOrganizations = [...accountData.organizations, o_id];
+        const result = await accounts.updateOne({_id: new ObjectId(a_id)}, {$set: {organizations: updatedOrganizations}});
+        //checks for if the update was successful
+        if(result.modifiedCount === 0) throw 'Failed to add organization!';
+        return {orgAdded: true};
     }
 
 
