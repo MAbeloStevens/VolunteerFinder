@@ -2,11 +2,11 @@
   <form id="reviewForm" method="post" action="/api/organizations/{{organization.o_id}}/review">
 
     <h3>Write a Review of "{{organization.name}}"</h3>
-    <textarea required type="text" name="review"></textarea>
+    <textarea type="text" name="review"></textarea>
     
     <label>
       Rating
-      <input required type="number" name="rating" min="0" max="10">
+      <input type="number" name="rating" min="0" max="10">
     </label>
     <button>Post</button>
   </form>
@@ -14,4 +14,8 @@
   <a href="/organizations/{{organization.o_id}}">
     <button>Back to "{{organization.name}}"</button>
   </a>
+</div>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
 </div>

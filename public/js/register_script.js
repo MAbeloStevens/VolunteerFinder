@@ -1,5 +1,3 @@
-import validation from '/validation';
-
 // Add tag button
 const addTagButton = document.getElementById("addTagButton")
 const addTagInput = document.getElementById("addTagInput")
