@@ -99,7 +99,7 @@ const validation = {
         if(typeof contactInfo !=='string') throw 'Organization contact information is not a string!';
         const trimmedContactInfo= contactInfo.trim();
         if(trimmedContactInfo.length===0) throw 'Organization contact information cannot be empty!';
-        if(trimmedContactInfo.length > 1000) throw 'Contact info body is too long, please keep it under 1000 characters!'
+        if(trimmedContactInfo.length > 500) throw 'Contact info body is too long, please keep it under 500 characters!'
         return trimmedContactInfo;
     },
 

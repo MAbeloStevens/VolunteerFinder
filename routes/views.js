@@ -259,7 +259,6 @@ router.route('/organizations/:o_id').get(async (req, res) => {
   try {
     orgFound = await organizationData.getOrganizationPageData(req.params.o_id, currentUser_id);
   } catch(e) {
-    console.trace(e);
     res.status(404).render('error', {
       title: "Error",
       ecode: 404,
@@ -285,7 +284,8 @@ router.route('/organizations/:o_id').get(async (req, res) => {
       o_id: req.params.o_id,
       organization: orgFound,
       adminInfo: adminInfo,
-      owner: owner
+      owner: owner,
+      script_partial: 'organization_script'
     });
 
   } catch (e) {
@@ -373,7 +373,6 @@ router.route('/organizations/:o_id/edit').get(async (req, res) => {
   try {
     orgFound = await organizationData.getOrganizationEditInfo(req.params.o_id);
   } catch(e) {
-    console.trace(e);
     res.status(404).render('error', {
       title: "Error",
       ecode: 404,
@@ -382,13 +381,23 @@ router.route('/organizations/:o_id/edit').get(async (req, res) => {
     return
   }
 
-  res.render('editOrg', {
-    title: 'Edit Organization',
-    knownTags: knownTags,
-    orgTags: orgFound.tags,
-    organization: orgFound,
-    script_partial: 'editOrg_script'
-  });
+  // only show the page if the current user is the organization admin
+  if (req.session.user && req.session.user === orgFound.adminAccount) {
+    res.render('editOrg', {
+      title: 'Edit Organization',
+      knownTags: knownTags,
+      orgTags: orgFound.tags,
+      organization: orgFound,
+      script_partial: 'editOrg_script'
+    });
+  } else {
+    // otherwise show an error
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: 'Cannot edit an organization you are not the admin of'
+    });
+  }
 });
 
 

@@ -29,7 +29,7 @@ const reviewFunctions = {
         //checking other parameters
         rating =  await validation.checkPositiveNumber(rating)
         rating = await validation.validRating(rating);
-        reviewBody= await validation.checkString(reviewBody,"Review");
+        reviewBody= await validation.checkReview(reviewBody);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!';
         const newReview={

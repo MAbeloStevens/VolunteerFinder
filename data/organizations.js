@@ -62,7 +62,7 @@ const organizationFunctions ={
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const organizationData =  await organizationCollection.findOne(
             {_id: new ObjectId(o_id)},
-            {projection: {_id: 1, name: 1, tags: 1, description: 1, bannerImg: 1, contact: 1, link: 1}}
+            {projection: {_id: 1, adminAccount: 1, name: 1, tags: 1, description: 1, bannerImg: 1, contact: 1, link: 1}}
         );
         if(!organizationData) throw 'No organization with that ID'
         return o_idRenameField(organizationData);
@@ -360,8 +360,8 @@ const organizationFunctions ={
 
         o_id= await id_validation.checkOrganizationID(o_id);
         a_id = await id_validation.checkID(a_id,"Account");
-        //to make sure the account exist
-        const user= await accountsFunctions.getAccount(a_id);
+        //add the organization to the account's interestedOrgs
+        const user= await accountsFunctions.addInterestedOrg(a_id, o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!';
         const updateInfo = await organizationCollection.findOneAndUpdate(
@@ -369,6 +369,7 @@ const organizationFunctions ={
             {$inc: {interestCount: 1},$push: {interestedAccounts: a_id}},
             { returnDocument: 'after' }
         );
+
         if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
         //not sure but this seems fine
         return o_id;
@@ -379,8 +380,8 @@ const organizationFunctions ={
 
         o_id= await id_validation.checkOrganizationID(o_id);
         a_id = await id_validation.checkID(a_id,"Account");
-        //to make sure the account exist
-        const user= await accountsFunctions.getAccount(a_id);
+        //remove the organization from the account's interestedOrgs
+        const user= await accountsFunctions.removeInterestedOrg(a_id, o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!';
         //check to see if this account is in the array

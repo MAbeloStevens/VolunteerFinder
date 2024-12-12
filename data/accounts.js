@@ -281,8 +281,41 @@ const accountsFunctions = {
         //checks for if the update was successful
         if(result.modifiedCount === 0) throw 'Failed to add organization!';
         return {orgAdded: true};
-    }
+    },
 
+    async removeOrganizationForAccount(a_id, o_id){
+        //given a_id and o_id, remove the o_id from the account's organizations list. Return {orgRemoved: true} if successful, error otherwise.
+        throw 'IMPLEMENT ME';
+    },
+
+    async addInterestedOrg(a_id, o_id){
+        // IMPORTANT NOTE: This is automatically called in organizations.removeInterestedAccount() and shouldn't be called seperately
+        //given a_id and o_id, push the o_id into the account's interestedOrgs list. Return {orgAdded: true} if successful, error otherwise.
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizations = await organizations();
+        if(!organizations) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //updating
+        const updatedInterestedOrgs = [...accountData.interestedOrgs, o_id];
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {interestedOrgs: updatedInterestedOrgs}});
+        //checks for if the update was successful
+        if(result.modifiedCount === 0) throw 'Failed to add organization!';
+        return {orgAdded: true};
+    },
+
+    async removeInterestedOrg(a_id, o_id){
+        // IMPORTANT NOTE: This is automatically called in organizations.removeInterestedAccount() and shouldn't be called seperately
+        //given a_id and o_id, remove the o_id from the account's interestedOrgs list. Return {orgRemoved: true} if successful, error otherwise.
+        throw 'IMPLEMENT ME';
+    }
 
 }
 export default accountsFunctions;

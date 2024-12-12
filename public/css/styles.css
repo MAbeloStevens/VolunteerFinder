@@ -384,7 +384,7 @@ div#searchPage {
     flex: 1 1 auto;
 }
 
-/* account page */
+/* profile page */
 div.infoBox {
     margin: 10px;
     padding-left: 20px;
@@ -393,4 +393,21 @@ div.infoBox {
     overflow: hidden;
     min-width: fit-content;
     width: 60%;
+}
+
+div.orgBanner {
+    height: 200px;
+    margin-top: -20px;
+    margin-left: -20px;
+    margin-right: -20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+div.orgBanner img {
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%;
 }

@@ -67,6 +67,10 @@ router.route('/createOrg').post(async (req, res) => {
   res.send(req.body);
 });
 
+router.route('/organization/:o_id').patch(async (req, res) => {
+  // 
+});
+
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
   //TODO Replace with saving comment to database
   res.send(req.body);
