@@ -68,7 +68,17 @@ router.route('/createOrg').post(async (req, res) => {
 });
 
 router.route('/organization/:o_id').patch(async (req, res) => {
-  // 
+  // when a user clicks Interested
+  // req.body.interested (boolean)
+  // if true, get the current user and o_id and call org function for setting interested
+  // if false, get the current user and o_id and call org function for remove interested
+  // if did not error, reroute to get method for this route
+  // if did error, load error page
+
+  // if current user is not logged in, reroute to not logged in
+
+  // IMPLEMENT ME
+  res.send(req.body);
 });
 
 router.route('/organizations/:o_id/comment').post(async (req, res) => {

@@ -222,11 +222,15 @@ form *{
     margin-bottom: 2px;
 }
 
+#interestBtn.interested:hover,
 button {
     border: solid 2px var(--btn-color);
     border-radius: 4px;
+    color: var(--txt-color);
+    background-color: var(--mnu-color);
 }
 
+#interestBtn.interested,
 button:hover {
     color: var(--txtalt-color);
     background-color: var(--bnnr-color);

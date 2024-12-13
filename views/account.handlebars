@@ -22,18 +22,28 @@
 
 <div class="infoBox">
   <h2>{{#if owner}}Your{{else}}{{nameApostrophe user.firstName}}{{/if}} Organizations</h2>
+  {{#if (listEmpty user.organizations)}}
+  <p>You do not have any of your own organizations right now.</p>
+  <br>
+  {{else}}
   <ul>
     {{#each user.organizations}}
     <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
     {{/each}}
   </ul>
+  {{/if}}
 </div>
 
 <div class="infoBox">
   <h2>Organizations {{#if owner}}You're{{else}}{{user.firstName}} Is{{/if}} Interested In</h2>
+  {{#if (listEmpty user.interestedOrgs)}}
+  <p>You haven't shown interest in any organizations yet. Go <a href="/search">explore some</a> and come back!</p>
+  <br>
+  {{else}}
   <ul>
     {{#each user.interestedOrgs}}
     <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
     {{/each}}
   </ul>
+  {{/if}}
 </div>

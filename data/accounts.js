@@ -315,6 +315,23 @@ const accountsFunctions = {
         // IMPORTANT NOTE: This is automatically called in organizations.removeInterestedAccount() and shouldn't be called seperately
         //given a_id and o_id, remove the o_id from the account's interestedOrgs list. Return {orgRemoved: true} if successful, error otherwise.
         throw 'IMPLEMENT ME';
+    },
+
+    async isAccountInterested(a_id, o_id) {
+        // returns true if the o_id is in the account's interestedOrg list
+        if(!a_id ||!o_id) throw 'Account ID and Organization ID are required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne(
+            {_id: new ObjectId(a_id)},
+            {projection: {interestedOrgs: 1}}
+        );
+        if(!accountData) throw 'No account with that ID';
+
+        return accountData.interestedOrgs.includes(o_id);
     }
 
 }

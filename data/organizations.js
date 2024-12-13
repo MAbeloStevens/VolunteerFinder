@@ -53,6 +53,21 @@ const organizationFunctions ={
         return pageData;
     },
 
+    async getOrganizationName(o_id){
+        //given o_id, get organization info {name, tags, description, bannerImg, contact, link}
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await id_validation.checkOrganizationID(o_id);
+        //get organization
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOne(
+            {_id: new ObjectId(o_id)},
+            {projection: {_id: 1, name: 1}}
+        );
+        if(!organizationData) throw 'No organization with that ID'
+        return o_idRenameField(organizationData);
+    },
+
     async getOrganizationEditInfo(o_id){
         //given o_id, get organization info {name, tags, description, bannerImg, contact, link}
         if(!o_id) throw  'Organization id is not provided, please input ID!'
@@ -84,13 +99,13 @@ const organizationFunctions ={
         )
         .project({_id: 1, name: 1, interestedAccounts: 1, interestCount: 1})
         .toArray();
-        //turn them id's into strings
+        //turn the id's into strings
         if (organizationsList.length===0) throw "No organizations from the list exists!";
         organizationsList= organizationsList.map((org) =>{
             org._id= org._id.toString();
-            return org;
+            return o_idRenameField(org);
         });
-        return organizationsList
+        return organizationsList;
     },
     
     async getOrganizationsTags(o_idList) {
@@ -113,7 +128,7 @@ const organizationFunctions ={
         if (organizationsList.length===0) throw "No organizations from the list exists!";
         organizationsList = organizationsList.map((org) => {
             org._id = org._id.toString();
-            return org;
+            return o_idRenameField(org);
         });
         return organizationsList;
     },

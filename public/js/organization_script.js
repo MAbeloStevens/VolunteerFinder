@@ -6,23 +6,18 @@
     interestBtn.on('click', function (event) {
         event.preventDefault();
 
+        // switch interested from whatever it was
+        interestBtn.toggleClass("interested");
+
         const currentUrl = new URL(window.location.href);
         let requestConfig = {
-            method: 'POST',
+            method: 'PATCH',
             url: '/api' + currentUrl.pathname,
-            data: {}
+            data: {interested: interestBtn.hasClass("interested")}
         };
-
-        // // switch from whatever it was
-        // interestBtn.toggleClass("interested");
-
-        // if (interestBtn.classList.contains("interested")) {
-        //     // user clicked the button to make them interested
-
-
-        // } else {
-        //     // user clicked the button to make them notInterested
-
-        // }
+        console.log(requestConfig.url);
+        $.ajax(requestConfig).then(function (responseMessage) {
+            console.log(responseMessage);
+        });
     });
 })(window.jQuery);
