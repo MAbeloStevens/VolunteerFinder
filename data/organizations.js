@@ -24,8 +24,25 @@ const organizationFunctions ={
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const organizationData =  await organizationCollection.findOne({_id: new ObjectId(o_id)});
         if(!organizationData) throw 'No organization with that ID'
+
+
+        let commentsDisplay = await Promise.all(organizationData.comments.map(async (comment) => ({
+            comment_id: comment._id,
+            author: await accountsFunctions.getAccountFullName(comment.author),
+            body:comment.body,
+            //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
+            canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
+        })));
+        let reviewsDisplay = await Promise.all(organizationData.reviews.map(async (review) => ({
+            review_id: review._id,
+            author: await accountsFunctions.getAccountFullName(review.author),
+            rating: review.rating,
+            body:review.body,
+            //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
+            canDelete: currentUser_id ? (currentUser_id === review.author || currentUser_id === organizationData.adminAccount) : false,
+        })));
         //this is the stuff we are going to return based on the document.
-        const pageData={
+        const pageData= {
             adminAccount: organizationData.adminAccount,
             name: organizationData.name,
             bannerImg: organizationData.bannerImg,
@@ -36,19 +53,8 @@ const organizationFunctions ={
             description: organizationData.description,
             contact: organizationData.contact,
             link: organizationData.link,
-            comments: organizationData.comments.map((comment)=>({
-                author:comment.author,
-                body:comment.body,
-                //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
-                canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
-            })),
-            reviews: organizationData.reviews.map((review) => ({
-                author:review.author,
-                rating: review.rating,
-                body:review.body,
-                //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
-                canDelete: currentUser_id ? (currentUser_id === review.author || currentUser_id === organizationData.adminAccount) : false,
-            }))
+            comments: commentsDisplay,
+            reviews: reviewsDisplay
         };
         return pageData;
     },

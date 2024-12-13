@@ -146,6 +146,10 @@ router.route('/account/accountPage/:a_id').get(async (req, res) => {
       return
     }
 
+    // get projections of interestedOrgs and organizations
+    accountFound.interestedOrgs = await organizationData.getOrganizationsTags(accountFound.interestedOrgs);
+    accountFound.organizations = await organizationData.getOrganizationsTags(accountFound.organizations);
+
     // render page
     res.render('account', {
       title: `${accountFound.firstName} ${accountFound.lastName}`,

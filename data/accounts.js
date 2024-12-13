@@ -246,7 +246,7 @@ const accountsFunctions = {
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID';
-        return {a_id: accountData._id, firstName: accountData.firstName, lastName: accountData.lastName}
+        return {a_id: accountData._id.toString(), firstName: accountData.firstName, lastName: accountData.lastName}
     },
 
     async getAccountOrganizations(a_id) {
