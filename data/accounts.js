@@ -285,7 +285,26 @@ const accountsFunctions = {
 
     async removeOrganizationForAccount(a_id, o_id){
         //given a_id and o_id, remove the o_id from the account's organizations list. Return {orgRemoved: true} if successful, error otherwise.
-        throw 'IMPLEMENT ME';
+        if(!a_id ||!o_id) throw 'Account ID and Organization ID are required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizations = await organizations();
+        if(!organizations) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //removing (we'll filter the organization list to only keep orgs that o_id does not equal the given o_id since the org list is just a list of o_ids)
+        const updatedOrganizations = accountData.organizations.filter(org => org.toString()!== o_id);
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {organizations: updatedOrganizations}});
+        //checks for if the removal was successful
+        if(result.modifiedCount === 0) throw 'Failed to remove organization!';
+        return {orgRemoved: true};
+        
     },
 
     async addInterestedOrg(a_id, o_id){
@@ -314,7 +333,24 @@ const accountsFunctions = {
     async removeInterestedOrg(a_id, o_id){
         // IMPORTANT NOTE: This is automatically called in organizations.removeInterestedAccount() and shouldn't be called seperately
         //given a_id and o_id, remove the o_id from the account's interestedOrgs list. Return {orgRemoved: true} if successful, error otherwise.
-        throw 'IMPLEMENT ME';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizations = await organizations();
+        if(!organizations) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //removing (same method as removeOrganization)
+        const updatedInterestedOrgs = accountData.interestedOrgs.filter(org => org.toString()!== o_id);
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {interestedOrgs: updatedInterestedOrgs}});
+        //checks for if the removal was successful
+        if(result.modifiedCount === 0) throw 'Failed to remove organization!';
+        return {orgRemoved: true};
     },
 
     async isAccountInterested(a_id, o_id) {
