@@ -107,7 +107,7 @@ const validation = {
         const allowedImageTypes =['image/jpeg', 'image/png'];
         const maxImageSize = 5*1024*1024; //its just 5MB
 
-        if(!bannerImg) throw "No image provided!"
+        if(!bannerImg || typeof bannerImg !== 'object') throw "No image provided!"
         const {mimetype, size} = bannerImg
         if (!allowedImageTypes.includes(mimetype)) {
             throw `Invalid file type! Allowed types are ${allowedImageTypes.join(',')}. `;
