@@ -49,7 +49,7 @@
         <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
         {{#if canDelete}}
-        <a href="/api/comment/{{comment_id}}/delete"><button class="important">Delete Comment</button></a>
+        <a href="/api/organizations/{{../o_id}}/comment/{{comment_id}}/delete"><button class="important">Delete Comment</button></a>
         {{/if}}
     </div>
     {{/each}}
@@ -69,7 +69,7 @@
         <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
         {{#if canDelete}}
-        <a href="/api/review/{{review_id}}/delete"><button class="important">Delete Review</button></a>
+        <a href="/api/organizations/{{../o_id}}/review/{{review_id}}/delete"><button class="important">Delete Review</button></a>
         {{/if}}
     </div>
     {{/each}}

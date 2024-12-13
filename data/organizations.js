@@ -27,14 +27,14 @@ const organizationFunctions ={
 
 
         let commentsDisplay = await Promise.all(organizationData.comments.map(async (comment) => ({
-            comment_id: comment._id,
+            comment_id: comment.id,
             author: await accountsFunctions.getAccountFullName(comment.author),
             body:comment.body,
             //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
             canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
         })));
         let reviewsDisplay = await Promise.all(organizationData.reviews.map(async (review) => ({
-            review_id: review._id,
+            review_id: review.id,
             author: await accountsFunctions.getAccountFullName(review.author),
             rating: review.rating,
             body:review.body,

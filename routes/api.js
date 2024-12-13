@@ -128,6 +128,20 @@ router.route('/organizations/:o_id').delete(async (req, res) =>{
   });
 });
 
+router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{
+  // middleware changes method for this route to delete
+  // delete the comment from organization and reload organization page
+  // display error page if user is not the organization admin or comment author
+  res.send("IMPLEMENT ME");
+});
+
+router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req, res) =>{
+  // middleware changes method for this route to delete
+  // delete the review from organization and reload organization page
+  // display error page if user is not the organization admin or review author
+  res.send("IMPLEMENT ME");
+});
+
 router.route('/logout').get(async (req, res) => {
   req.session.destroy((e) => {
     if (e) {
