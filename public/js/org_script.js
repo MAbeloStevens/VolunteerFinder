@@ -50,7 +50,11 @@ createOrgForm.addEventListener('submit', (evt) => {
     if (createOrgForm.contact.value === "") {
       throw `Organization contact is required`
     }
-    
+    if (![...createOrgForm.tags.querySelectorAll("option")].some((tag) => {return tag.selected})) {
+      throw `Please select a tag for your organization` 
+    }
+
+
   } catch (e) {
     errorDiv.hidden = false;
     errorMessage.innerText = e;
