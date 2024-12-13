@@ -32,7 +32,7 @@ try{
 // Create accounts we will be makring 4 different accounts for the groups members
 let Mark, Larc, Kendell, Kush
 try {
-    Mark = await accountData.createAccount('Mark', 'Abelo', ' Mabelo_123', ['Animals', 'Children','Elderly','Community'], 'mabelo@stevens.edu', '1234567890');
+    Mark = await accountData.createAccount('Mark', 'Abelo', 'Mabelo_123', ['Animals', 'Children','Elderly','Community'], 'mabelo@stevens.edu', '1234567890');
 } catch(e) {
     console.log(`Error creating Mark's Account:`, e);
 }
@@ -57,10 +57,10 @@ const catsOrg = {
     adminAccount:Mark,
     name: "Care For Cats",
     tags: [ 'Animals', 'Community'],
-    description: 'Here at Care For Cats, we rescue and foster stray cats and cats in unsustainable housing.\n\
-    We then find their forever homes with willing cat parents.\n\Join Care For Cats to help those sweet fur babies.',
+    description: 'Here at Care For Cats, we rescue and foster stray cats and cats in unsustainable housing.\r\n\
+    We then find their forever homes with willing cat parents.\r\nJoin Care For Cats to help those sweet fur babies.',
     //bannerImg : '/public/images/careforcats.jpg', Still needs implementing
-    contact: 'volunteers@care4cats.org\n228-228-2287',
+    contact: 'volunteers@care4cats.org\r\n228-228-2287',
     link: "https://www.care4cats.org/home",
 }
 const homelessOrg = {
@@ -69,7 +69,7 @@ const homelessOrg = {
     tags: ['LGBTQ+', 'Homeless', 'Human Rights', 'Community'],
     description: "Shelter & Pride is an organization dedicated to providing support and safe spaces for LGBTQ+ individuals facing homelessness. We focus on offering resources, advocacy, and community to ensure that every LGBTQ+ person has access to the support they deserve.",
     //bannerImg : '/public/images/shelterandpride.jpg', Still needs implementing
-    contact: 'contact@shelterandpride.org\n(555) 678-9012',
+    contact: 'contact@shelterandpride.org\r\n(555) 678-9012',
     link: "https://www.shelterandpride.org",
 }
 

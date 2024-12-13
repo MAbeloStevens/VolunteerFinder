@@ -18,15 +18,28 @@ router.route('/users/login').post(async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   
-  // validate inputs, rerender page if errors
+  let currentUser = undefined;
 
-  // call db function, rerender page if can't validate
+  try {
+    // validate inputs, rerender page if errors
+    email = await validation.checkEmail(email);
+    password = await validation.checkPassword(password);
+
+    // call db function, rerender page if can't validate
+    currentUser = await accountData.getLogInInfo(email, password);
+  } catch (e) {
+    console.trace(e);
+    res.render('login', {
+      title: 'Log in',
+      script_partial: 'login_script',
+      error: e
+    });
+    return;
+  }
 
   // set session user
-  req.session.user = {a_id: '6734f46960512626d9f23016', firstName: 'Mark', lastName: 'Abelo'}; // testing user
-
+  req.session.user = currentUser;
   // redirect to root
-  
   res.redirect('/');
 })
 
@@ -46,6 +59,25 @@ router.route('/users').patch(async (req, res) => {
 })
 
 router.route('/search').post(async (req, res) => {
+  res.send(req.body);
+});
+
+router.route('/createOrg').post(async (req, res) => {
+  // IMPLEMENT ME
+  res.send(req.body);
+});
+
+router.route('/organization/:o_id').patch(async (req, res) => {
+  // when a user clicks Interested
+  // req.body.interested (boolean)
+  // if true, get the current user and o_id and call org function for setting interested
+  // if false, get the current user and o_id and call org function for remove interested
+  // if did not error, reroute to get method for this route
+  // if did error, load error page
+
+  // if current user is not logged in, reroute to not logged in
+
+  // IMPLEMENT ME
   res.send(req.body);
 });
 
@@ -94,6 +126,20 @@ router.route('/organizations/:o_id').delete(async (req, res) =>{
     title: "Organization Deleted",
     wasAccount: false,
   });
+});
+
+router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{
+  // middleware changes method for this route to delete
+  // delete the comment from organization and reload organization page
+  // display error page if user is not the organization admin or comment author
+  res.send("IMPLEMENT ME");
+});
+
+router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req, res) =>{
+  // middleware changes method for this route to delete
+  // delete the review from organization and reload organization page
+  // display error page if user is not the organization admin or review author
+  res.send("IMPLEMENT ME");
 });
 
 router.route('/logout').get(async (req, res) => {

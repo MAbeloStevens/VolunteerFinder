@@ -43,11 +43,17 @@ Handlebars.registerHelper("nameApostrophe", function(name) {
     return (name + '\'s');
 });
 
+Handlebars.registerHelper("breaklines", function(textBody) {
+    textBody = Handlebars.Utils.escapeExpression(textBody);
+    textBody = textBody.replace(/(\r\n|\n|\r)/gm, '<br>');
+    return new Handlebars.SafeString(textBody);
+});
+
 
 // middleware functions
 
 // not-logged-in and logged-in redirection
-const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/createOrg', '/account/edit', '/organizations/:o_id/comment', '/account/delete', '/organizations/:o_id/review'];
+const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/createOrg', '/account/edit', '/account/delete'];
 const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
 app.use('/', async (req, res, next) => {
     // if logged in, set local variable user name for navBar rendering
@@ -71,6 +77,15 @@ app.use('/', async (req, res, next) => {
 app.use('/account/accountPage/:a_id', async (req, res, next) => {
     if (req.session.user && (req.params.a_id === req.session.user.a_id)) {
         return res.redirect('/account');
+    }
+    next();
+});
+
+// if you are trying to comment, review, edit or delete an organization, while not logged in, redirect to not-logged-in
+app.use('/organizations/:o_id', async (req, res, next) => {
+    const orgViews_notLoggedIn = ['/edit', '/delete', '/comment', '/review']
+    if (!req.session.user && orgViews_notLoggedIn.includes(req.path.replace('/organizations/:o_id',''))) {
+        return res.redirect('/not-logged-in');
     }
     next();
 });

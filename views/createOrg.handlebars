@@ -1,0 +1,53 @@
+<div class="centered">
+  <form id="createOrgForm" method="post" action="/api/createOrg">
+    <div class="textInputs">
+      <label for="name">
+        Organization Name
+        <input required type="text" name="name" id="name">
+      </label>
+    </div>
+
+    <label for="description">Description</label>
+    <textarea required type="text" name="description"></textarea>
+
+    <label for="contact">Contact Info</label>
+    <textarea required type="text" name="contact"></textarea>
+
+    <div class="textInputs">
+      <label>
+        External Link
+        <input type="url" name="link" id="link" placeholder="https://example.org">
+      </label>
+    </div>
+
+    <div class="centered">
+      <h3>Select Tags:</h3>
+      <p class="subtext">hold ctrl/cmd to select multiple</p>
+      <select id="tagSelection" name="tags" multiple size="5">
+          {{#each knownTags}}
+          <option value="{{this}}"/>{{this}}</option>
+          {{/each}}
+      </select>
+    </div>
+
+    <div class="centered">
+      <input id="addTagInput">
+      <button type="button" id="addTagButton">Add Tag</button>
+    </div>
+
+    <div class="centered imgUpload">
+        <h3>Upload Banner Image:</h3>
+        <input class="centered" type="file" id="bannerImg" name="bannerImg" accept="image/*">
+    </div>
+
+    <button type="submit">Create Organization</button>
+  </form>
+  
+  <a href="/orgAdmin">
+    <button>Back to Organization Admin</button>
+  </a>
+</div>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
+</div>

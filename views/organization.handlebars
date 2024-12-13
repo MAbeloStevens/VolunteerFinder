@@ -1,40 +1,56 @@
-<div id="orgBanner">
-    {{#if orgData.bannerImg}}
-    <img src="{{orgData.bannerImg}}" alt="{{orgData.name}} Banner">
+<div class="orgBanner">
+    {{#if organization.bannerImg}}
+    <img src="{{organization.bannerImg}}" alt="{{organization.name}} Banner">
     {{else}}
-    <img src="/public/images/VF_Background.jpg" alt="Default VF Banner">
+    <img src="/public/images/VF_Background.jpg" alt="VF Default Banner">
     {{/if}}
 </div>
 
-<div id="orgInfo">
-    <h1>{{orgData.name}}</h1>
-    <a id="editOrgBtn" href="/editOrg:{{orgData.o_id}}" hidden><button>Edit Page</button></a>
-    <button id="interestBtn"> {{orgData.interestCount}} Interested </button>
+<div class="orgInfo">
+    <h1>{{organization.name}}</h1>
+    {{#if owner}}
+    <a id="editOrgBtn" href="/organizations/{{o_id}}/edit"><button>Edit Page</button></a>
+    {{/if}}
+    <button id="interestBtn" {{#if userIsInterested}}class="interested"{{/if}}> {{organization.interestCount}} Interested </button>
 
-    <div id="orgTags">
-        <ul id="orgTagsList" ></ul>
+    <div class="orgTags">
+        <h2>Tags</h2>
+        <ul id="orgTagsList">
+            {{#each organization.tags}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ul>
     </div>
 
-    {{#if orgData.description}}
-    <p id="desc"></p>
+    {{#if organization.description}}
+    <h2>Description</h2>
+        <p>{{breaklines organization.description}}</p><br>
+        <br>
     {{/if}}
-    {{#if orgData.contact}}
-    <p id="contact">{}</p>
+    {{#if organization.contact}}
+    <h2>Contact Info</h2>
+        <p>{{breaklines organization.contact}}</p><br>
+        <br>
     {{/if}}
-    {{#if orgData.link}}
-        <a href="{{orgData.link}}">{{orgData.name}} External Site</a>
+    {{#if organization.link}}
+        <a href="{{organization.link}}">{{organization.name}} External Site</a> <br>
+        <br>
     {{/if}}
+    <label>Admin: <a href="/account/accountPage/{{adminInfo.a_id}}"><p>{{adminInfo.firstName}} {{adminInfo.lastName}}</p></a></label>
 </div>
 
 <div class="commentsDiv">
     <h2>Comments</h2>
-    {{#if (listEmpty orgData.comments)}}
+    {{#if (listEmpty organization.comments)}}
     <p>No comments yet</p>
     {{else}}
-    {{#each orgData.comments}}
+    {{#each organization.comments}}
     <div class="comment">
-        <p>{{this.body}}</p>
+        <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
+        {{#if canDelete}}
+        <a href="/api/organizations/{{../o_id}}/comment/{{comment_id}}/delete"><button class="important">Delete Comment</button></a>
+        {{/if}}
     </div>
     {{/each}}
     {{/if}}
@@ -44,27 +60,19 @@
 
 <div class="reviewsDiv">
     <h2>Reviews</h2>
-    {{#if (listEmpty orgData.comments)}}
+    {{#if (listEmpty organization.comments)}}
     <p>No reviews yet</p>
     {{else}}
-    {{#each orgData.reviews}}
+    {{#each organization.reviews}}
     <div class="review">
         <h3>{{rating}}/10</h3>
-        <p>{{this.body}}</p>
+        <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
+        {{#if canDelete}}
+        <a href="/api/organizations/{{../o_id}}/review/{{review_id}}/delete"><button class="important">Delete Review</button></a>
+        {{/if}}
     </div>
     {{/each}}
     {{/if}}
     <a href="/organizations/{{o_id}}/review"><button>Write a Review</button></a>
 </div>
-
-{{!-- "'/organizations/{{o_id}}/comment'" --}}
-{{!-- /organizations/{{o_id}}/review --}}
-
-
-
-
-
-
-
-

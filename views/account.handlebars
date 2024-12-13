@@ -4,10 +4,14 @@
 {{/if}}
 
 <h3>Contact Info</h3>
-{{#if user.phone}}
-<label>Phone: <p>{{user.phone}}</p></label>
-{{/if}}
-<label>Email: <p>{{user.email}}</p></label>
+<dl>
+  <dt>Email:</dt>
+  <dd>{{user.email}}</dd>
+  {{#if user.phone}}
+  <dt>Phone:</dt>
+  <dd>{{user.phone}}</dd>
+  {{/if}}
+</dl>
 
 <h2>{{#if owner}}Your{{else}}{{nameApostrophe user.firstName}}{{/if}} Tags</h2>
 <ul>
@@ -18,18 +22,36 @@
 
 <div class="infoBox">
   <h2>{{#if owner}}Your{{else}}{{nameApostrophe user.firstName}}{{/if}} Organizations</h2>
+  {{#if (listEmpty user.organizations)}}
+  {{#if owner}}
+  <p>You do not have any of your own organizations right now.</p>
+  {{else}}
+  <p>{{user.firstName}} does not have any organizations right now.</p>
+  {{/if}}
+  <br>
+  {{else}}
   <ul>
     {{#each user.organizations}}
     <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
     {{/each}}
   </ul>
+  {{/if}}
 </div>
 
 <div class="infoBox">
   <h2>Organizations {{#if owner}}You're{{else}}{{user.firstName}} Is{{/if}} Interested In</h2>
+  {{#if (listEmpty user.interestedOrgs)}}
+  {{#if owner}}
+  <p>You haven't shown interest in any organizations yet. Go <a href="/search">explore some</a> and come back!</p>
+  {{else}}
+  <p>{{user.firstName}} does not have any organizations they are interested in right now.</p>
+  {{/if}}
+  <br>
+  {{else}}
   <ul>
     {{#each user.interestedOrgs}}
     <li><a href="/organizations/{{o_id}}">{{name}}</a></li>
     {{/each}}
   </ul>
+  {{/if}}
 </div>

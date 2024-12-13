@@ -1,13 +1,21 @@
-// gets a cookie by name by parsing through document cookies 
-function getCookie(name) { /// SWITCHED TO EXPRESS-SESSION, DONT NEED THIS ANYMORE
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.startsWith(name + '=')) {
-        return decodeURIComponent(cookie.substring(name.length + 1));
-        }
+// given an object containing field _id, returns the same object with that field renamed to a_id 
+function a_idRenameField(obj) {
+    const newObj = {};
+    for (let k of Object.keys(obj)){
+        if (k === '_id') newObj['a_id'] = obj[k];
+        else newObj[k] = obj[k];
     }
-    return null; // Cookie not found
+    return newObj;
 };
 
-export { getCookie };
+// given an object containing field _id, returns the same object with that field renamed to o_id 
+function o_idRenameField(obj) {
+    const newObj = {};
+    for (let k of Object.keys(obj)){
+        if (k === '_id') newObj['o_id'] = obj[k];
+        else newObj[k] = obj[k];
+    }
+    return newObj;
+};
+
+export { a_idRenameField, o_idRenameField };

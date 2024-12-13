@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { organizations } from "../config/mongoCollections.js";
 import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
+import { o_idRenameField } from "../helpers/helpers.js";
 import accountsFunctions from "./accounts.js";
 import knownTagsFunctions from './knownTags.js';
 
@@ -23,8 +24,26 @@ const organizationFunctions ={
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const organizationData =  await organizationCollection.findOne({_id: new ObjectId(o_id)});
         if(!organizationData) throw 'No organization with that ID'
+
+
+        let commentsDisplay = await Promise.all(organizationData.comments.map(async (comment) => ({
+            comment_id: comment.id,
+            author: await accountsFunctions.getAccountFullName(comment.author),
+            body:comment.body,
+            //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
+            canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
+        })));
+        let reviewsDisplay = await Promise.all(organizationData.reviews.map(async (review) => ({
+            review_id: review.id,
+            author: await accountsFunctions.getAccountFullName(review.author),
+            rating: review.rating,
+            body:review.body,
+            //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
+            canDelete: currentUser_id ? (currentUser_id === review.author || currentUser_id === organizationData.adminAccount) : false,
+        })));
         //this is the stuff we are going to return based on the document.
-        const pageData={
+        const pageData= {
+            adminAccount: organizationData.adminAccount,
             name: organizationData.name,
             bannerImg: organizationData.bannerImg,
             interestCount: organizationData.interestCount,
@@ -34,21 +53,40 @@ const organizationFunctions ={
             description: organizationData.description,
             contact: organizationData.contact,
             link: organizationData.link,
-            comments: organizationData.comments.map((comment)=>({
-                author:comment.author,
-                body:comment.body,
-                //not sure about the page data can delete stuff, because i would need the users ID (currentUser_id) to remove that 
-                canDelete: currentUser_id ? (currentUser_id === comment.author ||  currentUser_id === organizationData.adminAccount) : false,
-            })),
-            reviews: organizationData.reviews.map((review) => ({
-                author:review.author,
-                rating: review.rating,
-                body:review.body,
-                //again not sure what to do about the can delete stuff, because  i would need the users (currentUser_id)  ID to remove that 
-                canDelete: currentUser_id ? (currentUser_id === review.author || currentUser_id === organizationData.adminAccount) : false,
-            }))
+            comments: commentsDisplay,
+            reviews: reviewsDisplay
         };
         return pageData;
+    },
+
+    async getOrganizationName(o_id){
+        //given o_id, get organization info {name, tags, description, bannerImg, contact, link}
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await id_validation.checkOrganizationID(o_id);
+        //get organization
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOne(
+            {_id: new ObjectId(o_id)},
+            {projection: {_id: 1, name: 1}}
+        );
+        if(!organizationData) throw 'No organization with that ID'
+        return o_idRenameField(organizationData);
+    },
+
+    async getOrganizationEditInfo(o_id){
+        //given o_id, get organization info {name, tags, description, bannerImg, contact, link}
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await id_validation.checkOrganizationID(o_id);
+        //get organization
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOne(
+            {_id: new ObjectId(o_id)},
+            {projection: {_id: 1, adminAccount: 1, name: 1, tags: 1, description: 1, bannerImg: 1, contact: 1, link: 1}}
+        );
+        if(!organizationData) throw 'No organization with that ID'
+        return o_idRenameField(organizationData);
     },
 
     async getOrganizationsInterest(o_idList){
@@ -67,13 +105,13 @@ const organizationFunctions ={
         )
         .project({_id: 1, name: 1, interestedAccounts: 1, interestCount: 1})
         .toArray();
-        //turn them id's into strings
+        //turn the id's into strings
         if (organizationsList.length===0) throw "No organizations from the list exists!";
         organizationsList= organizationsList.map((org) =>{
             org._id= org._id.toString();
-            return org;
+            return o_idRenameField(org);
         });
-        return organizationsList
+        return organizationsList;
     },
     
     async getOrganizationsTags(o_idList) {
@@ -96,7 +134,7 @@ const organizationFunctions ={
         if (organizationsList.length===0) throw "No organizations from the list exists!";
         organizationsList = organizationsList.map((org) => {
             org._id = org._id.toString();
-            return org;
+            return o_idRenameField(org);
         });
         return organizationsList;
     },
@@ -160,7 +198,6 @@ const organizationFunctions ={
         interestCount: Number
         description: string
         bannerImg: string (path to image i am assuming we will do it during the post requst part)
-        contact: string
         link: string <- idk if we need to verify if the url is valid
     }
 */
@@ -211,6 +248,7 @@ const organizationFunctions ={
             interestCount:0,
             description:newOrganization.description,
             bannerImg:bannerImg,
+            contact:newOrganization.contact,
             link:link
         };
         //grab collection
@@ -343,8 +381,8 @@ const organizationFunctions ={
 
         o_id= await id_validation.checkOrganizationID(o_id);
         a_id = await id_validation.checkID(a_id,"Account");
-        //to make sure the account exist
-        const user= await accountsFunctions.getAccount(a_id);
+        //add the organization to the account's interestedOrgs
+        const user= await accountsFunctions.addInterestedOrg(a_id, o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!';
         const updateInfo = await organizationCollection.findOneAndUpdate(
@@ -352,6 +390,7 @@ const organizationFunctions ={
             {$inc: {interestCount: 1},$push: {interestedAccounts: a_id}},
             { returnDocument: 'after' }
         );
+
         if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
         //not sure but this seems fine
         return o_id;
@@ -362,8 +401,8 @@ const organizationFunctions ={
 
         o_id= await id_validation.checkOrganizationID(o_id);
         a_id = await id_validation.checkID(a_id,"Account");
-        //to make sure the account exist
-        const user= await accountsFunctions.getAccount(a_id);
+        //remove the organization from the account's interestedOrgs
+        const user= await accountsFunctions.removeInterestedOrg(a_id, o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!';
         //check to see if this account is in the array
