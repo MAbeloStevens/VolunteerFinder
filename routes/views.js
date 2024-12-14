@@ -449,6 +449,7 @@ router.route('/organizations/:o_id/edit').get(async (req, res) => {
       knownTags: knownTags,
       orgTags: orgFound.tags,
       organization: orgFound,
+      o_id: req.params.o_id,
       script_partial: 'editOrg_script'
     });
   } else {

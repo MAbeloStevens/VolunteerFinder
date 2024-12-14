@@ -55,9 +55,10 @@ Handlebars.registerHelper("breaklines", function(textBody) {
 // middleware functions
 
 // not-logged-in and logged-in redirection
-const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/createOrg', '/account/edit', '/account/delete'];
-const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
 app.use('/', async (req, res, next) => {
+    const redirectRoutes_notLoggedIn = ['/account', '/orgAdmin', '/createOrg', '/account/edit', '/account/delete', '/users'];
+    const redirectRoutes_loggedIn = ['/login', '/register', '/not-logged-in'];
+
     // if logged in, set local variable user name for navBar rendering
     if (req.session.user) {
         res.locals.user_name =  `${req.session.user.firstName} ${req.session.user.lastName}`;
@@ -72,6 +73,20 @@ app.use('/', async (req, res, next) => {
     if (req.session.user && redirectRoutes_loggedIn.includes(req.path)) {
         return res.redirect('/');
     } 
+
+    next();
+});
+
+// redirect to not-logged-in if trying to use any api call other than the following
+// ('/session-data').get, ('/users/login').post, ('/users/register').post
+// while not logged in
+app.use('/api', async (req, res, next) => {
+    const allowedRoutes_notLoggedIn = ['/session-data', '/users/login', '/users/register'];
+
+    if (!req.session.user && !allowedRoutes_notLoggedIn.includes(req.path)) {
+        return res.redirect('/not-logged-in');
+    }
+
     next();
 });
 
@@ -84,7 +99,7 @@ app.use('/account/accountPage/:a_id', async (req, res, next) => {
 });
 
 
-//middleware for images
+// middleware for images
 app.use('/createOrg', upload.single('bannerImg'), async(req, res, next)=>{
     try{
         //image is optional so you should be able to go next
@@ -104,6 +119,18 @@ app.use('/organizations/:o_id', async (req, res, next) => {
     if (!req.session.user && orgViews_notLoggedIn.includes(req.path.replace('/organizations/:o_id',''))) {
         return res.redirect('/not-logged-in');
     }
+    next();
+});
+
+// if trying to access the comment delete api route, change the method to delete
+app.use('/api/organizations/:o_id/comment/:comment_id/delete', async (req, res, next) => {
+    req.method = 'DELETE';
+    next();
+});
+
+// if trying to access the review delete api route, change the method to delete
+app.use('/organizations/:o_id/review/:review_id/delete', async (req, res, next) => {
+    req.method = 'DELETE';
     next();
 });
 

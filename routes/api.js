@@ -14,7 +14,7 @@ router.route('/session-data').get(async (req, res) => {
 });
 
 router.route('/users/login').post(async (req, res) => {
-  //TODO: Need DB functions
+  console.log('testing route: /users/login')
   let email = req.body.email;
   let password = req.body.password;
   
@@ -28,7 +28,6 @@ router.route('/users/login').post(async (req, res) => {
     // call db function, rerender page if can't validate
     currentUser = await accountData.getLogInInfo(email, password);
   } catch (e) {
-    console.trace(e);
     res.render('login', {
       title: 'Log in',
       script_partial: 'login_script',
@@ -44,37 +43,96 @@ router.route('/users/login').post(async (req, res) => {
 })
 
 router.route('/users/register').post(async (req, res) => {
-  //TODO: replace with saving entry to database
-  // validate inputs
+  // validate body inputs for register (see the handlebars file for variable names)
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // call createAccount
+  // if successful, redirect to '/login'
+  // if any errors, render error page passing error message
 
-  // create user in database
-
-  // redirect to login
+  // IMPLEMENT ME
   res.send(req.body)
 })
 
-router.route('/users').patch(async (req, res) => {
-  //TODO: replace with saving entry to database
+router.route('/users').patch(async (req, res) => {  
+  // validate body inputs for editAccount (see the handlebars file for variable names)
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // call updateAccount
+  // if successful, redirect to '/account'
+  // if any errors, render error page passing error message
+
+  // IMPLEMENT ME
   res.send(req.body)
 })
 
-router.route('/search').post(async (req, res) => {
-  res.send(req.body);
+router.route('/users').delete(async (req, res) =>{
+  // call deleteAccount for current user
+  // IMPLEMENT ME
+
+  // destroy session
+  req.session.destroy((e) => {
+    if (e) {
+      res.status(500).render('error', {
+        title: "Error",
+        ecode: 500,
+        error: e
+      });
+    } else {
+      delete res.locals.user_name;
+      // render account deletion confirmation page
+      res.render('deletionConfirmation', {
+        title: "Account Deleted",
+        wasAccount: true,
+      });
+    }
+  });
 });
 
-router.route('/createOrg').post(async (req, res) => {
+router.route('/search').post(async (req, res) => {
+  // body parameters: searchTxt (string), tags (list of strings), anyOrAll (string of value 'any' or 'all')
+  // searchTxt can be the empty string, tags can be undefined
+
+  // call the organization db function getSearchResults(searchTxt, tags, anyOrAll)
+  // the result will be a list of o_ids, and can be the empty list
+  
+  // map the result so each item is a projection of the result getOrganizationsInterest
+  // IMPORTANT NOTE: this is an async function, so you need to await for all of them
+  // it's a little tricky, but here is how I did it for an array of comment ids using 'await Promise.all'
+    // let commentsDisplay = await Promise.all(comments.map(getCommentProjection));
+    // /* where getCommentProjection is an async function */
+  
+  // return as res.json({searchResults: ListOfProjections});
+  // the case where it is the empty list will be handled by the ajax, so dont worry about that, just do the map and return the json
+  
   // IMPLEMENT ME
   res.send(req.body);
 });
 
-router.route('/organization/:o_id').patch(async (req, res) => {
-  // when a user clicks Interested
+router.route('/createOrg').post(async (req, res) => {
+  // validate body inputs
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // put the inputs into an object to work with the db function
+  // call createOrganziation, see the organizations.js data file for how to construct the input object
+  // if successful, add the orgainization to the current user's account (addOrganizationForAccount)
+    // if that errored, you need to delete the organization from the db (deleteOrganization)
+      // (if you error out of deletion, just render the error page with this error)
+    // then after successfully deleting, render the error page with the error that happened from addOrganizationForAccount
+
+  // if successfully created organization and added it to the admin's account, then redirect to that organization's page
+
+  // IMPLEMENT ME
+  res.send(req.body);
+});
+
+// functionality on organization page when a user clicks Interested button
+router.route('/organizations/:o_id').patch(async (req, res) => {
+  // if current user is not logged in, reroute to not logged in
+  // validate o_id
   // req.body.interested (boolean)
   // if true, get the current user and o_id and call org function for setting interested
   // if false, get the current user and o_id and call org function for remove interested
-  // if did not error, reroute to get method for this route
   // if did error, load error page
   // if current user is not logged in, reroute to not logged in
+  // if successful, reredirect to this organizations page (cannot use this route as it has /api in front of it)
 
 
   //check if user is logged 
@@ -122,51 +180,52 @@ router.route('/organization/:o_id').patch(async (req, res) => {
 
 });
 
+router.route('/organizations/:o_id').delete(async (req, res) =>{
+  // get the organization's adminAccount
+  // display error page if user is not the organization admin
+  // otherwise, call deleteOrganization
+  res.send("IMPLEMENT ME");
+
+  // if successful, redirect to render deletion confirmation page (just uncomment this block below)
+
+  // render organization deletion confirmation page if successfully deleted
+  // res.render('deletionConfirmation', {
+  //   title: "Organization Deleted",
+  //   wasAccount: false,
+  // });
+});
+
+router.route('/organizations/:o_id/edit').patch(async (req, res) => {
+  // validate body inputs for editOrg (see the handlebars file for variable names)
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // call updateOrganization
+  // if successful, reload the orgainization's page '/organizations/:o_id'
+  // if any errors, render error page passing error message
+
+  // IMPLEMENT ME
+  res.send(req.body);
+});
+
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
-  //TODO Replace with saving comment to database
+  // validate body inputs for createComment (see the handlebars file for variable names)
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // call createComment
+  // if successful, reload the orgainization's page '/organizations/:o_id'
+  // if any errors, render error page passing error message
+
+  // IMPLEMENT ME
   res.send(req.body);
 });
 
 router.route('/organizations/:o_id/review').post(async (req, res) => {
-  //TODO Replace with saving review to database
+  // validate body inputs for createReview (see the handlebars file for variable names)
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // call createReview
+  // if successful, reload the orgainization's page '/organizations/:o_id'
+  // if any errors, render error page passing error message
+
+  // IMPLEMENT ME
   res.send(req.body);
-});
-
-router.route('/account/edit').post(async (req, res) => {
-  // TODO update account db based on new info
-  res.send("IMPLEMENT ME");
-});
-
-router.route('/users').delete(async (req, res) =>{
-  //TODO Delete the account by a_id of the currently logged in user
-
-  // destroy session
-  req.session.destroy((e) => {
-    if (e) {
-      res.status(500).render('error', {
-        title: "Error",
-        ecode: 500,
-        error: e
-      });
-    } else {
-      delete res.locals.user_name;
-      // render account deletion confirmation page
-      res.render('deletionConfirmation', {
-        title: "Account Deleted",
-        wasAccount: true,
-      });
-    }
-  });
-});
-
-router.route('/organizations/:o_id').delete(async (req, res) =>{
-  //TODO Delete the organization by o_id of the currently logged in user
-  
-  // render organization deletion confirmation page
-  res.render('deletionConfirmation', {
-    title: "Organization Deleted",
-    wasAccount: false,
-  });
 });
 
 router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{
