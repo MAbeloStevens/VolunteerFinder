@@ -11,7 +11,9 @@
     {{#if owner}}
     <a id="editOrgBtn" href="/organizations/{{o_id}}/edit"><button>Edit Page</button></a>
     {{/if}}
-    <button id="interestBtn" {{#if userIsInterested}}class="interested"{{/if}}> {{organization.interestCount}} Interested </button>
+    <form class="interestedBtnForm" method="patch" action="/api/organizations/:o_id">
+        <button id="interestBtn" {{#if userIsInterested}}class="interested"{{/if}}> {{organization.interestCount}} Interested </button>
+    </form>
 
     <div class="orgTags">
         <h2>Tags</h2>
