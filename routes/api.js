@@ -64,6 +64,29 @@ router.route('/users').patch(async (req, res) => {
   res.send(req.body)
 })
 
+router.route('/users').delete(async (req, res) =>{
+  // call deleteAccount for current user
+  // IMPLEMENT ME
+
+  // destroy session
+  req.session.destroy((e) => {
+    if (e) {
+      res.status(500).render('error', {
+        title: "Error",
+        ecode: 500,
+        error: e
+      });
+    } else {
+      delete res.locals.user_name;
+      // render account deletion confirmation page
+      res.render('deletionConfirmation', {
+        title: "Account Deleted",
+        wasAccount: true,
+      });
+    }
+  });
+});
+
 router.route('/search').post(async (req, res) => {
   // body parameters: searchTxt (string), tags (list of strings), anyOrAll (string of value 'any' or 'all')
   // searchTxt can be the empty string, tags can be undefined
@@ -134,29 +157,6 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
 
   // IMPLEMENT ME
   res.send(req.body);
-});
-
-router.route('/users').delete(async (req, res) =>{
-  // call deleteAccount for current user
-  // IMPLEMENT ME
-
-  // destroy session
-  req.session.destroy((e) => {
-    if (e) {
-      res.status(500).render('error', {
-        title: "Error",
-        ecode: 500,
-        error: e
-      });
-    } else {
-      delete res.locals.user_name;
-      // render account deletion confirmation page
-      res.render('deletionConfirmation', {
-        title: "Account Deleted",
-        wasAccount: true,
-      });
-    }
-  });
 });
 
 router.route('/organizations/:o_id').delete(async (req, res) =>{
