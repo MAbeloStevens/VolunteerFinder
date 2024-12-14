@@ -3,15 +3,15 @@
     <div class="textInputs">
       <label for="name">
         Organization Name
-        <input required type="text" name="name" id="name" value="{{organization.name}}">
+        <input type="text" name="name" id="name" value="{{organization.name}}">
       </label>
     </div>
 
     <label for="description">Description</label>
-    <textarea required type="text" name="description">{{organization.description}}</textarea>
+    <textarea type="text" name="description">{{organization.description}}</textarea>
 
     <label for="contact">Contact Info</label>
-    <textarea required type="text" name="contact">{{organization.contact}}</textarea>
+    <textarea type="text" name="contact">{{organization.contact}}</textarea>
 
     <div class="textInputs">
       <label>
@@ -42,7 +42,7 @@
         <input class="centered" type="file" id="bannerImg" name="bannerImg" accept="image/*" value="{{organization.bannerImg}}">
     </div>
 
-    <button type="submit">Create Organization</button>
+    <button type="submit">Update Organization</button>
   </form>
   
   <a href="/orgAdmin">
