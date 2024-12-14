@@ -119,6 +119,10 @@ app.use('/organizations/:o_id', async (req, res, next) => {
     if (!req.session.user && orgViews_notLoggedIn.includes(req.path.replace('/organizations/:o_id',''))) {
         return res.redirect('/not-logged-in');
     }
+    // only allow not logged in users to get the page
+    if (req.method !== 'GET'){
+        return res.redirect('/not-logged-in');
+    }
     next();
 });
 

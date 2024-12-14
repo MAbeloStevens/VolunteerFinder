@@ -14,7 +14,7 @@ router.route('/session-data').get(async (req, res) => {
 });
 
 router.route('/users/login').post(async (req, res) => {
-  console.log('testing route: /users/login')
+  console.log('testing route: /users/login') //----------------------------DELETE THIS
   let email = req.body.email;
   let password = req.body.password;
   
@@ -127,25 +127,17 @@ router.route('/createOrg').post(async (req, res) => {
 router.route('/organizations/:o_id').patch(async (req, res) => {
   // if current user is not logged in, reroute to not logged in
   // validate o_id
-  // req.body.interested (boolean)
-  // if true, get the current user and o_id and call org function for setting interested
-  // if false, get the current user and o_id and call org function for remove interested
+  // if false, get the current user and o_id and call org function for setting interested
+  // if true, get the current user and o_id and call org function for remove interested
   // if did error, load error page
   // if current user is not logged in, reroute to not logged in
   // if successful, reredirect to this organizations page (cannot use this route as it has /api in front of it)
-
-
-  //check if user is logged 
-  if (!req.session.user) {
-    res.redirect('/not-logged-in');
-    return;
-  }
   
   //validate o_id
   var o_id = req.params.o_id;
 
   try {
-    o_id = id_validation(req.params.o_id);
+    o_id = await id_validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
     res.status(400).render('error', {
       title: "Error",
@@ -157,20 +149,18 @@ router.route('/organizations/:o_id').patch(async (req, res) => {
 
   //get current user 
   const currentUser = req.session.user;
-  const interested = req.body.interested;
+  const interested = await accountData.isAccountInterested(currentUser.a_id, o_id);
 
   try {
     //call org function for setting/removing interested
     if(interested) {
-      await organizationData.addInterestedAccount(o_id, currentUser.a_id);
-    } else {
       await organizationData.removeInterestedAccount(o_id, currentUser.a_id);
+    } else {
+      await organizationData.addInterestedAccount(o_id, currentUser.a_id);
     }
-
     //redirect to org page
-    res.redirect(`/organization/${o_id}`);
+    res.redirect(`/organizations/${o_id}`);
   } catch(e) {
-    console.trace(e);
     res.status(500).render('error', {
       title: "Error",
       ecode: 500,
