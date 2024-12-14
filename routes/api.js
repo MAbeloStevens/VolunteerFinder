@@ -82,12 +82,12 @@ router.route('/organization/:o_id').patch(async (req, res) => {
     res.redirect('/not-logged-in');
     return;
   }
-  
+
   //validate o_id
   var o_id = req.params.o_id;
 
   try {
-    o_id = id_validation(req.params.o_id);
+    o_id = id_validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
     res.status(400).render('error', {
       title: "Error",
@@ -124,7 +124,33 @@ router.route('/organization/:o_id').patch(async (req, res) => {
 
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
   //TODO Replace with saving comment to database
-  res.send(req.body);
+  try {
+    //validate o_id
+    const o_id = await id_validation.checkOrganizationID(req.params.o_id);
+
+    //checks if user is logged in 
+    if (!req.session.user) {
+      res.redirect('/not-logged-in');
+      return;
+    }
+
+    //get comment body
+    const commentBody = await validation.checkComment(req.body);
+
+    //create comment 
+    const comment = await commentData.createComment(o_id, req.session.user.a_id, commentBody);
+
+    //redirect to org page with comment
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    console.trace(e);
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/review').post(async (req, res) => {
