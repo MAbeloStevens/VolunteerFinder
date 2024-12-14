@@ -1,3 +1,4 @@
+const fs = require('fs');
 const validation = {
 
     async checkName(organizationName){
@@ -137,8 +138,14 @@ const validation = {
         if (typeof password!=='string') throw 'Password must be a string';
         if (password.length < 8) throw 'Password must be at least 8 characters long';
         return password
-    }
+    },
 
+    async validateFile(imagePath){
+        if(!fs.existsSync(imagePath)){
+            throw "Image does not exist"
+        }
+        return imagePath
+    }
 };
 
 export default validation;
