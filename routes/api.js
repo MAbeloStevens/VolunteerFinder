@@ -74,11 +74,52 @@ router.route('/organization/:o_id').patch(async (req, res) => {
   // if false, get the current user and o_id and call org function for remove interested
   // if did not error, reroute to get method for this route
   // if did error, load error page
-
   // if current user is not logged in, reroute to not logged in
 
-  // IMPLEMENT ME
-  res.send(req.body);
+
+  //check if user is logged 
+  if (!req.session.user) {
+    res.redirect('/not-logged-in');
+    return;
+  }
+  
+  //validate o_id
+  var o_id = req.params.o_id;
+
+  try {
+    o_id = id_validation(req.params.o_id);
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
+
+  //get current user 
+  const currentUser = req.session.user;
+  const interested = req.body.interested;
+
+  try {
+    //call org function for setting/removing interested
+    if(interested) {
+      await organizationData.addInterestedAccount(o_id, currentUser.a_id);
+    } else {
+      await organizationData.removeInterestedAccount(o_id, currentUser.a_id);
+    }
+
+    //redirect to org page
+    res.redirect(`/organization/${o_id}`);
+  } catch(e) {
+    console.trace(e);
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+  }
+
 });
 
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
