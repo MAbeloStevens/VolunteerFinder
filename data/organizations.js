@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
-import { organizations } from "../config/mongoCollections.js";
+import { accounts, organizations } from "../config/mongoCollections.js";
+import { o_idRenameField } from "../helpers/helpers.js";
 import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
-import { o_idRenameField } from "../helpers/helpers.js";
 import accountsFunctions from "./accounts.js";
 import knownTagsFunctions from './knownTags.js';
 
@@ -259,19 +259,28 @@ const organizationFunctions ={
         return insertOrganization.insertedId.toString() //not sure, will change this
     },
 
-    async getRecommendedOrgs(tags){
+    async getRecommendedOrgs(tags, a_id){
         //Given list of tags, return list of o_ids for the top 10 organizations. Prioritizing organizations with more matching tags, then of higher interest count (call the function getRecommendedOrgs(tags)) 
 
         if(!tags) throw  'Organization tags are not provided, please input tags!'
         if(!Array.isArray(tags)) throw "Organization tags must be type array"
         if (tags.length === 0) throw "Please provide tags!" //could be return []
+        
+        if(!a_id) throw 'Account id is not provided, please input ID!'
+        a_id = await id_validation.checkID(a_id,"Account");
         //validate these tags 
         tags= await validation.checkTags(tags)
         tags= validation.properCaseTags(tags)
+        const accountCollection = await accounts()
+        if(!accountCollection) throw 'Failed to connect to organization collection'; 
+        const accountInfo = await accountCollection.findOne({_id: new ObjectId(a_id)})
+        const excludedOrgIds = accountInfo.interestedOrgs
         const organizationCollection= await organizations()
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         let organizationsList= await organizationCollection
         .aggregate([
+            //excludes prexisting organizations 
+            {$match: {_id: {$nin: excludedOrgIds.map(id => new ObjectId(id))}}},
             //basically makes a field seeing how many of tags match  in the organization to the list 
             {$addFields:{numberOfTagsMatch: {$size: {$setIntersection: ["$tags", tags]}}}}, 
             //first sort by number of matching tags then by interest count
