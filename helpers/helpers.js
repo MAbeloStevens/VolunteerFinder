@@ -61,5 +61,5 @@ const upload= multer({storage:storage,
     limits:{fileSize: 5* 1024 * 1024}
 });
 
-export { a_idRenameField, a_idRenameField, getCookie, o_idRenameField, o_idRenameField, upload };
+export { a_idRenameField, getCookie, o_idRenameField, o_idRenameField, upload };
 
