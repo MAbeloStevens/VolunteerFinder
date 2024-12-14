@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { accounts, organizations } from "../config/mongoCollections.js";
+import file_validation from "../helpers/file_validation.js";
 import { o_idRenameField } from "../helpers/helpers.js";
 import id_validation from "../helpers/id_validation.js";
-import file_validation from "../helpers/file_validation.js";
 import validation from '../helpers/validation.js';
 import accountsFunctions from "./accounts.js";
 import knownTagsFunctions from './knownTags.js';
@@ -255,39 +255,49 @@ const organizationFunctions ={
 */
     async createOrganziation(newOrganization){
         //these are the required fields, check to see if those exist
-        if(newOrganization.adminAccount===undefined) throw "Organization admin account required!";
-        if(newOrganization.name===undefined) throw "Organization name required!";
-        if(newOrganization.tags===undefined) throw "Organization tags required!";
-        if(newOrganization.description===undefined) throw "Organization description required!";
-        if(newOrganization.contact===undefined) throw "Organization contact information required!";
-    
-        //validation checks for required fields
-        newOrganization.adminAccount= await id_validation.checkAdminAccount(newOrganization.adminAccount);
-        newOrganization.name= await validation.checkName(newOrganization.name);
-        newOrganization.tags= await validation.checkTags(newOrganization.tags);
-        const allTags = await knownTagsFunctions.getKnownTags();
-        //TODO need to check if at least 1 tag is in knownTags
-        newOrganization.tags = validation.properCaseTags(newOrganization.tags)
-        const containsKnownTags = newOrganization.tags.filter((tag) => allTags.includes(tag))
-        if(containsKnownTags.length===0) throw "Must include one tag from known tags"
-    
-        newOrganization.description= await validation.checkDescription(newOrganization.description);
-        newOrganization.contact = await validation.checkContact(newOrganization.contact);
-    
         let bannerImg= undefined;
-        //optional fields
-        if(newOrganization.bannerImg!==undefined) {
-            //this should be a file object, we will be using some middleware named Multer during the route to put this file 
-            try{
-                bannerImg= await file_validation.validateFile(newOrganization.bannerImg);
-            }catch(e){
-                throw `Image validation failed: ${e}`;
+        let link= undefined;
+        try{
+            if(newOrganization.adminAccount===undefined) throw "Organization admin account required!";
+            if(newOrganization.name===undefined) throw "Organization name required!";
+            if(newOrganization.tags===undefined) throw "Organization tags required!";
+            if(newOrganization.description===undefined) throw "Organization description required!";
+            if(newOrganization.contact===undefined) throw "Organization contact information required!";
+        
+            //validation checks for required fields
+            newOrganization.adminAccount= await id_validation.checkAdminAccount(newOrganization.adminAccount);
+            newOrganization.name= await validation.checkName(newOrganization.name);
+            newOrganization.tags= await validation.checkTags(newOrganization.tags);
+            const allTags = await knownTagsFunctions.getKnownTags();
+            //TODO need to check if at least 1 tag is in knownTags
+            newOrganization.tags = validation.properCaseTags(newOrganization.tags)
+            const containsKnownTags = newOrganization.tags.filter((tag) => allTags.includes(tag))
+            if(containsKnownTags.length===0) throw "Must include one tag from known tags"
+        
+            newOrganization.description= await validation.checkDescription(newOrganization.description);
+            newOrganization.contact = await validation.checkContact(newOrganization.contact);
+        
+
+            //optional fields
+            if(newOrganization.bannerImg!==undefined) {
+                //this should be a file object, we will be using some middleware named Multer during the route to put this file 
+                try{
+                    bannerImg= await file_validation.validateFile(newOrganization.bannerImg);
+                }catch(e){
+                    throw `Image validation failed: ${e}`;
+                }
+            }
+            
+            if(newOrganization.link!==undefined) {
+                link= await validation.checkLink(newOrganization.link);
             }
         }
-        
-        let link= undefined;
-        if(newOrganization.link!==undefined) {
-            link= await validation.checkLink(newOrganization.link);
+        catch(e){
+            if(newOrganization.bannerImg){
+                const deleteImg = await file_validation.deleteFile(newOrganization.bannerImg)
+
+            }
+            throw (e)
         }
         const organization={
             adminAccount:newOrganization.adminAccount,
@@ -411,14 +421,18 @@ const organizationFunctions ={
         // Update the organization in the database
         const organizationCollection = await organizations();
         if (!organizationCollection) throw 'Failed to connect to organization collection.';
+        const orginalInfo = await organizationCollection.findOned({_id: new ObjectId(o_id)})
+        if(!orginalInfo) throw "Could not find organization!"
         const updateInfo = await organizationCollection.findOneAndUpdate(
             { _id: new ObjectId(o_id) },
             { $set: updateFields },
             { returnDocument: 'after' }
         );
-    
         if (updateInfo.modifiedCount === 0) throw 'Could not update the organization successfully.';
         //not sure but this seems fine
+        if(!orginalInfo.bannerImg){
+            const deleteImg= await file_validation(orginalInfo.bannerImg);
+        }
         return o_id;
     },
         
@@ -430,6 +444,9 @@ const organizationFunctions ={
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const organizationData =  await organizationCollection.findOneAndDelete({_id: new ObjectId(o_id)});
         if(!organizationData) throw 'Cannot delete organization';
+        if(organizationData.bannerImg){
+            const deleteImg = await file_validation.deleteFile(organizationData.bannerImg);
+        }
         return `${organizationData.name} have been successfully deleted!`;
     },
 

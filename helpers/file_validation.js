@@ -6,6 +6,14 @@ const file_validation = {
             throw "Image does not exist"
         }
         return imagePath
+    },
+    async deleteFile(imagePath){
+        fs.unlink(imagePath, (err)=>{
+            if(err){
+                throw "Error deleting bannerImg";
+            }
+        })
+        return true;
     }
 };
 export default file_validation;
