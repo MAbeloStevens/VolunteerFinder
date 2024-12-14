@@ -66,7 +66,24 @@ router.route('/users').patch(async (req, res) => {
 
 router.route('/users').delete(async (req, res) =>{
   // call deleteAccount for current user
-  // IMPLEMENT ME
+  try{
+    // check if user is logged in
+    if(!req.session.user){
+      res.redirect('/not-logged-in');
+    }
+
+    //validate and delete account based on a_id
+    const a_id = await id_validation.checkID(req.session.user.a_id, 'Account');
+    await accountData.deleteAccount(a_id);
+    
+  } catch(e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
 
   // destroy session
   req.session.destroy((e) => {
