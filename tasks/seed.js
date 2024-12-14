@@ -32,7 +32,7 @@ try{
 // Create accounts we will be makring 4 different accounts for the groups members
 let Mark, Larc, Kendell, Kush
 try {
-    Mark = await accountData.createAccount('Mark', 'Abelo', ' Mabelo_123', ['Animals', 'Children','Elderly','Community'], 'mabelo@stevens.edu', '1234567890');
+    Mark = await accountData.createAccount('Mark', 'Abelo', 'Mabelo_123', ['Animals', 'Children','Elderly','Community'], 'mabelo@stevens.edu', '1234567890');
 } catch(e) {
     console.log(`Error creating Mark's Account:`, e);
 }
@@ -57,10 +57,10 @@ const catsOrg = {
     adminAccount:Mark,
     name: "Care For Cats",
     tags: [ 'Animals', 'Community'],
-    description: 'Here at Care For Cats, we rescue and foster stray cats and cats in unsustainable housing.\n\
-    We then find their forever homes with willing cat parents.\n\Join Care For Cats to help those sweet fur babies.',
+    description: 'Here at Care For Cats, we rescue and foster stray cats and cats in unsustainable housing.\r\n\
+    We then find their forever homes with willing cat parents.\r\nJoin Care For Cats to help those sweet fur babies.',
     //bannerImg : '/public/images/careforcats.jpg', Still needs implementing
-    contact: 'volunteers@care4cats.org\n228-228-2287',
+    contact: 'volunteers@care4cats.org\r\n228-228-2287',
     link: "https://www.care4cats.org/home",
 }
 const homelessOrg = {
@@ -69,7 +69,7 @@ const homelessOrg = {
     tags: ['LGBTQ+', 'Homeless', 'Human Rights', 'Community'],
     description: "Shelter & Pride is an organization dedicated to providing support and safe spaces for LGBTQ+ individuals facing homelessness. We focus on offering resources, advocacy, and community to ensure that every LGBTQ+ person has access to the support they deserve.",
     //bannerImg : '/public/images/shelterandpride.jpg', Still needs implementing
-    contact: 'contact@shelterandpride.org\n(555) 678-9012',
+    contact: 'contact@shelterandpride.org\r\n(555) 678-9012',
     link: "https://www.shelterandpride.org",
 }
 
@@ -86,9 +86,19 @@ try{
     console.log(`Error creating Kush's organization:`, e);
 }
 
-// TODO: We also need to make a data functions to add an organization to a user's account 
+//add an organization to a user's account 
+try{
+    const addOrgToMark=await accountData.addOrganizationForAccount(Mark,insertOrgMark)
+}catch(e){
+    console.log(`Error adding Org to Mark's account:`, e);
+}
+try{
+    const addOrgToKush = await accountData.addOrganizationForAccount(Kush,insertOrgKush);
+}catch(e){
+    console.log(`Error creating Kush's organization:`, e);
+}
 
-//updating orgs to add these accounts in their interested list
+// updating orgs to add these accounts in their interested list, which also adds itself to the account, list
 try{
     const addInterestedAccountMarkOrg1 = await organizationData.addInterestedAccount(insertOrgMark,Kendell)
 }catch(e){
@@ -108,28 +118,6 @@ try{
     const addInterestedAccountMarkOrg2 = await organizationData.addInterestedAccount(insertOrgKush,Mark)
 }catch(e){
     console.log(`Error adding Mark as an interested account to Kush's organization:`, e);
-}
-
-//updating accounts to add these orgs in their interested List
-try{
-    const addInterestOrgMark = await accountData.updateAccount(Mark,undefined,undefined,undefined,undefined,[insertOrgKush],undefined,undefined)
-}catch(e){
-    console.log(`Error adding Kush's Org as an interested Org to Mark's Account:`, e);
-}
-try{
-    const addInterestOrgLarc = await accountData.updateAccount(Larc,undefined,undefined,undefined,undefined,[insertOrgKush],undefined,undefined)
-}catch(e){
-    console.log(`Error adding Kush's Org as an interested Org to Larc's Account:`, e);
-}
-try{
-    const addInterestOrgMark = await accountData.updateAccount(Kush,undefined,undefined,undefined,undefined,[insertOrgMark],undefined,undefined)
-}catch(e){
-    console.log(`Error adding Mark's Org as an interested Org to Kush's Account:`, e);
-}
-try{
-    const addInterestOrgMark = await accountData.updateAccount(Kendell,undefined,undefined,undefined,undefined,[insertOrgMark],undefined,undefined)
-}catch(e){
-    console.log(`Error adding Mark's Org as an interested Org to Kendell's Account:`, e);
 }
 
 //add comments to the two organizations

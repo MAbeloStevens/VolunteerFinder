@@ -1,13 +1,13 @@
 <form id="registrationForm" method="post" action="/api/users?_method=PATCH">
-  <div id="textInputs">
+  <div class="textInputs">
     <label>
       First Name
-      <input required type="" name="firstName" value="{{user.firstName}}">
+      <input type="" name="firstName" value="{{user.firstName}}">
     </label>
 
     <label>
       Last Name
-      <input required type="" name="lastName" value="{{user.lastName}}">
+      <input type="" name="lastName" value="{{user.lastName}}">
     </label>
 
 
@@ -30,7 +30,7 @@
     </select>
   </div>
 
-  <div>
+  <div class="centered">
     <input id="addTagInput">
     <button type="button" id="addTagButton">Add Tag</button>
   </div>

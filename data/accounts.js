@@ -1,21 +1,32 @@
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
-import { accounts } from '../config/mongoCollections.js';
+import { accounts, organizations } from '../config/mongoCollections.js';
 import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
 const saltRounds = 10;
 const accountsFunctions = {
 
-    async getAccountIdandPassword(email) {
-        //given a string email, return the associated user's a_id and password
-        //TODO
+    async getLogInInfo(email, password) {
+        //given a string email and password, get the account asssociated with the email and bcrypt compare the hashed passwords
+        //if cannot validate, throw error saying the email or password is invalid
+        //if valid return {a_id, firstName, lastName}
         if(!email) throw  'email is not provided, please input email!'
         email = await validation.checkEmail(email);
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({email: email});
-        if(!accountData) throw 'No account with that email'
-        return {a_id: accountData._id, password: accountData.password};
+        if(!password) throw  'password is not provided, please input password!'
+        password = await validation.checkPassword(password);
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne(
+            {email: email},
+            {projection: {_id: 1, password: 1, firstName: 1, lastName: 1}}
+        );
+        // email not found
+        if(!accountData) throw 'Either the email or password is invalid';
+        // validate password
+        const match = await bcrypt.compare(password, accountData.password);
+        if (match){
+            return {a_id: accountData._id, firstName: accountData.firstName, lastName: accountData.lastName};
+        } else throw 'Either the email or password is invalid';
     },
 
     async getAccount(a_id) {
@@ -26,7 +37,18 @@ const accountsFunctions = {
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
-        return accountData;
+
+        const returnData = {
+            a_id: accountData._id,
+            firstName: accountData.firstName,
+            lastName: accountData.lastName,
+            tags: accountData.tags,
+            interestedOrgs: accountData.interestedOrgs,
+            organizations: accountData.organizations,
+            email: accountData.email,
+            phone: accountData.phone
+        };
+        return returnData;
     },
 
     async getAccountNames(a_ids) {
@@ -89,7 +111,7 @@ const accountsFunctions = {
         const result = await accountsInfo.insertOne({
             firstName: firstName, 
             lastName: lastName, 
-            passwordHash: password, 
+            password: password, 
             tags: tags, 
             interestedOrgs: interestedOrgs, 
             organizations: organizations, 
@@ -208,13 +230,144 @@ const accountsFunctions = {
         //given a_id, return account data {tage, interestedOrgs}
         if(!a_id) throw 'Account ID is required!';
         a_id = await id_validation.checkID(a_id,"Account");
-        const accounts = await accounts();
-        if(!accounts) throw 'Failed to connect to accounts collection';
-        const accountData = await accounts.findOne({_id: new ObjectId(a_id)});
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         return {tags: accountData.tags, interestedOrgs: accountData.interestedOrgs};
-    }
+    },
 
+    async getAccountFullName(a_id) {
+        //given a_id, return full name of the account
+        if(!a_id) throw 'Account ID is required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID';
+        return {a_id: accountData._id.toString(), firstName: accountData.firstName, lastName: accountData.lastName}
+    },
+
+    async getAccountOrganizations(a_id) {
+        //given a_id, return all organizations the account is associated with
+        if(!a_id) throw 'Account ID is required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        return accountData.organizations;
+    },
+
+    async addOrganizationForAccount(a_id, o_id) {
+        //given a_id and o_id, push the o_id into the account's organizations list. Return {orgAdded: true} if successful, error otherwise.
+        if(!a_id ||!o_id) throw 'Account ID and Organization ID are required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //updating
+        const updatedOrganizations = [...accountData.organizations, o_id];
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {organizations: updatedOrganizations}});
+        //checks for if the update was successful
+        if(result.modifiedCount === 0) throw 'Failed to add organization!';
+        return {orgAdded: true};
+    },
+
+    async removeOrganizationForAccount(a_id, o_id){
+        //given a_id and o_id, remove the o_id from the account's organizations list. Return {orgRemoved: true} if successful, error otherwise.
+        if(!a_id ||!o_id) throw 'Account ID and Organization ID are required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //removing (we'll filter the organization list to only keep orgs that o_id does not equal the given o_id since the org list is just a list of o_ids)
+        const updatedOrganizations = accountData.organizations.filter(org => org.toString()!== o_id);
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {organizations: updatedOrganizations}});
+        //checks for if the removal was successful
+        if(result.modifiedCount === 0) throw 'Failed to remove organization!';
+        return {orgRemoved: true};
+        
+    },
+
+    async addInterestedOrg(a_id, o_id){
+        // IMPORTANT NOTE: This is automatically called in organizations.removeInterestedAccount() and shouldn't be called seperately
+        //given a_id and o_id, push the o_id into the account's interestedOrgs list. Return {orgAdded: true} if successful, error otherwise.
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //updating
+        const updatedInterestedOrgs = [...accountData.interestedOrgs, o_id];
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {interestedOrgs: updatedInterestedOrgs}});
+        //checks for if the update was successful
+        if(result.modifiedCount === 0) throw 'Failed to add organization!';
+        return {orgAdded: true};
+    },
+
+    async removeInterestedOrg(a_id, o_id){
+        // IMPORTANT NOTE: This is automatically called in organizations.removeInterestedAccount() and shouldn't be called seperately
+        //given a_id and o_id, remove the o_id from the account's interestedOrgs list. Return {orgRemoved: true} if successful, error otherwise.
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+        //check for the account's existance
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID'
+        //check if organization exists 
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
+        if(!existingOrganization) throw 'No organization with that ID'
+        //removing (same method as removeOrganization)
+        const updatedInterestedOrgs = accountData.interestedOrgs.filter(org => org.toString()!== o_id);
+        const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {interestedOrgs: updatedInterestedOrgs}});
+        //checks for if the removal was successful
+        if(result.modifiedCount === 0) throw 'Failed to remove organization!';
+        return {orgRemoved: true};
+    },
+
+    async isAccountInterested(a_id, o_id) {
+        // returns true if the o_id is in the account's interestedOrg list
+        if(!a_id ||!o_id) throw 'Account ID and Organization ID are required!';
+        a_id = await id_validation.checkID(a_id,"Account");
+        o_id = await id_validation.checkOrganizationID(o_id);
+
+        const accountsInfo = await accounts();
+        if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne(
+            {_id: new ObjectId(a_id)},
+            {projection: {interestedOrgs: 1}}
+        );
+        if(!accountData) throw 'No account with that ID';
+
+        return accountData.interestedOrgs.includes(o_id);
+    }
 
 }
 export default accountsFunctions;

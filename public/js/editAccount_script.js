@@ -1,5 +1,3 @@
-import validation from '/validation';
-
 // Add tag button
 const addTagButton = document.getElementById("addTagButton");
 const addTagInput = document.getElementById("addTagInput");
@@ -31,3 +29,29 @@ addTagButton.addEventListener('click', (evt) => {
     errorMessage.innerText = `Input Error: ${e}`;
   }
 });
+
+
+// Validation
+
+const registrationForm = document.getElementById("registrationForm")
+
+registrationForm.addEventListener('submit', (evt) => {
+  if (!errorDiv.hidden) {
+    errorDiv.hidden = true;
+  }
+
+  try {
+    if (registrationForm.firstName.value.trim() === "") {
+      throw `First Name is required`
+    }
+    if (registrationForm.lastName.value.trim() === "") {
+      throw `Last Name is required`
+    }
+    
+  } catch (e) {
+    errorDiv.hidden = false;
+    errorMessage.innerText = e;
+    evt.preventDefault()
+  }
+
+})

@@ -1,3 +1,4 @@
+
 // Add tag button
 const addTagButton = document.getElementById("addTagButton")
 const addTagInput = document.getElementById("addTagInput")
@@ -32,35 +33,28 @@ addTagButton.addEventListener('click', (evt) => {
 
 // Confirm Password Validation
 
-const registrationForm = document.getElementById("registrationForm")
-const password = document.getElementById("password")
-const confirmPassword = document.getElementById("confirmPassword")
+const createOrgForm = document.getElementById("createOrgForm")
 
-registrationForm.addEventListener('submit', (evt) => {
+createOrgForm.addEventListener('submit', (evt) => {
   if (!errorDiv.hidden) {
     errorDiv.hidden = true;
   }
 
   try {
-    if (password.value !== confirmPassword.value) {
-      throw `Passwords must match`
+    if (createOrgForm.name.value === "") {
+      throw `Organization name is required`
     }
-    if (registrationForm.firstName.value.trim() === "") {
-      throw `First Name is required`
+    if (createOrgForm.description.value === "") {
+      throw `Organization description is required`
     }
-    if (registrationForm.lastName.value.trim() === "") {
-      throw `Last Name is required`
+    if (createOrgForm.contact.value === "") {
+      throw `Organization contact is required`
     }
-    if (registrationForm.password.value.trim() === "") {
-      throw `Password is required`
+    if (![...createOrgForm.tags.querySelectorAll("option")].some((tag) => {return tag.selected})) {
+      throw `Please select a tag for your organization` 
     }
-    if (registrationForm.email.value.trim() === "") {
-      throw `Email is required`
-    }
-    if ( !/^\w+@\w+\.\w+$/.test(registrationForm.email.value.trim()) ) {
-      throw `Email must be in valid format.`
-    }
-    
+
+
   } catch (e) {
     errorDiv.hidden = false;
     errorMessage.innerText = e;

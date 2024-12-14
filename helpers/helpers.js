@@ -1,3 +1,4 @@
+
 // gets a cookie by name by parsing through document cookies 
 import multer from "multer";
 import path from "path";
@@ -9,9 +10,18 @@ function getCookie(name) { /// SWITCHED TO EXPRESS-SESSION, DONT NEED THIS ANYMO
         if (cookie.startsWith(name + '=')) {
         return decodeURIComponent(cookie.substring(name.length + 1));
         }
+
+// given an object containing field _id, returns the same object with that field renamed to a_id 
+function a_idRenameField(obj) {
+    const newObj = {};
+    for (let k of Object.keys(obj)){
+        if (k === '_id') newObj['a_id'] = obj[k];
+        else newObj[k] = obj[k];
+
     }
-    return null; // Cookie not found
+    return newObj;
 };
+
 
 const storage = multer.diskStorage({
     destination: (req,file,cb) =>{
@@ -40,4 +50,17 @@ const upload= multer({storage:storage,
 });
 
 export { getCookie, upload };
+
+
+// given an object containing field _id, returns the same object with that field renamed to o_id 
+function o_idRenameField(obj) {
+    const newObj = {};
+    for (let k of Object.keys(obj)){
+        if (k === '_id') newObj['o_id'] = obj[k];
+        else newObj[k] = obj[k];
+    }
+    return newObj;
+};
+
+export { a_idRenameField, o_idRenameField };
 

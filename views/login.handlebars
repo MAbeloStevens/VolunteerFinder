@@ -1,11 +1,11 @@
 <div class="centered">
   <form id="loginForm" method="post" action="/api/users/login">
-    <div id="textInputs" class="centered">
+    <div class="centered textInputs">
       <label for="email">Email 
-        <input required type="email" name="email">
+        <input name="email">
       </label>
       <label for="password">Password
-        <input required type="password" name="password">
+        <input type="password" name="password">
       </label>
     </div>
     <button>Login</button>
@@ -14,7 +14,13 @@
   <p>Don't have an account? <a href="/register"><button>Register</button></a></p>
 </div>
 
+{{#if error}}
+<div id="errorDiv" class="errors centered">
+  <p id="errorMessage">{{error}}</p>
+</div>
+{{else}}
 <div id="errorDiv" class="errors centered" hidden>
   <p id="errorMessage"></p>
 </div>
+{{/if}}
 

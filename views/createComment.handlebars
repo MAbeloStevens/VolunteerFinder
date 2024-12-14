@@ -1,11 +1,15 @@
 <div class="centered">
   <form id="commentForm" method="post" action="/api/organizations/{{organization.o_id}}/comment">
     <h3>Write Comment for "{{organization.name}}"</h3>
-    <textarea required name="comment"></textarea>
+    <textarea name="comment"></textarea>
     <button>Post</button>
   </form>
 
   <a href="/organizations/{{organization.o_id}}">
     <button>Back to "{{organization.name}}"</button>
   </a>
+</div>
+
+<div id="errorDiv" class="errors centered" hidden>
+  <p id="errorMessage"></p>
 </div>
