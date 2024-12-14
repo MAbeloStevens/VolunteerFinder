@@ -442,7 +442,7 @@ router.route('/organizations/:o_id/edit').get(async (req, res) => {
   }
 
   // only show the page if the current user is the organization admin
-  if (req.session.user && req.session.user === orgFound.adminAccount) {
+  if (req.session.user && req.session.user.a_id === orgFound.adminAccount) {
     res.render('editOrg', {
       title: 'Edit Organization',
       knownTags: knownTags,
