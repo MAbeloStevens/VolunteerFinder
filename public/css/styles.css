@@ -222,6 +222,15 @@ form *{
     margin-bottom: 2px;
 }
 
+form.interestedBtnForm {
+    border: none;
+    vertical-align: none;
+    margin: 0;
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+}
+
 #interestBtn.interested:hover,
 button {
     border: solid 2px var(--btn-color);

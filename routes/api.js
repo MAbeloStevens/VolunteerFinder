@@ -87,7 +87,7 @@ router.route('/users').delete(async (req, res) =>{
   });
 });
 
-router.route('/search').post(async (req, res) => {
+router.route('/search').get(async (req, res) => {
   // body parameters: searchTxt (string), tags (list of strings), anyOrAll (string of value 'any' or 'all')
   // searchTxt can be the empty string, tags can be undefined
 
