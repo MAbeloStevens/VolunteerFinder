@@ -10,7 +10,8 @@ function getCookie(name) { /// SWITCHED TO EXPRESS-SESSION, DONT NEED THIS ANYMO
         if (cookie.startsWith(name + '=')) {
         return decodeURIComponent(cookie.substring(name.length + 1));
         }
-
+    }
+}
 // given an object containing field _id, returns the same object with that field renamed to a_id 
 function a_idRenameField(obj) {
     const newObj = {};
@@ -22,7 +23,17 @@ function a_idRenameField(obj) {
     return newObj;
 };
 
+// given an object containing field _id, returns the same object with that field renamed to o_id 
+function o_idRenameField(obj) {
+    const newObj = {};
+    for (let k of Object.keys(obj)){
+        if (k === '_id') newObj['o_id'] = obj[k];
+        else newObj[k] = obj[k];
+    }
+    return newObj;
+};
 
+//this is the stuff for the image thing, i am not entirely sure how this works
 const storage = multer.diskStorage({
     destination: (req,file,cb) =>{
         //should save files to public/images
@@ -36,6 +47,7 @@ const storage = multer.diskStorage({
     }
 });
 
+//this will will actually upload the image
 const upload= multer({storage:storage,
     fileFilter:async (req, file, cb)=>{
         try{
@@ -49,18 +61,5 @@ const upload= multer({storage:storage,
     limits:{fileSize: 5* 1024 * 1024}
 });
 
-export { getCookie, upload };
-
-
-// given an object containing field _id, returns the same object with that field renamed to o_id 
-function o_idRenameField(obj) {
-    const newObj = {};
-    for (let k of Object.keys(obj)){
-        if (k === '_id') newObj['o_id'] = obj[k];
-        else newObj[k] = obj[k];
-    }
-    return newObj;
-};
-
-export { a_idRenameField, o_idRenameField };
+export { a_idRenameField, a_idRenameField, getCookie, o_idRenameField, o_idRenameField, upload };
 

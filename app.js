@@ -84,7 +84,7 @@ app.use('/account/accountPage/:a_id', async (req, res, next) => {
 
 
 //middleware for images
-app.use('/organizations/createOrg', upload.single('bannerImg'), async(req, res, next)=>{
+app.use('/createOrg', upload.single('bannerImg'), async(req, res, next)=>{
     try{
         //image is optional so you should be able to go next
         if(!req.file){

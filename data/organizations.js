@@ -334,8 +334,7 @@ const organizationFunctions ={
         let processedBannerImg = undefined;
         if (bannerImg !== undefined) {
             try {
-                await validation.checkImg(bannerImg);
-                processedBannerImg = `/public/images/${bannerImg.filename}`;
+                processedBannerImg = await validation.validateFile(bannerImg);
             } catch (e) {
                 throw `Image validation failed: ${e}`;
             }
