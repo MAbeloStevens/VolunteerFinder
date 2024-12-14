@@ -137,6 +137,21 @@ router.route('/organization/:o_id').patch(async (req, res) => {
   res.send(req.body);
 });
 
+router.route('/organizations/:o_id').delete(async (req, res) =>{
+  // get the organization's adminAccount
+  // display error page if user is not the organization admin
+  // otherwise, call deleteOrganization
+  res.send("IMPLEMENT ME");
+
+  // if successful, redirect to render deletion confirmation page (just uncomment this block below)
+
+  // render organization deletion confirmation page if successfully deleted
+  // res.render('deletionConfirmation', {
+  //   title: "Organization Deleted",
+  //   wasAccount: false,
+  // });
+});
+
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
   // validate body inputs for createComment (see the handlebars file for variable names)
   // if any errors, just render the error page, don't worry about rerendering the form to display the errors
@@ -157,21 +172,6 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
 
   // IMPLEMENT ME
   res.send(req.body);
-});
-
-router.route('/organizations/:o_id').delete(async (req, res) =>{
-  // get the organization's adminAccount
-  // display error page if user is not the organization admin
-  // otherwise, call deleteOrganization
-  res.send("IMPLEMENT ME");
-
-  // if successful, redirect to render deletion confirmation page (just uncomment this block below)
-
-  // render organization deletion confirmation page if successfully deleted
-  // res.render('deletionConfirmation', {
-  //   title: "Organization Deleted",
-  //   wasAccount: false,
-  // });
 });
 
 router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{
