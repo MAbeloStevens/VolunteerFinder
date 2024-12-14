@@ -139,6 +139,22 @@ const organizationFunctions ={
         return organizationsList;
     },
 
+    async getSearchResults(searchString, tags, anyOrAll){
+        // return a list of organization ids as a result of searching
+        // if searchString is "", then only search by tags
+        // if tags is undefined, only search by searchString
+        // if both are undefined return an empty list []
+
+        // if tags is provided, then anyOrAll will have the value 'any' or 'all'. Depending on which, call the releated WithTags function
+        // from the result of that, filter out organization ids with names that at least contain searchString as a substring
+        // capitalization should not matter
+        // ex. organization named "Care For Cats" should show up in results for searchStrings ('Care', 'Cat', 'cat' ,'car')
+
+        // if tags is undefined, then search the db directly with the same criteria
+        
+        // return the result as a list of organization ids
+    },
+
     async getOrganizationsWithTags(tags){
         //Given list of tags, return a list of organization ids that contain ANY of the tags
         //this is some error checking 

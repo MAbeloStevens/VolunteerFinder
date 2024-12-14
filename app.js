@@ -44,6 +44,7 @@ Handlebars.registerHelper("nameApostrophe", function(name) {
     return (name + '\'s');
 });
 
+// given text body containing line breaks, exchanges those for html <br>
 Handlebars.registerHelper("breaklines", function(textBody) {
     textBody = Handlebars.Utils.escapeExpression(textBody);
     textBody = textBody.replace(/(\r\n|\n|\r)/gm, '<br>');
