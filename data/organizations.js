@@ -227,8 +227,7 @@ const organizationFunctions ={
         if(newOrganization.bannerImg!==undefined) {
             //this should be a file object, we will be using some middleware named Multer during the route to put this file 
             try{
-                await validation.checkImg(newOrganization.bannerImg);
-                bannerImg=`/public/images/${newOrganization.bannerImg.filename}`;
+                bannerImg= await validation.validateFile(newOrganization.bannerImg);
             }catch(e){
                 throw `Image validation failed: ${e}`;
             }
@@ -372,7 +371,6 @@ const organizationFunctions ={
         return o_id;
     },
         
-
     async deleteOrganization(o_id){
         //delete Organization given o_id
         if(!o_id) throw  'Organization id is not provided, please input ID!'

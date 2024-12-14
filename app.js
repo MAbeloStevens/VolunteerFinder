@@ -1,11 +1,12 @@
 import express from 'express';
 const app = express();
 
-import configRoutes from './routes/index.js';
-import session from 'express-session';
 import exphbs from 'express-handlebars';
+import session from 'express-session';
 import Handlebars from 'handlebars';
 import methodOverride from 'method-override';
+import { upload } from './helpers/helpers.js';
+import configRoutes from './routes/index.js';
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -81,6 +82,21 @@ app.use('/account/accountPage/:a_id', async (req, res, next) => {
     next();
 });
 
+
+//middleware for images
+app.use('/organizations/createOrg', upload.single('bannerImg'), async(req, res, next)=>{
+    try{
+        //image is optional so you should be able to go next
+        if(!req.file){
+            return res.status(200).json({message: 'No file uploaded, proceed without image'})
+        }
+        res.json({ message: 'File uploaded successfully!', filePath: req.file.path });
+    }catch(e){
+        res.status(400).json({ error: e.message });
+    }
+    next()
+})
+
 // if you are trying to comment, review, edit or delete an organization, while not logged in, redirect to not-logged-in
 app.use('/organizations/:o_id', async (req, res, next) => {
     const orgViews_notLoggedIn = ['/edit', '/delete', '/comment', '/review']
@@ -89,6 +105,7 @@ app.use('/organizations/:o_id', async (req, res, next) => {
     }
     next();
 });
+
 
 configRoutes(app);
 
