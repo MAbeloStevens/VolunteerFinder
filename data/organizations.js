@@ -153,6 +153,41 @@ const organizationFunctions ={
         // if tags is undefined, then search the db directly with the same criteria
         
         // return the result as a list of organization ids
+        if((!searchString ||searchString.trim().length===0) &&(!tags || tags.length===0)){
+            return [];
+        }
+        let organizationsList =[];
+        //this grabs all the search ones
+        if(searchString && searchString.trim().length>0){
+            searchString=searchString.trim().toLowerCase()
+            const organizationCollection= await organizations();
+            if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+            organizationsList= await organizationCollection.find(
+                {name: {$regex: searchString, $options:'i'}}
+            ).toArray();
+        }
+        else if(tags && tags.length>0){
+            //tag entries
+            let tagSearchResults=[]
+            if (anyOrAll==="any"){
+                tagSearchResults= await this.getOrganizationsWithTags(tags)
+            }
+            else if(anyOrAll==="all"){
+                tagSearchResults= await this.getOrganizationsWithAllTags(tags)
+            }
+            else{
+                throw "Invalid value for anyOrAll. Expected 'any' or 'all'";
+            } 
+            //now we need to filter it out
+            if(searchString && searchString.trim().length>0){
+                const searchSet = new Set(organizationsList.map((org)=> org._id.toString()));
+                organizationsList= tagSearchResults.filter((org)=>searchSet.has(org._id.toString()));
+            }
+            else{
+                organizationsList= tagSearchResults
+            }
+        }
+        return organizationsList.map((org) =>org._id= org._id.toString());
     },
 
     async getOrganizationsWithTags(tags){
