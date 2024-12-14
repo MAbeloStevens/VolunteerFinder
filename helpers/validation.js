@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 const validation = {
 
     async checkName(organizationName){
@@ -154,13 +152,6 @@ const validation = {
         if (password.length < 8) throw 'Password must be at least 8 characters long';
         return password
     },
-
-    async validateFile(imagePath){
-        if(!fs.existsSync(imagePath)){
-            throw "Image does not exist"
-        }
-        return imagePath
-    }
 };
 
 export default validation;
