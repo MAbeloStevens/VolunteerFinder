@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
-import { accounts } from '../config/mongoCollections.js';
-import { organizations } from '../config/mongoCollections.js';
+import { accounts, organizations } from '../config/mongoCollections.js';
 import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
 const saltRounds = 10;
@@ -271,9 +270,9 @@ const accountsFunctions = {
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         //check if organization exists 
-        const organizations = await organizations();
-        if(!organizations) throw 'Failed to connect to organizations collection';
-        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
         if(!existingOrganization) throw 'No organization with that ID'
         //updating
         const updatedOrganizations = [...accountData.organizations, o_id];
@@ -294,9 +293,9 @@ const accountsFunctions = {
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         //check if organization exists 
-        const organizations = await organizations();
-        if(!organizations) throw 'Failed to connect to organizations collection';
-        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
         if(!existingOrganization) throw 'No organization with that ID'
         //removing (we'll filter the organization list to only keep orgs that o_id does not equal the given o_id since the org list is just a list of o_ids)
         const updatedOrganizations = accountData.organizations.filter(org => org.toString()!== o_id);
@@ -318,9 +317,9 @@ const accountsFunctions = {
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         //check if organization exists 
-        const organizations = await organizations();
-        if(!organizations) throw 'Failed to connect to organizations collection';
-        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
         if(!existingOrganization) throw 'No organization with that ID'
         //updating
         const updatedInterestedOrgs = [...accountData.interestedOrgs, o_id];
@@ -341,9 +340,9 @@ const accountsFunctions = {
         const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
         if(!accountData) throw 'No account with that ID'
         //check if organization exists 
-        const organizations = await organizations();
-        if(!organizations) throw 'Failed to connect to organizations collection';
-        const existingOrganization = await organizations.findOne({_id: new ObjectId(o_id)});
+        const organizationsCollection = await organizations();
+        if(!organizationsCollection) throw 'Failed to connect to organizations collection';
+        const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
         if(!existingOrganization) throw 'No organization with that ID'
         //removing (same method as removeOrganization)
         const updatedInterestedOrgs = accountData.interestedOrgs.filter(org => org.toString()!== o_id);
