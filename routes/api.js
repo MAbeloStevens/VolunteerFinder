@@ -124,7 +124,7 @@ router.route('/createOrg').post(async (req, res) => {
 });
 
 // functionality on organization page when a user clicks Interested button
-router.route('/organization/:o_id').patch(async (req, res) => {
+router.route('/organizations/:o_id').patch(async (req, res) => {
   // if current user is not logged in, reroute to not logged in
   // validate o_id
   // req.body.interested (boolean)
@@ -150,6 +150,17 @@ router.route('/organizations/:o_id').delete(async (req, res) =>{
   //   title: "Organization Deleted",
   //   wasAccount: false,
   // });
+});
+
+router.route('/organizations/:o_id/edit').patch(async (req, res) => {
+  // validate body inputs for editOrg (see the handlebars file for variable names)
+  // if any errors, just render the error page, don't worry about rerendering the form to display the errors
+  // call updateOrganization
+  // if successful, reload the orgainization's page '/organizations/:o_id'
+  // if any errors, render error page passing error message
+
+  // IMPLEMENT ME
+  res.send(req.body);
 });
 
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
