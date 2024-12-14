@@ -55,14 +55,14 @@ const accountsFunctions = {
         //given a list of user's a_ids, return each associated user's a_id, firstName, and lastName
         if(!a_ids || a_ids.length===0) throw 'No account ids from the list exists!';
         //validates each a_id in the list
-        a_ids = a_ids.map(async (id) => {
+        a_ids = await Promise.all(a_ids.map(async (id) => {
             id = await id_validation.checkID(id,"Account");
             return id;
-        });
+        }));
         const accountsInfo = await accounts();
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
         //search for each account for each a_id
-        const accountData = await accountsInfo.find({_id: {$in: a_ids}}).toArray();
+        const accountData = await accountsInfo.find({_id: {$in: a_ids.map(a_id => new ObjectId(a_id))}}).toArray();
         if(accountData.length!== a_ids.length) throw 'Not all account ids exist!'
         return accountData.map((account) => ({a_id: account._id, firstName: account.firstName, lastName: account.lastName}));
     },

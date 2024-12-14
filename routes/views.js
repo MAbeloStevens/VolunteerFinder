@@ -1,8 +1,8 @@
-import { Router } from 'express'
+import { Router } from 'express';
 const router = Router();
 
+import { accountData, knownTagsData, organizationData } from '../data/index.js';
 import id_validation from '../helpers/id_validation.js';
-import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
 
 
 router.route('/').get(async (req, res) => {
@@ -11,8 +11,9 @@ router.route('/').get(async (req, res) => {
   if(req.session.user) {
     // get user data
     let userData = await accountData.getAccountDisplayData(req.session.user.a_id);
-    // get user recommended orgs
-    recommendedOrgs = await organizationData.getOrganizationsTags(await organizationData.getRecommendedOrgs(userData.tags));
+    const listOfTags= await organizationData.getRecommendedOrgs(userData.tags,req.session.user.a_id)
+    // get user recommended orgs , (adding a_id here)
+    recommendedOrgs = await organizationData.getOrganizationsTags(listOfTags);
   }
 
   // get most interested orgs
@@ -197,10 +198,10 @@ router.route('/orgAdmin').get(async (req, res) => {
     let ownedOrgs = await organizationData.getOrganizationsInterest(user_organizations);
 
     // for all organizations in the list, map interestedAccounts to be the projection returned by getAccountNames
-    ownedOrgs = ownedOrgs.map(async (org) => {
+    ownedOrgs = await Promise.all(ownedOrgs.map(async (org) => {
       org.interestedAccounts = await accountData.getAccountNames(org.interestedAccounts);
       return org;
-    });
+    }));
 
     // render page
     res.render('orgAdmin', {
