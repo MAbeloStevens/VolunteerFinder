@@ -428,9 +428,22 @@ const organizationFunctions ={
         o_id= await id_validation.checkOrganizationID(o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        // get admin account
+        const admin = await this.getOrganizationAdminAccount(o_id);
+        // remove the account organization from the account
+        const deleteFromAccount=await accountData.removeOrganizationForAccount(admin, o_id);
+        // delete the organization
         const organizationData =  await organizationCollection.findOneAndDelete({_id: new ObjectId(o_id)});
         if(!organizationData) throw 'Cannot delete organization';
+<<<<<<< Updated upstream
         return `${organizationData.name} have been successfully deleted!`;
+=======
+        if(organizationData.bannerImg!==null){
+            const validateFile= await file_validation.validateFile(orginalInfo.bannerImg)
+            const deleteImg= await file_validation.deleteFile(orginalInfo.bannerImg);
+        }
+        return `${organizationData.name} has been successfully deleted!`;
+>>>>>>> Stashed changes
     },
 
     async addInterestedAccount(o_id, a_id){
