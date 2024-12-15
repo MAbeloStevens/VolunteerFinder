@@ -1,9 +1,9 @@
-import { Router } from 'express'
+import { Router } from 'express';
 const router = Router();
 
-import validation from '../helpers/validation.js';
+import { accountData, organizationData } from '../data/index.js';
 import id_validation from '../helpers/id_validation.js';
-import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
+import validation from '../helpers/validation.js';
 
 router.route('/session-data').get(async (req, res) => {
   if (req.session.user) {
@@ -118,9 +118,85 @@ router.route('/createOrg').post(async (req, res) => {
     // then after successfully deleting, render the error page with the error that happened from addOrganizationForAccount
 
   // if successfully created organization and added it to the admin's account, then redirect to that organization's page
-
-  // IMPLEMENT ME
-  res.send(req.body);
+  let orgInfo = req.body;
+  if(!orgInfo || Object.keys(orgInfo).length === 0){
+    return res.status(500).render("error",
+      {
+        title: "Error",
+        ecode: 400,
+        error: "Please input required fields",
+      });
+  }
+  const fields= [
+    {key:'name', message: "Organization name is missing"},
+    {key:'tags', message: "Organization tags are missing"},
+    {key:'description', message: "Organization description is missing"},
+    {key:'contact', message:"Organization contact information is missing"},
+  ]
+  for (const field of fields){
+    if(!orgInfo[field.key]){
+      return res.status(400).render("error",{
+        title: "Error",
+        ecode: 400,
+        error: field.message,
+      });
+    }
+  }
+  //validation checks
+  try{
+    orgInfo.name = await validation.checkName(orgInfo.name);
+    orgInfo.tags= await validation.checkTags(orgInfo.tags);
+    orgInfo.description= await validation.checkDescription(orgInfo.description)
+    orgInfo.contact= await validation.checkContact(orgInfo.contact)
+    orgInfo.adminAccount= req.session.user.a_id
+    
+    //optional link 
+    if(orgInfo.link){
+      orgInfo.link = await validation.checkLink(orgInfo.link)
+    }
+    //this is the image path 
+    if(req.file && req.file.path){
+      orgInfo.bannerImg= req.file.path
+    }
+  }catch(e){
+    return res.status(400).render("error",{
+      title: "Error",
+      ecode: 400,
+      error: e,
+    });
+  }
+  //time to add it to the db 
+  let newOrg= undefined;
+  try{
+    newOrg= await organizationData.createOrganziation(orgInfo);
+  }catch(e){
+    return res.status(500).render("error",{
+      title: "Error",
+      ecode: 500,
+      error: e,
+    });
+  }
+  try{
+    const addOrgToAccount=await accountData.addOrganizationForAccount(orgInfo.adminAccount,newOrg)
+  }catch(e){
+    //delete org
+    try{
+      const deleteOrg= await organizationData.deleteOrganization(newOrg)
+    }catch(e){
+      return res.status(500).render("error",{
+        title: "Error",
+        ecode: 500,
+        error: e,
+      });
+    }
+    //return error
+    return res.status(500).render("error",{
+      title: "Error",
+      ecode: 500,
+      error: e,
+    });
+  }
+  return res.redirect(`/organizations/${newOrg}`);
 });
 
 // functionality on organization page when a user clicks Interested button
@@ -132,24 +208,42 @@ router.route('/organizations/:o_id').patch(async (req, res) => {
   // if false, get the current user and o_id and call org function for remove interested
   // if did error, load error page
   // if successful, reredirect to this organizations page (cannot use this route as it has /api in front of it)
-
   // IMPLEMENT ME
   res.send(req.body);
 });
 
+///api/organizations/{{o_id}}?_method=DELETE
 router.route('/organizations/:o_id').delete(async (req, res) =>{
   // get the organization's adminAccount
   // display error page if user is not the organization admin
   // otherwise, call deleteOrganization
-  res.send("IMPLEMENT ME");
+  console.log("wtf2");
+  let o_id=req.params.o_id;
+  try{
+    o_id = await id_validation.checkOrganizationID(o_id);
+    const adminAccount= getOrganizationAdminAccount(o_id);
+    if(adminAccount!==req.session.user.a_id){
+      return res.status(400).render("error",{
+        title: "Error",
+        ecode: 500,
+        error: "User is not Organization admin",
+      });
+    }
+    const removed =  organizationData.deleteOrganization(o_id);
+    // if successful, redirect to render deletion confirmation page (just uncomment this block below)
+    // render organization deletion confirmation page if successfully deleted
+    res.render('deletionConfirmation', {
+      title: "Organization Deleted",
+      wasAccount: false,
+    });
 
-  // if successful, redirect to render deletion confirmation page (just uncomment this block below)
-
-  // render organization deletion confirmation page if successfully deleted
-  // res.render('deletionConfirmation', {
-  //   title: "Organization Deleted",
-  //   wasAccount: false,
-  // });
+  }catch(e){
+    return res.status(400).render("error",{
+      title: "Error",
+      ecode: 500,
+      error: e,
+    });
+  }
 });
 
 router.route('/organizations/:o_id/edit').patch(async (req, res) => {
@@ -160,7 +254,68 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
   // if any errors, render error page passing error message
 
   // IMPLEMENT ME
-  res.send(req.body);
+  let o_id= req.params.o_id;
+  let orgInfo = req.body;
+  if(!orgInfo || Object.keys(orgInfo).length === 0){
+    return res.status(500).render("error",
+      {
+        title: "Error",
+        ecode: 400,
+        error: "Please input required fields",
+      });
+  }
+  const fields= [
+    {key:'name', message: "Organization name is missing"},
+    {key:'tags', message: "Organization tags are missing"},
+    {key:'description', message: "Organization description is missing"},
+    {key:'contact', message:"Organization contact information is missing"},
+  ]
+  for (const field of fields){
+    if(!orgInfo[field.key]){
+      return res.status(400).render("error",{
+        title: "Error",
+        ecode: 400,
+        error: field.message,
+      });
+    }
+  }
+  //validation checks
+  try{
+    o_id = await id_validation.checkOrganizationID(o_id);
+    orgInfo.name = await validation.checkName(orgInfo.name);
+    orgInfo.tags= await validation.checkTags(orgInfo.tags);
+    orgInfo.description= await validation.checkDescription(orgInfo.description)
+    orgInfo.contact= await validation.checkContact(orgInfo.contact)
+    orgInfo.adminAccount= req.session.user.a_id
+    
+    //optional link 
+    if(orgInfo.link){
+      orgInfo.link = await validation.checkLink(orgInfo.link)
+    }
+    //this is the image path 
+    if(req.file && req.file.path){
+      orgInfo.bannerImg= req.file.path
+    }
+  }catch(e){
+    return res.status(400).render("error",{
+      title: "Error",
+      ecode: 400,
+      error: e,
+    });
+  }
+  //time to update it
+  let updateOrg= undefined;
+  try{
+    updateOrg= await organizationData.updateOrganization(o_id,orgInfo.name, orgInfo.tags, orgInfo.bannerImg, orgInfo.description, orgInfo.contact, orgInfo.link);
+  }
+  catch(e){
+    return res.status(500).render("error",{
+      title: "Error",
+      ecode: 500,
+      error: e,
+    });
+  }
+  return res.redirect(`/organizations/${updateOrg}`);
 });
 
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
