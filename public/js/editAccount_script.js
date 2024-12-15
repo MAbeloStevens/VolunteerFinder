@@ -1,4 +1,5 @@
-// Add tag button
+import validation from '/validation';
+
 const addTagButton = document.getElementById("addTagButton");
 const addTagInput = document.getElementById("addTagInput");
 const tagSelection = document.getElementById("tagSelection");
@@ -35,18 +36,19 @@ addTagButton.addEventListener('click', (evt) => {
 
 const registrationForm = document.getElementById("registrationForm")
 
-registrationForm.addEventListener('submit', (evt) => {
+registrationForm.addEventListener('submit', async (evt) => {
   if (!errorDiv.hidden) {
     errorDiv.hidden = true;
   }
 
   try {
-    if (registrationForm.firstName.value.trim() === "") {
-      throw `First Name is required`
-    }
-    if (registrationForm.lastName.value.trim() === "") {
-      throw `Last Name is required`
-    }
+    await validation.checkName(registrationForm.firstName.value)
+    await validation.checkName(registrationForm.lastName.value)
+    await validation.checkPhone(registrationForm.phone.value) // Required
+
+    const tagSelection = document.getElementById("tagSelection")
+    const selectedTags = Array.from(tagSelection.selectedOptions).map(option => option.value)
+    await validation.checkTags(selectedTags) // Required
     
   } catch (e) {
     errorDiv.hidden = false;

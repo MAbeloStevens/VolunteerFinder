@@ -16,7 +16,8 @@
     <div class="textInputs">
       <label>
         External Link
-        <input type="url" name="link" id="link" placeholder="https://example.org">
+        <input name="link" id="link" placeholder="https://example.org">
+        {{!-- Removed type="url" to remove the html validation in place of clientside validation --}}
       </label>
     </div>
 

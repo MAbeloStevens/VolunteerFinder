@@ -48,6 +48,7 @@ router.route('/users/login').post(async (req, res) => {
 })
 
 router.route('/users/register').post(async (req, res) => {
+  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   // validate body inputs for register (see the handlebars file for variable names)
   // if any errors, just render the error page, don't worry about rerendering the form to display the errors
   // call createAccount
@@ -60,6 +61,7 @@ router.route('/users/register').post(async (req, res) => {
 
 router.route('/users')
 .patch(async (req, res) => {  
+  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   // validate body inputs for editAccount (see the handlebars file for variable names)
   // if any errors, just render the error page, don't worry about rerendering the form to display the errors
   // call updateAccount
@@ -178,6 +180,7 @@ router.route('/search').post(async (req, res) => {
 });
 
 router.route('/createOrg').post(async (req, res) => {
+  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   // validate body inputs
   // if any errors, just render the error page, don't worry about rerendering the form to display the errors
   // put the inputs into an object to work with the db function
@@ -306,6 +309,7 @@ router.route('/organizations/:o_id')
   }
 })
 .patch(async (req, res) => {
+  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   // if current user is not logged in, reroute to not logged in
   // validate o_id
   // if false, get the current user and o_id and call org function for setting interested
