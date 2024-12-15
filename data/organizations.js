@@ -75,6 +75,21 @@ const organizationFunctions ={
         return o_idRenameField(organizationData);
     },
 
+    async getOrganizationCommentsReviews(o_id){
+        // given o_id, get the organization's comment and review lists {o_id, comments, reviews}
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id= await id_validation.checkOrganizationID(o_id);
+        //get organization
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        const organizationData =  await organizationCollection.findOne(
+            {_id: new ObjectId(o_id)},
+            {projection: {_id: 1, comments: 1, reviews: 1}}
+        );
+        if(!organizationData) throw 'No organization with that ID'
+        return o_idRenameField(organizationData);
+    },
+
     async getOrganizationEditInfo(o_id){
         //given o_id, get organization info {name, tags, description, bannerImg, contact, link}
         if(!o_id) throw  'Organization id is not provided, please input ID!'
