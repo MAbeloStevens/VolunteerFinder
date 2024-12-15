@@ -296,7 +296,7 @@ const organizationFunctions ={
         
             //validation checks for required fields
             newOrganization.adminAccount= await id_validation.checkAdminAccount(newOrganization.adminAccount);
-            newOrganization.name= await validation.checkName(newOrganization.name);
+            newOrganization.name= await validation.checkName(newOrganization.name, 'organization name');
             newOrganization.tags= await validation.checkTags(newOrganization.tags);
             const allTags = await knownTagsFunctions.getKnownTags();
             //TODO need to check if at least 1 tag is in knownTags
@@ -414,7 +414,7 @@ const organizationFunctions ={
         //checking ID name, and tags, description and contact since they are required.
         if (!o_id) throw 'Organization ID is not provided. Please input a valid ID!';
         o_id = await id_validation.checkOrganizationID(o_id);
-        name = await validation.checkName(name);
+        name = await validation.checkName(name, 'orgaanization name');
         tags = await validation.checkTags(tags);
         const allTags = await knownTagsFunctions.getKnownTags();
         //ensure at least one tag is in knownTags

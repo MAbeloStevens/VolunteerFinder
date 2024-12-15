@@ -42,7 +42,7 @@ createOrgForm.addEventListener('submit', async (evt) => {
 
   try {
 
-    await validation.checkName(createOrgForm.name.value) // Changed the validation functionality to cater to specific names
+    await validation.checkName(createOrgForm.name.value, 'organization name') // Changed the validation functionality to cater to specific names
     await validation.checkDescription(createOrgForm.description.value)
     await validation.checkContact(createOrgForm.contact.value) 
     

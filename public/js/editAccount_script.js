@@ -42,8 +42,8 @@ registrationForm.addEventListener('submit', async (evt) => {
   }
 
   try {
-    await validation.checkName(registrationForm.firstName.value)
-    await validation.checkName(registrationForm.lastName.value)
+    await validation.checkName(registrationForm.firstName.value, 'first name')
+    await validation.checkName(registrationForm.lastName.value, 'last name')
     await validation.checkPhone(registrationForm.phone.value) // Required
 
     const tagSelection = document.getElementById("tagSelection")

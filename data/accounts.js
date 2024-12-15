@@ -81,8 +81,8 @@ const accountsFunctions = {
         phone: string (optional)
         */
         if(!firstName ||!lastName ||!password || !email) throw 'First name, last name, email, and password are required!';
-        firstName = await validation.checkName(firstName);
-        lastName = await validation.checkName(lastName);
+        firstName = await validation.checkName(firstName, 'first Name');
+        lastName = await validation.checkName(lastName, 'last Name');
         //password hashing
         password = await validation.checkPassword(password);
         password = await bcrypt.hash(password, saltRounds);
@@ -143,14 +143,14 @@ const accountsFunctions = {
         if(a_firstName) 
         {
             //validated a_firstName
-            a_firstName = await validation.checkName(a_firstName);
+            a_firstName = await validation.checkName(a_firstName, 'first Name');
             updateDoc.firstName = a_firstName;
         }
 
         if(a_lastName)
         {
             //validated a_lastName
-            a_lastName = await validation.checkName(a_lastName);
+            a_lastName = await validation.checkName(a_lastName, 'last Name');
             updateDoc.lastName = a_lastName;
         } 
 
