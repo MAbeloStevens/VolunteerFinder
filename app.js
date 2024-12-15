@@ -1,16 +1,15 @@
 import express from 'express';
-const app = express();
-
 import exphbs from 'express-handlebars';
 import session from 'express-session';
 import Handlebars from 'handlebars';
 import methodOverride from 'method-override';
 import { upload } from './helpers/helpers.js';
 import configRoutes from './routes/index.js';
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 // express session config
 app.use(session({
@@ -51,7 +50,10 @@ Handlebars.registerHelper("breaklines", function(textBody) {
     return new Handlebars.SafeString(textBody);
 });
 
-
+app.use((req, res, next) => {
+    console.log(`Method: ${req.method}, URL: ${req.url}`);
+    next();
+  });
 // middleware functions
 
 // not-logged-in and logged-in redirection
@@ -99,17 +101,20 @@ app.use('/account/accountPage/:a_id', async (req, res, next) => {
 
 
 // middleware for images
-app.use('/createOrg', upload.single('bannerImg'), async(req, res, next)=>{
-    try{
-        //image is optional so you should be able to go next
-        if(!req.file){
-            return res.status(200).json({message: 'No file uploaded, proceed without image'})
-        }
-        res.json({ message: 'File uploaded successfully!', filePath: req.file.path });
-    }catch(e){
-        res.status(400).json({ error: e.message });
-    }
-    next()
+// app.use('/api/createOrg', upload.single('bannerImg'), async (req, res, next) => {
+//     try {
+//         if (req.body.bannerImg) {
+//             console.log('File uploaded:', req.body.bannerImg);
+//         }
+//         next();
+//     } catch (e) {
+//         res.status(400).json({ error: e.message });
+//     }
+//     next();
+// });
+
+app.use('/api/createOrg', upload.single('bannerImg'),async(req,res,next)=>{
+    next();
 })
 
 // if you are trying to comment, review, edit or delete an organization, while not logged in, redirect to not-logged-in
@@ -125,6 +130,21 @@ app.use('/organizations/:o_id', async (req, res, next) => {
     next();
 });
 
+app.use('/api/organizations/:o_id', async (req, res, next) => {
+    req.method = 'PATCH';
+    next();
+});
+
+app.use('/api/user', async (req, res, next) => {
+    req.method = 'PATCH';
+    next();
+});
+
+app.use('/api/organizations/:o_id/edit', async (req, res, next) => {
+    req.method = 'PATCH';
+    next();
+});
+
 // if trying to access the comment delete api route, change the method to delete
 app.use('/api/organizations/:o_id/comment/:comment_id/delete', async (req, res, next) => {
     req.method = 'DELETE';
@@ -137,6 +157,22 @@ app.use('/organizations/:o_id/review/:review_id/delete', async (req, res, next) 
     next();
 });
 
+//adds image during edit 
+// app.use('/api/organizations/:o_id/edit', upload.single('bannerImg'), async(req, res, next)=>{
+//     try{
+//         //image is optional so you should be able to go next
+//         if(!req.file){
+//             return res.status(200).json({message: 'No file uploaded, proceed without image'})
+//         }
+//         res.json({ message: 'File uploaded successfully!', filePath: req.file.path });
+//     }catch(e){
+//         res.status(400).json({ error: e.message });
+//     }
+//     next()
+// })
+app.use('/api/organizations/:o_id/edit', upload.single('bannerImg'),async(req,res,next)=>{
+    next();
+})
 
 configRoutes(app);
 
