@@ -1,16 +1,15 @@
 import express from 'express';
-const app = express();
-
 import exphbs from 'express-handlebars';
 import session from 'express-session';
 import Handlebars from 'handlebars';
 import methodOverride from 'method-override';
 import { upload } from './helpers/helpers.js';
 import configRoutes from './routes/index.js';
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 // express session config
 app.use(session({
@@ -78,10 +77,9 @@ app.use('/', async (req, res, next) => {
 });
 
 // redirect to not-logged-in if trying to use any api call other than the following
-// ('/session-data').get, ('/users/login').post, ('/users/register').post
 // while not logged in
 app.use('/api', async (req, res, next) => {
-    const allowedRoutes_notLoggedIn = ['/session-data', '/users/login', '/users/register'];
+    const allowedRoutes_notLoggedIn = ['/session-data', '/users/login', '/users/register', '/search'];
 
     if (!req.session.user && !allowedRoutes_notLoggedIn.includes(req.path)) {
         return res.redirect('/not-logged-in');
@@ -100,23 +98,30 @@ app.use('/account/accountPage/:a_id', async (req, res, next) => {
 
 
 // middleware for images
-app.use('/createOrg', upload.single('bannerImg'), async(req, res, next)=>{
-    try{
-        //image is optional so you should be able to go next
-        if(!req.file){
-            return res.status(200).json({message: 'No file uploaded, proceed without image'})
-        }
-        res.json({ message: 'File uploaded successfully!', filePath: req.file.path });
-    }catch(e){
-        res.status(400).json({ error: e.message });
-    }
-    next()
+// app.use('/api/createOrg', upload.single('bannerImg'), async (req, res, next) => {
+//     try {
+//         if (req.body.bannerImg) {
+//             console.log('File uploaded:', req.body.bannerImg);
+//         }
+//         next();
+//     } catch (e) {
+//         res.status(400).json({ error: e.message });
+//     }
+//     next();
+// });
+
+app.use('/api/createOrg', upload.single('bannerImg'),async(req,res,next)=>{
+    next();
 })
 
 // if you are trying to comment, review, edit or delete an organization, while not logged in, redirect to not-logged-in
 app.use('/organizations/:o_id', async (req, res, next) => {
     const orgViews_notLoggedIn = ['/edit', '/delete', '/comment', '/review']
     if (!req.session.user && orgViews_notLoggedIn.includes(req.path.replace('/organizations/:o_id',''))) {
+        return res.redirect('/not-logged-in');
+    }
+    // only allow not logged in users to get the page
+    if (req.method !== 'GET'){
         return res.redirect('/not-logged-in');
     }
     next();
@@ -129,11 +134,33 @@ app.use('/api/organizations/:o_id/comment/:comment_id/delete', async (req, res, 
 });
 
 // if trying to access the review delete api route, change the method to delete
-app.use('/organizations/:o_id/review/:review_id/delete', async (req, res, next) => {
+app.use('/api/organizations/:o_id/review/:review_id/delete', async (req, res, next) => {
     req.method = 'DELETE';
     next();
 });
 
+//adds image during edit 
+// app.use('/api/organizations/:o_id/edit', upload.single('bannerImg'), async(req, res, next)=>{
+//     try{
+//         //image is optional so you should be able to go next
+//         if(!req.file){
+//             return res.status(200).json({message: 'No file uploaded, proceed without image'})
+//         }
+//         res.json({ message: 'File uploaded successfully!', filePath: req.file.path });
+//     }catch(e){
+//         res.status(400).json({ error: e.message });
+//     }
+//     next()
+// })
+app.use('/api/organizations/:o_id/edit', upload.single('bannerImg'),async(req,res,next)=>{
+    next();
+})
+
+//testing: print method and url for all routing
+app.use((req, res, next) => {
+    console.log(`Method: ${req.method}, URL: ${req.url}`);
+    next();
+});
 
 configRoutes(app);
 

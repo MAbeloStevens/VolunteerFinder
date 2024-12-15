@@ -1,5 +1,5 @@
 <div class="centered">
-  <form id="createOrgForm" method="post" action="/api/organizations/{{o_id}}/edit">
+  <form id="createOrgForm" method="post" action="/api/organizations/{{o_id}}/edit?_method=PATCH" enctype="multipart/form-data">
     <div class="textInputs">
       <label for="name">
         Organization Name
@@ -16,7 +16,7 @@
     <div class="textInputs">
       <label>
         External Link
-        <input type="url" name="link" id="link" placeholder="https://example.org" value="{{organization.link}}">
+        <input name="link" id="link" placeholder="https://example.org" value="{{organization.link}}">
       </label>
     </div>
 

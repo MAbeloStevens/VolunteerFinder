@@ -3,6 +3,8 @@
 import multer from "multer";
 import path from "path";
 import validation from "./validation.js";
+import { knownTagsData } from '../data/index.js';
+
 function getCookie(name) { /// SWITCHED TO EXPRESS-SESSION, DONT NEED THIS ANYMORE
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
@@ -33,33 +35,42 @@ function o_idRenameField(obj) {
     return newObj;
 };
 
-//this is the stuff for the image thing, i am not entirely sure how this works
 const storage = multer.diskStorage({
-    destination: (req,file,cb) =>{
-        //should save files to public/images
-        cb(null, './public/images')
+    destination: (req, file, cb) => {
+        //Save files to public/images directory
+        cb(null, './public/images');
     },
-    filename: (req, file, cb)=> {
-        //random string of characters at the end to avoid issues with files of the same name 
-        const unqiueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    filename: (req, file, cb) => {
+        //generate unique filename using timestamp and random number
+        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
         const ext = path.extname(file.originalname);
-        cb(null, `${file.fieldname}-${unqiueSuffix}${ext}`)
+        cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
     }
 });
 
-//this will will actually upload the image
-const upload= multer({storage:storage,
-    fileFilter:async (req, file, cb)=>{
-        try{
+const upload = multer({
+    storage: storage,
+    fileFilter: async (req, file, cb) => {
+        try {
             await validation.checkImg(file);
-            cb(null,true)
-        }
-        catch(e){
-            cb(new Error(e.message||e))
+            cb(null, true);
+        } catch (e) {
+            cb(new Error(e.message || e));
         }
     },
-    limits:{fileSize: 5* 1024 * 1024}
-});
+    limits: { fileSize: 5 * 1024 * 1024 }
+})
 
-export { a_idRenameField, getCookie, o_idRenameField, upload };
+
+// this tags in a list of tags and ensures that they are all valid known tags
+async function allValidTags(tags){
+    let knownTags = await knownTagsData.getKnownTags();
+    for (let tag of tags){
+        if (typeof tag !== 'string') throw 'Tags must only contain strings';
+        if (!knownTags.includes(tag)) throw `${tag} is not a known tag`;
+    }
+    return true;
+}
+
+export { a_idRenameField, getCookie, o_idRenameField, upload , allValidTags};
 

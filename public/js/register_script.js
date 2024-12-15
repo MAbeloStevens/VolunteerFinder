@@ -1,4 +1,5 @@
-// Add tag button
+import validation from '/validation';
+
 const addTagButton = document.getElementById("addTagButton")
 const addTagInput = document.getElementById("addTagInput")
 const tagSelection = document.getElementById("tagSelection")
@@ -36,35 +37,37 @@ const registrationForm = document.getElementById("registrationForm")
 const password = document.getElementById("password")
 const confirmPassword = document.getElementById("confirmPassword")
 
-registrationForm.addEventListener('submit', (evt) => {
+registrationForm.addEventListener('submit', async (evt) => {
   if (!errorDiv.hidden) {
     errorDiv.hidden = true;
   }
 
   try {
-    if (password.value !== confirmPassword.value) {
-      throw `Passwords must match`
+
+    await validation.checkName(registrationForm.firstName.value)
+    await validation.checkName(registrationForm.lastName.value)
+
+    const pass = await validation.checkPassword(password.value)
+    const confirmPass = await validation.checkPassword(confirmPassword.value)
+    if (pass !== confirmPass) {
+      throw `Passwords do not match`
     }
-    if (registrationForm.firstName.value.trim() === "") {
-      throw `First Name is required`
-    }
-    if (registrationForm.lastName.value.trim() === "") {
-      throw `Last Name is required`
-    }
-    if (registrationForm.password.value.trim() === "") {
-      throw `Password is required`
-    }
-    if (registrationForm.email.value.trim() === "") {
-      throw `Email is required`
-    }
-    if ( !/^\w+@\w+\.\w+$/.test(registrationForm.email.value.trim()) ) {
-      throw `Email must be in valid format.`
-    }
+
+    await validation.checkEmail(registrationForm.email.value)
+    if (registrationForm.phoneNumber.value) {
+      await validation.checkPhone(registrationForm.phoneNumber.value) // Not marked as optional, however in a previous talk i think we mentioned this being optional on sign up
+    } 
     
+    const tagSelection = document.getElementById("tagSelection")
+    const selectedTags = Array.from(tagSelection.selectedOptions).map(option => option.value)
+
+    if (selectedTags.length) {
+      await validation.checkTags(selectedTags) // Marked as optional on Blueprint
+    }
+
   } catch (e) {
     errorDiv.hidden = false;
     errorMessage.innerText = e;
     evt.preventDefault()
   }
-
 })

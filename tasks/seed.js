@@ -115,7 +115,12 @@ try{
     console.log(`Error adding Larc as an interested account to Kush's organization:`, e);
 }
 try{
-    const addInterestedAccountMarkOrg2 = await organizationData.addInterestedAccount(insertOrgKush,Mark)
+    const addInterestedAccountKushkOrg2 = await organizationData.addInterestedAccount(insertOrgKush,Mark)
+}catch(e){
+    console.log(`Error adding Mark as an interested account to Kush's organization:`, e);
+}
+try{
+    const addInterestedAccountKushOrg3 = await organizationData.addInterestedAccount(insertOrgKush,Kendell)
 }catch(e){
     console.log(`Error adding Mark as an interested account to Kush's organization:`, e);
 }

@@ -133,9 +133,7 @@ a.nav_active {
 
 /* page content */
 #pageContent {
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px;
 }
 
 h1 {
@@ -397,6 +395,34 @@ div#searchPage {
     flex: 1 1 auto;
 }
 
+.searchResults a {
+    text-decoration: none;
+}
+
+.resultDiv {
+    border: 1px solid var(--mnu-hover);
+    background-color: var(--mnu-color);
+    width: 100%;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 5px;
+    overflow: auto;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.resultDiv:hover {
+    background-color: var(--mnu-hover);
+}
+
+.resultDiv  .resultContent {
+    width: 30%;
+    min-width: fit-content;
+    padding-left: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 /* profile page */
 div.infoBox {
     margin: 10px;
@@ -423,4 +449,56 @@ div.orgBanner img {
     flex-shrink: 0;
     min-width: 100%;
     min-height: 100%;
+}
+
+div.commentsDiv {
+    margin-top: 20px;
+    overflow: hidden;
+    width: 70%;
+}
+
+div.commentsDiv *{
+    margin-top: 10px;
+}
+
+div.commentsDiv button{
+    margin-left: 20px;
+}
+
+div.commentsDiv div.comment {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+}
+
+div.commentsDiv div.comment .writtenBy {
+    text-align: right;
+}
+
+div.reviewsDiv {
+    margin-top: 20px;
+    overflow: hidden;
+    width: 70%;
+}
+
+div.reviewsDiv *{
+    margin-top: 10px;
+}
+
+div.reviewsDiv button{
+    margin-left: 20px;
+}
+
+div.reviewsDiv div.review {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+}
+
+div.reviewsDiv div.review .writtenBy {
+    text-align: right;
 }

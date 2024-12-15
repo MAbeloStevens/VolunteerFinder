@@ -1,5 +1,5 @@
+import validation from '/validation';
 
-// Add tag button
 const addTagButton = document.getElementById("addTagButton")
 const addTagInput = document.getElementById("addTagInput")
 const tagSelection = document.getElementById("tagSelection")
@@ -35,30 +35,33 @@ addTagButton.addEventListener('click', (evt) => {
 
 const createOrgForm = document.getElementById("createOrgForm")
 
-createOrgForm.addEventListener('submit', (evt) => {
+createOrgForm.addEventListener('submit', async (evt) => {
   if (!errorDiv.hidden) {
     errorDiv.hidden = true;
   }
 
   try {
-    if (createOrgForm.name.value === "") {
-      throw `Organization name is required`
-    }
-    if (createOrgForm.description.value === "") {
-      throw `Organization description is required`
-    }
-    if (createOrgForm.contact.value === "") {
-      throw `Organization contact is required`
-    }
-    if (![...createOrgForm.tags.querySelectorAll("option")].some((tag) => {return tag.selected})) {
-      throw `Please select a tag for your organization` 
-    }
 
+    await validation.checkName(createOrgForm.name.value) // Changed the validation functionality to cater to specific names
+    await validation.checkDescription(createOrgForm.description.value)
+    await validation.checkContact(createOrgForm.contact.value) 
+    
+    if (createOrgForm.link.value) {
+      await validation.checkLink(createOrgForm.link.value) // Marked as option on blueprint
+    }
+    
+    const tagSelection = document.getElementById("tagSelection")
+    const selectedTags = Array.from(tagSelection.selectedOptions).map(option => option.value)
+    await validation.checkTags(selectedTags) // Blueprint: Tags not optional on creation
+
+    
+    if (typeof createOrgForm.bannerImg.value === File) {
+      await validation.checkImg(createOrgForm.bannerImg.value) //Banner Upload/file upload is optional.
+    }
 
   } catch (e) {
     errorDiv.hidden = false;
     errorMessage.innerText = e;
     evt.preventDefault()
   }
-
 })
