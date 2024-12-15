@@ -484,9 +484,9 @@ const organizationFunctions ={
         const organization = await organizationCollection.findOne({_id: new ObjectId(o_id)});
         if(!organization) throw 'Organization does not exist';
         //iterate over interestedAccounts list and call removeInterestedOrg
-        organization.interestedAccounts.forEach(async (account_id) => {
-            await accountsFunctions.removeInterestedOrg(account_id, o_id);
-        });
+        for (var i = 0; i < organization.interestedAccounts.length; i++) {
+            await accountsFunctions.removeInterestedOrg(organization.interestedAccounts[i], o_id);
+        }
         //finally delete the organization
         // get admin account
         const admin = await this.getOrganizationAdminAccount(o_id);
