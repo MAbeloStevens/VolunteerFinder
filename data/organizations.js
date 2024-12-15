@@ -493,12 +493,15 @@ const organizationFunctions ={
         // remove the account organization from the account
         const deleteFromAccount=await accountData.removeOrganizationForAccount(admin, o_id);
         // delete the organization
+
+
+        
         const organizationData =  await organizationCollection.findOneAndDelete({_id: new ObjectId(o_id)});
         if(!organizationData) throw 'Cannot delete organization';
       
         if(organizationData.bannerImg!==null){
-            const validateFile= await file_validation.validateFile(orginalInfo.bannerImg)
-            const deleteImg= await file_validation.deleteFile(orginalInfo.bannerImg);
+            const validateFile= await file_validation.validateFile(organizationData.bannerImg)
+            const deleteImg= await file_validation.deleteFile(organizationData.bannerImg);
         }
         return `${organizationData.name} has been successfully deleted!`;
     },
