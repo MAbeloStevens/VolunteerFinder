@@ -479,6 +479,15 @@ const organizationFunctions ={
         o_id= await id_validation.checkOrganizationID(o_id);
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
+        //remove account's interest in organization through iterating over interestedAccounts list and calling removeInterestedOrg in accountsFunctions
+        //find the organization to be deleted
+        const organization = await organizationCollection.findOne({_id: new ObjectId(o_id)});
+        if(!organization) throw 'Organization does not exist';
+        //iterate over interestedAccounts list and call removeInterestedOrg
+        organization.interestedAccounts.forEach(async (account_id) => {
+            await accountsFunctions.removeInterestedOrg(account_id, o_id);
+        });
+        //finally delete the organization
         // get admin account
         const admin = await this.getOrganizationAdminAccount(o_id);
         // remove the account organization from the account
