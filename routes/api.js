@@ -1,7 +1,6 @@
 import { Router } from 'express';
 const router = Router();
 
-import { accountData, organizationData } from '../data/index.js';
 import id_validation from '../helpers/id_validation.js';
 
 import validation from '../helpers/validation.js';
