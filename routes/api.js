@@ -83,7 +83,7 @@ router.route('/users').delete(async (req, res) =>{
     // for all owned organizations
     // - for each interested account
     //   - remove interest for this organization
-    //     organizationData.removeInterestedAccount (will remove interest for account)
+    //     organizationData.removeInterestedAccount
     // - for each comment
     //   - get its comment_id and delete the comment
     // - for each review
