@@ -90,7 +90,6 @@ const commentsFunctions = {
             {},
             {$pull: {comments:{author:a_id}}}
         );
-        const updateResults = await organizationCollection.find({})
         if (!updateResult.acknowledged || (updateResult.modifiedCount === 0)) {
             throw 'Failed to delete all comment from account!';
         }
