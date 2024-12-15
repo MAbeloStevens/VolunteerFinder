@@ -5,9 +5,10 @@ import id_validation from '../helpers/id_validation.js';
 
 import validation from '../helpers/validation.js';
 
+import { accountData, commentData, organizationData, reviewData } from '../data/index.js';
 import { allValidTags } from '../helpers/helpers.js';
-import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
-import xss from 'xss';
+//knownTagsData
+//import xss from 'xss';
 
 
 router.route('/session-data').get(async (req, res) => {
@@ -54,22 +55,88 @@ router.route('/users/register').post(async (req, res) => {
   // call createAccount
   // if successful, redirect to '/login'
   // if any errors, render error page passing error message
+  let {firstName, lastName, password, confirmPassword, email, phone, tags} =req.body
+  console.log(req.body)
+  try{
+    if(!firstName ||!lastName ||!password || !email) throw 'First name, last name, email, and password are required!';
+    firstName = await validation.checkName(firstName);
+    lastName = await validation.checkName(lastName);
+    //password hashing
+    password = await validation.checkPassword(password);
+    if (password!==confirmPassword){
+      throw "Confirm password does not match password"
+    }
 
-  // IMPLEMENT ME
-  res.send(req.body)
+    tags = await validation.checkTags(tags)
+    tags = validation.properCaseTags(tags)
+
+    email = await validation.checkEmail(email);
+    if(phone){
+        phone = await validation.checkPhone(phone);
+    }
+  }catch(e){
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return
+  }
+  try{
+    const addUser= await accountData.createAccount(firstName,lastName,password,tags,email,phone);
+    res.redirect('/login');
+    return 
+  }
+  catch(e){
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return
+  }
 })
 
 router.route('/users')
 .patch(async (req, res) => {  
-  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   // validate body inputs for editAccount (see the handlebars file for variable names)
   // if any errors, just render the error page, don't worry about rerendering the form to display the errors
   // call updateAccount
   // if successful, redirect to '/account'
   // if any errors, render error page passing error message
+  const a_id = req.session.user.a_id
+  let {firstName, lastName, phone, tags} = req.body
+  try{
+    if(!firstName ||!lastName ||!tags) throw 'First name, last name, and tags are required!';
+    firstName = await validation.checkName(firstName);
+    lastName = await validation.checkName(lastName);
 
-  // IMPLEMENT ME
-  res.send(req.body)
+    tags = await validation.checkTags(tags)
+    tags = validation.properCaseTags(tags)
+
+    if(phone){
+      phone = await validation.checkPhone(phone);
+    }
+  }catch(e){
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return
+  }
+  try{
+    const updateUser= await accountData.updateAccount(a_id,firstName,lastName,tags,phone)
+    res.redirect('/account');
+    return
+  }catch(e){
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return
+  }
 })
 .delete(async (req, res) =>{
   // call deleteAccount for current user

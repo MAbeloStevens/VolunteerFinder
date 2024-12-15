@@ -120,17 +120,15 @@ const accountsFunctions = {
         return result.insertedId.toString();
     },
 
-    async updateAccount(a_id, a_firstName, a_lastName, a_password, a_tags, a_interestedOrgs, a_organizations, a_email, a_phone) {
+    async updateAccount(a_id, a_firstName, a_lastName, a_tags, a_phone) {
         //updates the account with the specified information
         /*
         a_id: string,
         a_firstName: string (optional),
         a_lastName: string (optional),
-        a_password: string (optional),
         a_tags: Array<string> (optional),
         a_interestedOrgs: Array<string> (optional),
         a_organizations: Array<string> (optional),
-        a_email: string (optional),
         a_phone: string (optional)
         */
        //find the account to be updated (if it exists)
@@ -155,13 +153,6 @@ const accountsFunctions = {
             updateDoc.lastName = a_lastName;
         } 
 
-        if(a_password)
-        {
-            //validated a_password
-            a_password = await validation.checkPassword(a_password);
-            updateDoc.password = a_password;
-        }
-
         if(a_tags)
         {
             //validated a_tags
@@ -169,41 +160,11 @@ const accountsFunctions = {
             a_tags = validation.properCaseTags(a_tags)
             updateDoc.tags = a_tags;
         }
-        
-        if(a_interestedOrgs)
-        {
-            //validated a_interestedOrgs
-            a_interestedOrgs =  await Promise.all(a_interestedOrgs.map(async (o_id) => {
-                o_id = await id_validation.checkOrganizationID(o_id);
-                return o_id;
-            }));
-            updateDoc.interestedOrgs = a_interestedOrgs;
-        }
-
-        if(a_organizations)
-        {
-            //validated a_organizations
-            a_organizations =  await Promise.all(a_organizations.map(async (o_id) => {
-                o_id = await id_validation.checkOrganizationID(o_id);
-                return o_id;
-            }));
-            updateDoc.organizations = a_organizations;
-        }
-
-        if(a_email)
-        {
-            //validated a_email
-            email = await validation.checkEmail(a_email);
-            //check if email is already used in another account in the collection
-            const existingAccount = await accountsInfo.findOne({email: a_email});
-            if(existingAccount && existingAccount._id.toString()!== a_id.toString()) throw 'Email already exists!';
-            updateDoc.email = a_email;
-        }
 
         if(a_phone)
         {
             //validated a_phone
-            phone = await validation.checkPhone(a_phone);
+            a_phone = await validation.checkPhone(a_phone);
             updateDoc.phone = a_phone;
         }
         //setting the new updated information
