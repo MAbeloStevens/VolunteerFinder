@@ -130,21 +130,6 @@ app.use('/organizations/:o_id', async (req, res, next) => {
     next();
 });
 
-app.use('/api/organizations/:o_id', async (req, res, next) => {
-    req.method = 'PATCH';
-    next();
-});
-
-app.use('/api/user', async (req, res, next) => {
-    req.method = 'PATCH';
-    next();
-});
-
-app.use('/api/organizations/:o_id/edit', async (req, res, next) => {
-    req.method = 'PATCH';
-    next();
-});
-
 // if trying to access the comment delete api route, change the method to delete
 app.use('/api/organizations/:o_id/comment/:comment_id/delete', async (req, res, next) => {
     req.method = 'DELETE';
