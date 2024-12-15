@@ -56,15 +56,27 @@ const commentsFunctions = {
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection!'; 
         const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{comments:{id:new ObjectId(comment_id)}}});
-        if (!updateResult.acknowledged || !updateResult.modifiedCount === 0) {
-            throw 'Failed to delete comment to the organization!';
+        if (!updateResult.acknowledged || (updateResult.modifiedCount === 0)) {
+            throw 'Failed to delete comment on the organization!';
         }
         return true;
     },
 
     async deleteCommentsByAccount(a_id) {
-        // delete all reviews made by the account with the given a_id
-        return 'IMPLEMENT ME';
+        // delete all comments made by the account with the given a_id
+        if(!a_id) throw 'Account id is not provided, please input ID';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection!'; 
+        const updateResult  =  await organizationCollection.updateMany(
+            {},
+            {$pull: {comments:{author:a_id}}}
+        );
+        const updateResults = await organizationCollection.find({})
+        if (!updateResult.acknowledged || (updateResult.modifiedCount === 0)) {
+            throw 'Failed to delete all comment from account!';
+        }
+        return true;
     }
 }
 

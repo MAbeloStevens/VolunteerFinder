@@ -62,14 +62,26 @@ const reviewFunctions = {
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{reviews:{id:new ObjectId(review_id)}}});
         if (!updateResult.acknowledged|| updateResult.modifiedCount === 0) {
-            throw 'Failed to delete review to the organization.';
+            throw 'Failed to delete review on the organization.';
         }
         return true;
     },
 
     async deleteReviewsByAccount(a_id) {
         // delete all reviews made by the account with the given a_id
-        return 'IMPLEMENT ME';
+        if(!a_id) throw 'Account id is not provided, please input ID';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection!'; 
+        const updateResult  =  await organizationCollection.updateMany(
+            {},
+            {$pull: {reviews:{author:a_id}}}
+        );
+        const updateResults = await organizationCollection.find({})
+        if (!updateResult.acknowledged || (updateResult.modifiedCount === 0)) {
+            throw 'Failed to delete all reviews from account!';
+        }
+        return true;
     }
 
 }
