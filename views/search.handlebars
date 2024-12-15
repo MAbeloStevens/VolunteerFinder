@@ -1,6 +1,6 @@
 <div id="searchPage">
     <div class="leftBar">
-        <form id="searchForm" method="get" action="/api/search">
+        <form id="searchForm" method="post" action="/api/search">
             <h3 class="centered">Organization Search</h3>
 
             <input name="searchTxt" id="searchInput" placeholder="search by name">
@@ -24,12 +24,12 @@
             <button type="submit">Search</button>
         </form>
 
-        <div class="errors" hidden>
-            <p>errors here</p>
+        <div id="errorDiv" class="errors centered" hidden>
+            <p id="errorMessage"></p>
         </div>
     </div>
 
-    <div class="searchResults">
+    <div class="searchResults" id="searchResults">
         <p id="noResults">No Results. Use the search bar and/or tags to specify your search</p>
     </div>
 </div>
