@@ -78,10 +78,9 @@ app.use('/', async (req, res, next) => {
 });
 
 // redirect to not-logged-in if trying to use any api call other than the following
-// ('/session-data').get, ('/users/login').post, ('/users/register').post
 // while not logged in
 app.use('/api', async (req, res, next) => {
-    const allowedRoutes_notLoggedIn = ['/session-data', '/users/login', '/users/register'];
+    const allowedRoutes_notLoggedIn = ['/session-data', '/users/login', '/users/register', '/search'];
 
     if (!req.session.user && !allowedRoutes_notLoggedIn.includes(req.path)) {
         return res.redirect('/not-logged-in');

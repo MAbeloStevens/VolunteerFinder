@@ -397,6 +397,52 @@ div#searchPage {
     flex: 1 1 auto;
 }
 
+.searchResults a {
+    text-decoration: none;
+}
+
+.resultDiv {
+    border: 1px solid var(--mnu-hover);
+    background-color: var(--mnu-color);
+    width: 100%;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 5px;
+    overflow: auto;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.resultDiv:hover {
+    background-color: var(--mnu-hover);
+}
+
+.resultDiv  .resultContent {
+    width: 30%;
+    min-width: fit-content;
+    padding-left: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+/* .resultDiv .resultName {
+    margin: 5px;
+    margin-left: 10%;
+    float: left;
+}
+
+.resultDiv .resultTags {
+    margin: 5px;
+    float: left;
+    font-size: small;
+}
+
+.resultDiv .resultCount {
+    margin: 5px;
+    margin-right: 10%;
+    float: right;
+} */
+
 /* profile page */
 div.infoBox {
     margin: 10px;

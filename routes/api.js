@@ -3,7 +3,9 @@ const router = Router();
 
 import validation from '../helpers/validation.js';
 import id_validation from '../helpers/id_validation.js';
+import { allValidTags } from '../helpers/helpers.js';
 import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
+import xss from 'xss';
 
 router.route('/session-data').get(async (req, res) => {
   if (req.session.user) {
@@ -87,24 +89,50 @@ router.route('/users').delete(async (req, res) =>{
   });
 });
 
-router.route('/search').get(async (req, res) => {
+router.route('/search').post(async (req, res) => {
   // body parameters: searchTxt (string), tags (list of strings), anyOrAll (string of value 'any' or 'all')
   // searchTxt can be the empty string, tags can be undefined
+  let searchTxt = '';
+  let tags = [];
+  let anyOrAll = 'any';
+  try {
+    searchTxt = req.body.searchTxt;
+    if (searchTxt) {
+      if (typeof searchTxt !=='string') throw 'Search text must be a string';
+    }
+    tags = req.body.tags;
+    if (tags){
+      if (!Array.isArray(tags) || !allValidTags(tags)) throw 'Tags must be an array of valid tags';
+    }
+    anyOrAll = req.body.anyOrAll;
+    if (!anyOrAll) throw 'anyOrAll must be provided';
+    if (typeof anyOrAll !=='string' || (anyOrAll !== 'any' && anyOrAll !== 'all')) throw 'anyOrAll must be a be a string of value \'any\' or \'all\'';
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 
-  // call the organization db function getSearchResults(searchTxt, tags, anyOrAll)
-  // the result will be a list of o_ids, and can be the empty list
-  
-  // map the result so each item is a projection of the result getOrganizationsInterest
-  // IMPORTANT NOTE: this is an async function, so you need to await for all of them
-  // it's a little tricky, but here is how I did it for an array of comment ids using 'await Promise.all'
-    // let commentsDisplay = await Promise.all(comments.map(getCommentProjection));
-    // /* where getCommentProjection is an async function */
-  
-  // return as res.json({searchResults: ListOfProjections});
-  // the case where it is the empty list will be handled by the ajax, so dont worry about that, just do the map and return the json
-  
-  // IMPLEMENT ME
-  res.send(req.body);
+  try {
+    // call the organization db function getSearchResults(searchTxt, tags, anyOrAll)
+    // the result will be a list of o_ids, and can be the empty list
+    let searchResults = await organizationData.getSearchResults(searchTxt, tags, anyOrAll);
+    // get the projections of the organizations
+    let searchProjections = await organizationData.getOrganizationsTags(searchResults);
+
+    return res.json({searchResults: searchProjections});
+
+  } catch (e) {
+    console.trace(e);
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+  }
 });
 
 router.route('/createOrg').post(async (req, res) => {

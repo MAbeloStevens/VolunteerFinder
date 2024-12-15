@@ -1,12 +1,12 @@
 const validation = {
 
-    async checkName(organizationName){
+    async checkName(name){
         //basic string check
-        if(typeof organizationName !=='string') throw 'Organization name is not a string!';
-        const trimmedOrganizationName= organizationName.trim();
-        if(trimmedOrganizationName.length===0) throw 'Organization name cannot be empty!';
-        if(trimmedOrganizationName.length>100) throw  'Organaization name is too long, please keep it under 100 characters!'
-        return trimmedOrganizationName;
+        if(typeof name !=='string') throw 'Name is not a string!';
+        const trimmedName= name.trim();
+        if(trimmedName.length===0) throw 'Name cannot be empty!';
+        if(trimmedName.length>100) throw  'Name is too long, please keep it under 100 characters!'
+        return trimmedName;
     },
     //Helper function because strings are stupid.
     //It will make sure the tag entires look like what they do in the proposal
