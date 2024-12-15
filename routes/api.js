@@ -1,11 +1,14 @@
-import { Router } from 'express'
+import { Router } from 'express';
 const router = Router();
 
-import validation from '../helpers/validation.js';
 import id_validation from '../helpers/id_validation.js';
+
+import validation from '../helpers/validation.js';
+
 import { allValidTags } from '../helpers/helpers.js';
 import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
 import xss from 'xss';
+
 
 router.route('/session-data').get(async (req, res) => {
   if (req.session.user) {
@@ -68,7 +71,46 @@ router.route('/users')
 })
 .delete(async (req, res) =>{
   // call deleteAccount for current user
-  // IMPLEMENT ME
+  try{
+    // check if user is logged in
+    if(!req.session.user){
+      res.redirect('/not-logged-in');
+    }
+
+    // validate a_id
+    const a_id = await id_validation.checkID(req.session.user.a_id, 'Account');
+
+
+    // Clean up related account data
+
+    // for all owned organizations
+    // - for each interested account
+    //   - remove interest for this organization
+    //     organizationData.removeInterestedAccount
+    // - for each comment
+    //   - get its comment_id and delete the comment
+    // - for each review
+    //   - get its review_id and delete the review
+
+    // for all interestedOrgs
+    // - remove interest for this organization
+    //   organizationData.removeInterestedAccount (will remove interest for account)
+
+    // call deleteCommentsByAccount for this account
+    // call deleteReviewsByAccount for this account
+
+
+    // delete account based on a_id
+    await accountData.deleteAccount(a_id);
+    
+  } catch(e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
 
   // destroy session
   req.session.destroy((e) => {
@@ -146,9 +188,85 @@ router.route('/createOrg').post(async (req, res) => {
     // then after successfully deleting, render the error page with the error that happened from addOrganizationForAccount
 
   // if successfully created organization and added it to the admin's account, then redirect to that organization's page
-
-  // IMPLEMENT ME
-  res.send(req.body);
+  let orgInfo = req.body;
+  if(!orgInfo || Object.keys(orgInfo).length === 0){
+    return res.status(500).render("error",
+      {
+        title: "Error",
+        ecode: 400,
+        error: "Please input required fields",
+      });
+  }
+  const fields= [
+    {key:'name', message: "Organization name is missing"},
+    {key:'tags', message: "Organization tags are missing"},
+    {key:'description', message: "Organization description is missing"},
+    {key:'contact', message:"Organization contact information is missing"},
+  ]
+  for (const field of fields){
+    if(!orgInfo[field.key]){
+      return res.status(400).render("error",{
+        title: "Error",
+        ecode: 400,
+        error: field.message,
+      });
+    }
+  }
+  //validation checks
+  try{
+    orgInfo.name = await validation.checkName(orgInfo.name);
+    orgInfo.tags= await validation.checkTags(orgInfo.tags);
+    orgInfo.description= await validation.checkDescription(orgInfo.description)
+    orgInfo.contact= await validation.checkContact(orgInfo.contact)
+    orgInfo.adminAccount= req.session.user.a_id
+    
+    //optional link 
+    if(orgInfo.link){
+      orgInfo.link = await validation.checkLink(orgInfo.link)
+    }
+    //this is the image path 
+    if(req.file && req.file.path){
+      orgInfo.bannerImg= req.file.path
+    }
+  }catch(e){
+    return res.status(400).render("error",{
+      title: "Error",
+      ecode: 400,
+      error: e,
+    });
+  }
+  //time to add it to the db 
+  let newOrg= undefined;
+  try{
+    newOrg= await organizationData.createOrganziation(orgInfo);
+  }catch(e){
+    return res.status(500).render("error",{
+      title: "Error",
+      ecode: 500,
+      error: e,
+    });
+  }
+  try{
+    const addOrgToAccount=await accountData.addOrganizationForAccount(orgInfo.adminAccount,newOrg)
+  }catch(e){
+    //delete org
+    try{
+      const deleteOrg= await organizationData.deleteOrganization(newOrg)
+    }catch(e){
+      return res.status(500).render("error",{
+        title: "Error",
+        ecode: 500,
+        error: e,
+      });
+    }
+    //return error
+    return res.status(500).render("error",{
+      title: "Error",
+      ecode: 500,
+      error: e,
+    });
+  }
+  return res.redirect(`/organizations/${newOrg}`);
 });
 
 // functionality on organization page when a user clicks Interested button
@@ -231,28 +349,7 @@ router.route('/organizations/:o_id')
       error: e
     });
   }
-<<<<<<< Updated upstream
-
 });
-
-router.route('/organizations/:o_id').delete(async (req, res) =>{
-  // get the organization's adminAccount
-  // display error page if user is not the organization admin
-  // otherwise, call deleteOrganization
-  res.send("IMPLEMENT ME");
-
-  // if successful, redirect to render deletion confirmation page (just uncomment this block below)
-
-  // render organization deletion confirmation page if successfully deleted
-  // res.render('deletionConfirmation', {
-  //   title: "Organization Deleted",
-  //   wasAccount: false,
-  // });
-});
-=======
-});
-
->>>>>>> Stashed changes
 
 router.route('/organizations/:o_id/edit').patch(async (req, res) => {
   // validate body inputs for editOrg (see the handlebars file for variable names)
@@ -261,10 +358,6 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
 
-<<<<<<< Updated upstream
-  // IMPLEMENT ME
-  res.send(req.body);
-=======
   let o_id= req.params.o_id;
   let orgInfo = req.body;
   if(!orgInfo || Object.keys(orgInfo).length === 0){
@@ -327,7 +420,6 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
     });
   }
   return res.redirect(`/organizations/${updateOrg}`);
->>>>>>> Stashed changes
 });
 
 router.route('/organizations/:o_id/comment').post(async (req, res) => {
@@ -374,22 +466,137 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
 
-  // IMPLEMENT ME
-  res.send(req.body);
+  try{
+    //validate o_id
+    const o_id = await id_validation.checkOrganizationID(req.params.o_id);
+
+    //checks if user is logged in 
+    if (!req.session.user) {
+      res.redirect('/not-logged-in');
+      return;
+    }
+
+    //validate rating and review text
+    const {  rating, reviewBody } = req.body;
+    const Vrating = await validation.validRating(rating)
+    const VReviewBody = await validation.checkReview(reviewBody);
+
+    //create review 
+    const newReview = await reviewData.createReview(o_id, Vrating, req.session.user.a_id, VReviewBody);
+
+    //redirect to org page with review
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    console.trace(e);
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{
   // middleware changes method for this route to delete
   // delete the comment from organization and reload organization page
   // display error page if user is not the organization admin or comment author
-  res.send("IMPLEMENT ME");
+
+  let o_id = req.params.o_id;
+  let comment_id = req.params.comment_id;
+  try {
+    // validate route parameters
+    let o_id = await id_validation.checkID(o_id, 'Organization');
+    let comment_id = await id_validation.checkID(comment_id, 'Comment');
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
+
+  let ecode = 500;
+  try {
+    // get organization admin
+    let orgEditInfo = await organizationData.getOrganizationEditInfo(o_id)
+    // get comment info
+    let commentFound = await commentData.getComment(o_id, comment_id);
+    // ensure that user is the comment author or organization admin
+    let currentUser_id = undefined;
+    if (req.session.user){
+      currentUser_id = req.session.user.a_id;
+    }
+    if (currentUser_id !== orgEditInfo.adminAccount && currentUser_id !== commentFound.author){
+      ecode = 400;
+      throw 'You cannot delete a comment if you are not its author or the organization\'s admin';
+    }
+
+    // delete comment
+    const commentDeleted = await commentData.deleteComment(o_id, comment_id);
+    if (!commentDeleted) throw 'Could not delete comment';
+    // reload organization page
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    res.status(ecode).render('error', {
+      title: "Error",
+      ecode: ecode,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req, res) =>{
   // middleware changes method for this route to delete
   // delete the review from organization and reload organization page
   // display error page if user is not the organization admin or review author
-  res.send("IMPLEMENT ME");
+  
+  let o_id = req.params.o_id;
+  let review_id = req.params.comment_id;
+  try {
+    // validate route parameters
+    let o_id = await id_validation.checkID(o_id, 'Organization');
+    let review_id = await id_validation.checkID(review_id, 'Review');
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
+
+  let ecode = 500;
+  try {
+    // get organization admin
+    let orgEditInfo = await organizationData.getOrganizationEditInfo(o_id)
+    // get review info
+    let reviewFound = await reviewData.getReview(o_id, review_id);
+    // ensure that user is the review author or organization admin
+    let currentUser_id = undefined;
+    if (req.session.user){
+      currentUser_id = req.session.user.a_id;
+    }
+    if (currentUser_id !== orgEditInfo.adminAccount && currentUser_id !== reviewFound.author){
+      ecode = 400;
+      throw 'You cannot delete a review if you are not its author or the organization\'s admin';
+    }
+
+    // delete review
+    const reviewDeleted = await reviewData.deleteReview(o_id, review_id);
+    if (!reviewDeleted) throw 'Could not delete review';
+    // reload organization page
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    res.status(ecode).render('error', {
+      title: "Error",
+      ecode: ecode,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/logout').get(async (req, res) => {

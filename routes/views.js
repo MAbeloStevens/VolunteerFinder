@@ -370,7 +370,7 @@ router.route('/organizations/:o_id/delete').get(async (req, res) => {
   // get current user
   let currentUser_id = undefined;
   if (req.session.user){
-    currentUser_id = req.session.user;
+    currentUser_id = req.session.user.a_id;
   }
 
   // get organization data
@@ -387,10 +387,11 @@ router.route('/organizations/:o_id/delete').get(async (req, res) => {
   }
 
   // only render this page if the current user is the organization's admin
-  if (currentUser_id !== orgFound.adminAccount){
+  if (currentUser_id === orgFound.adminAccount){
     res.render('organizationDeletion', {
       title: 'Delete Organization',
-      organization: orgFound
+      organization: orgFound,
+      o_id:req.params.o_id,
     });
   } else {
     res.status(400).render('error', {

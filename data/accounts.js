@@ -220,9 +220,20 @@ const accountsFunctions = {
         a_id = await id_validation.checkID(a_id,"Account");
         const accountsInfo = await accounts();
         if(!accountsInfo) throw 'Failed to connect to accounts collection';
+        const accountData = await accountsInfo.findOne({_id: new ObjectId(a_id)});
+        if(!accountData) throw 'No account with that ID';
+        //delete organizations from the account's organization list
+        const organizationsInfo = await organizations();
+        if(!organizationsInfo) throw 'Failed to connect to organizations collection';
+        accountData.organizations.forEach(async (o_id) => {
+            //delete organization
+            const organization = await organizationsInfo.findOne({_id: new ObjectId(o_id)});
+            if(organization) await organizationsInfo.deleteOne({_id: new ObjectId(o_id)});
+        });
+        //delete account from the accounts collection
         const result = await accountsInfo.deleteOne({_id: new ObjectId(a_id)});
         //checks for if the delete was successful
-        if(result.deletedCount === 0) throw 'No account found with that ID!';
+        if(result.deletedCount === 0) throw 'Trouble deleting account';
         return a_id;
     },
 

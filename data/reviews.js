@@ -3,7 +3,25 @@ import { organizations } from "../config/mongoCollections.js";
 import id_validation from "../helpers/id_validation.js";
 import validation from '../helpers/validation.js';
 import accountsFunctions from "./accounts.js";
+import organizationsFunctions from "./organizations.js";
+
 const reviewFunctions = {
+
+    async getReview(o_id, review_id){
+        // return review info given o_id and review_id (calls organizations.getOrganizationCommentsReviews)
+        if(!o_id) throw  'Organization id is not provided, please input ID!'
+        o_id = await id_validation.checkOrganizationID(o_id);
+        if(!review_id) throw 'Review id is not provided, please input ID!'
+        review_id = await id_validation.checkID(review_id,"Review");
+
+        // get organization reviews
+        const organizationLists = await organizationsFunctions.getOrganizationCommentsReviews(o_id);
+        // find and return review with matching id
+        const reviewFound = organizationLists.reviews.find((r) => r.id === review_id);
+        if (!reviewFound) throw 'No review with that ID';
+
+        return reviewFound;
+    },
 
     async createReview(o_id, rating, a_id, reviewBody) {
         //add a review to the organization's review list
@@ -62,7 +80,23 @@ const reviewFunctions = {
         if(!organizationCollection) throw 'Failed to connect to organization collection'; 
         const updateResult  =  await organizationCollection.updateOne({_id: new ObjectId(o_id)},{$pull :{reviews:{id:new ObjectId(review_id)}}});
         if (!updateResult.acknowledged|| updateResult.modifiedCount === 0) {
-            throw 'Failed to delete review to the organization.';
+            throw 'Failed to delete review on the organization.';
+        }
+        return true;
+    },
+
+    async deleteReviewsByAccount(a_id) {
+        // delete all reviews made by the account with the given a_id
+        if(!a_id) throw 'Account id is not provided, please input ID';
+        a_id = await id_validation.checkID(a_id,"Account");
+        const organizationCollection= await organizations();
+        if(!organizationCollection) throw 'Failed to connect to organization collection!'; 
+        const updateResult  =  await organizationCollection.updateMany(
+            {},
+            {$pull: {reviews:{author:a_id}}}
+        );
+        if (!updateResult.acknowledged || (updateResult.modifiedCount === 0)) {
+            throw 'Failed to delete all reviews from account!';
         }
         return true;
     }
