@@ -2,13 +2,10 @@ import { Router } from 'express';
 const router = Router();
 
 import id_validation from '../helpers/id_validation.js';
-
 import validation from '../helpers/validation.js';
-
-import { accountData, commentData, organizationData, reviewData } from '../data/index.js';
+import { accountData, commentData, organizationData, reviewData, knownTagsData } from '../data/index.js';
 import { allValidTags } from '../helpers/helpers.js';
-//knownTagsData
-//import xss from 'xss';
+import xss from 'xss';
 
 
 router.route('/session-data').get(async (req, res) => {
