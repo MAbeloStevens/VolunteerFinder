@@ -446,6 +446,8 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
         ecode: 400,
         error: field.message,
       });
+    } else {
+      orgInfo[field.key] = xss(orgInfo[field.key])
     }
   }
   //validation checks
@@ -459,6 +461,7 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
     
     //optional link 
     if(orgInfo.link){
+      orgInfo.link = xss(orgInfo.link);
       orgInfo.link = await validation.checkLink(orgInfo.link)
     }
     //this is the image path 
@@ -494,6 +497,7 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
   let commentBody = req.body.comment;
+  commentBody = xss(commentBody);
 
   try {
     //validate o_id
@@ -531,6 +535,8 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
   let {  rating, review } = req.body;
+  review = xss(review);
+  rating = xss(rating);
   rating = Number(rating);
 
   try{
@@ -569,6 +575,9 @@ router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (re
 
   let o_id = req.params.o_id;
   let comment_id = req.params.comment_id;
+  o_id = xss(o_id);
+  comment_id = xss(comment_id);
+
   try {
     // validate route parameters
     o_id = await id_validation.checkID(o_id, 'Organization');
@@ -620,6 +629,8 @@ router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req,
   
   let o_id = req.params.o_id;
   let review_id = req.params.review_id;
+  o_id = xss(o_id);
+  review_id = xss(review_id);
   try {
     // validate route parameters
     o_id = await id_validation.checkID(o_id, 'Organization');
