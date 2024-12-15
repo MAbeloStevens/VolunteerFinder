@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import { accounts, organizations } from '../config/mongoCollections.js';
+import { organizationData } from './index.js';
+import organizationFunctions from './organizations.js';
 import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
 const saltRounds = 10;
@@ -225,11 +227,9 @@ const accountsFunctions = {
         //delete organizations from the account's organization list
         const organizationsInfo = await organizations();
         if(!organizationsInfo) throw 'Failed to connect to organizations collection';
-        accountData.organizations.forEach(async (o_id) => {
-            //delete organization
-            const organization = await organizationsInfo.findOne({_id: new ObjectId(o_id)});
-            if(organization) await organizationsInfo.deleteOne({_id: new ObjectId(o_id)});
-        });
+        for (var i = 0; i < accountData.organizations.length; i++) {
+            await organizationFunctions.deleteOrganization(accountData.organizations[i]);
+        };
         //delete account from the accounts collection
         const result = await accountsInfo.deleteOne({_id: new ObjectId(a_id)});
         //checks for if the delete was successful
@@ -356,7 +356,7 @@ const accountsFunctions = {
         const existingOrganization = await organizationsCollection.findOne({_id: new ObjectId(o_id)});
         if(!existingOrganization) throw 'No organization with that ID'
         //removing (same method as removeOrganization)
-        const updatedInterestedOrgs = accountData.interestedOrgs.filter(org => org.toString()!== o_id);
+        const updatedInterestedOrgs = accountData.interestedOrgs.filter((org) => org.toString()!== o_id);
         const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: {interestedOrgs: updatedInterestedOrgs}});
         //checks for if the removal was successful
         if(result.modifiedCount === 0) throw 'Failed to remove organization!';
