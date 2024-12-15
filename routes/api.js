@@ -19,7 +19,6 @@ router.route('/session-data').get(async (req, res) => {
 });
 
 router.route('/users/login').post(async (req, res) => {
-  console.log('testing route: /users/login') //----------------------------DELETE THIS
   let email = req.body.email;
   let password = req.body.password;
   
@@ -299,7 +298,6 @@ router.route('/organizations/:o_id')
     return;
 
   }catch(e){
-    console.trace(e); // ------------------------------DELETE THIS
     res.status(ecode).render("error",{
       title: "Error",
       ecode: ecode,
@@ -324,7 +322,6 @@ router.route('/organizations/:o_id')
   try {
     o_id = await id_validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
-    console.trace(e); // ------------------------------DELETE THIS
     res.status(400).render('error', {
       title: "Error",
       ecode: 400,
@@ -434,7 +431,6 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
   // if any errors, render error page passing error message
   let commentBody = req.body.comment;
 
-  // IMPLEMENT ME
   try {
     //validate o_id
     const o_id = await id_validation.checkOrganizationID(req.params.o_id);

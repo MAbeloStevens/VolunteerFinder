@@ -14,7 +14,7 @@
       if (typeof searchTxt !== 'string') throw 'Search text must be a string';
 
       let tags = $('select[name="tags"]').val();
-      let anyOrAll = $('input[name="anyOrAll"]').val()
+      let anyOrAll = $('input[name="anyOrAll"]:checked').val()
 
       // construct req.body
       let dataBody = {
