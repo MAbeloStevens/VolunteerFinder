@@ -461,8 +461,8 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
     
     //optional link 
     if(orgInfo.link){
-      orgInfo.link = await validation.checkLink(orgInfo.link)
       orgInfo.link = xss(orgInfo.link);
+      orgInfo.link = await validation.checkLink(orgInfo.link)
     }
     //this is the image path 
     if(req.file && req.file.path){
