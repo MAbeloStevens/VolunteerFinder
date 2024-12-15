@@ -53,7 +53,8 @@ const accountsFunctions = {
 
     async getAccountNames(a_ids) {
         //given a list of user's a_ids, return each associated user's a_id, firstName, and lastName
-        if(!a_ids || a_ids.length===0) throw 'No account ids from the list exists!';
+        if(!a_ids) throw 'Account ids list does not exist!';
+        if(a_ids.length===0) return [];
         //validates each a_id in the list
         a_ids = await Promise.all(a_ids.map(async (id) => {
             id = await id_validation.checkID(id,"Account");
