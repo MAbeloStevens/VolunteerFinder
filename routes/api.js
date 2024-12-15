@@ -506,14 +506,102 @@ router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (re
   // middleware changes method for this route to delete
   // delete the comment from organization and reload organization page
   // display error page if user is not the organization admin or comment author
-  res.send("IMPLEMENT ME");
+
+  let o_id = req.params.o_id;
+  let comment_id = req.params.comment_id;
+  try {
+    // validate route parameters
+    let o_id = await id_validation.checkID(o_id, 'Organization');
+    let comment_id = await id_validation.checkID(comment_id, 'Comment');
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
+
+  let ecode = 500;
+  try {
+    // get organization admin
+    let orgEditInfo = await organizationData.getOrganizationEditInfo(o_id)
+    // get comment info
+    let commentFound = await commentData.getComment(o_id, comment_id);
+    // ensure that user is the comment author or organization admin
+    let currentUser_id = undefined;
+    if (req.session.user){
+      currentUser_id = req.session.user.a_id;
+    }
+    if (currentUser_id !== orgEditInfo.adminAccount && currentUser_id !== commentFound.author){
+      ecode = 400;
+      throw 'You cannot delete a comment if you are not its author or the organization\'s admin';
+    }
+
+    // delete comment
+    const commentDeleted = await commentData.deleteComment(o_id, comment_id);
+    if (!commentDeleted) throw 'Could not delete comment';
+    // reload organization page
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    res.status(ecode).render('error', {
+      title: "Error",
+      ecode: ecode,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req, res) =>{
   // middleware changes method for this route to delete
   // delete the review from organization and reload organization page
   // display error page if user is not the organization admin or review author
-  res.send("IMPLEMENT ME");
+  
+  let o_id = req.params.o_id;
+  let review_id = req.params.comment_id;
+  try {
+    // validate route parameters
+    let o_id = await id_validation.checkID(o_id, 'Organization');
+    let review_id = await id_validation.checkID(review_id, 'Review');
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
+
+  let ecode = 500;
+  try {
+    // get organization admin
+    let orgEditInfo = await organizationData.getOrganizationEditInfo(o_id)
+    // get review info
+    let reviewFound = await reviewData.getReview(o_id, review_id);
+    // ensure that user is the review author or organization admin
+    let currentUser_id = undefined;
+    if (req.session.user){
+      currentUser_id = req.session.user.a_id;
+    }
+    if (currentUser_id !== orgEditInfo.adminAccount && currentUser_id !== reviewFound.author){
+      ecode = 400;
+      throw 'You cannot delete a review if you are not its author or the organization\'s admin';
+    }
+
+    // delete review
+    const reviewDeleted = await reviewData.deleteReview(o_id, review_id);
+    if (!reviewDeleted) throw 'Could not delete review';
+    // reload organization page
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    res.status(ecode).render('error', {
+      title: "Error",
+      ecode: ecode,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/logout').get(async (req, res) => {
