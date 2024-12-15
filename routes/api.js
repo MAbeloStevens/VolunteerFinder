@@ -160,7 +160,7 @@ router.route('/organizations/:o_id').patch(async (req, res) => {
   // if did error, load error page
   // if current user is not logged in, reroute to not logged in
   // if successful, reredirect to this organizations page (cannot use this route as it has /api in front of it)
-  
+
   //validate o_id
   var o_id = req.params.o_id;
 
@@ -232,7 +232,33 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
   // if any errors, render error page passing error message
 
   // IMPLEMENT ME
-  res.send(req.body);
+  try {
+    //validate o_id
+    const o_id = await id_validation.checkOrganizationID(req.params.o_id);
+
+    //checks if user is logged in 
+    if (!req.session.user) {
+      res.redirect('/not-logged-in');
+      return;
+    }
+
+    //get comment body
+    const commentBody = await validation.checkComment(req.body);
+
+    //create comment 
+    const comment = await commentData.createComment(o_id, req.session.user.a_id, commentBody);
+
+    //redirect to org page with comment
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    console.trace(e);
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/review').post(async (req, res) => {
