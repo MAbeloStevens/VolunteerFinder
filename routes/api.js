@@ -68,7 +68,24 @@ router.route('/users').patch(async (req, res) => {
 
 router.route('/users').delete(async (req, res) =>{
   // call deleteAccount for current user
-  // IMPLEMENT ME
+  try{
+    // check if user is logged in
+    if(!req.session.user){
+      res.redirect('/not-logged-in');
+    }
+
+    //validate and delete account based on a_id
+    const a_id = await id_validation.checkID(req.session.user.a_id, 'Account');
+    await accountData.deleteAccount(a_id);
+    
+  } catch(e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
 
   // destroy session
   req.session.destroy((e) => {
@@ -268,8 +285,35 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
 
-  // IMPLEMENT ME
-  res.send(req.body);
+  try{
+    //validate o_id
+    const o_id = await id_validation.checkOrganizationID(req.params.o_id);
+
+    //checks if user is logged in 
+    if (!req.session.user) {
+      res.redirect('/not-logged-in');
+      return;
+    }
+
+    //validate rating and review text
+    const {  rating, reviewBody } = req.body;
+    const Vrating = await validation.validRating(rating)
+    const VReviewBody = await validation.checkReview(reviewBody);
+
+    //create review 
+    const newReview = await reviewData.createReview(o_id, Vrating, req.session.user.a_id, VReviewBody);
+
+    //redirect to org page with review
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    console.trace(e);
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{
