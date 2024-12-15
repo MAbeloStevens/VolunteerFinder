@@ -58,7 +58,8 @@ router.route('/users/register').post(async (req, res) => {
   res.send(req.body)
 })
 
-router.route('/users').patch(async (req, res) => {  
+router.route('/users')
+.patch(async (req, res) => {  
   // validate body inputs for editAccount (see the handlebars file for variable names)
   // if any errors, just render the error page, don't worry about rerendering the form to display the errors
   // call updateAccount
@@ -68,8 +69,7 @@ router.route('/users').patch(async (req, res) => {
   // IMPLEMENT ME
   res.send(req.body)
 })
-
-router.route('/users').delete(async (req, res) =>{
+.delete(async (req, res) =>{
   // call deleteAccount for current user
   try{
     // check if user is logged in
@@ -270,7 +270,42 @@ router.route('/createOrg').post(async (req, res) => {
 });
 
 // functionality on organization page when a user clicks Interested button
-router.route('/organizations/:o_id').patch(async (req, res) => {
+router.route('/organizations/:o_id')
+.delete(async (req, res) =>{
+  // /api/organizations/{{o_id}}?_method=DELETE
+  // get the organization's adminAccount
+  // display error page if user is not the organization admin
+  // otherwise, call deleteOrganization
+  console.log("wtf2");
+  let o_id = req.params.o_id;
+  let ecode = 500;
+  try{
+    o_id = await id_validation.checkOrganizationID(o_id);
+    const adminAccount= await organizationData.getOrganizationAdminAccount(o_id);
+    if(adminAccount!==req.session.user.a_id){
+      ecode = 400;
+      throw "User is not Organization admin";
+    }
+    const removed =  await organizationData.deleteOrganization(o_id);
+    // if successful, redirect to render deletion confirmation page (just uncomment this block below)
+    // render organization deletion confirmation page if successfully deleted
+    res.render('deletionConfirmation', {
+      title: "Organization Deleted",
+      wasAccount: false,
+    });
+    return;
+
+  }catch(e){
+    console.trace(e); // ------------------------------DELETE THIS
+    res.status(ecode).render("error",{
+      title: "Error",
+      ecode: ecode,
+      error: e,
+    });
+    return;
+  }
+})
+.patch(async (req, res) => {
   // if current user is not logged in, reroute to not logged in
   // validate o_id
   // if false, get the current user and o_id and call org function for setting interested
@@ -279,16 +314,13 @@ router.route('/organizations/:o_id').patch(async (req, res) => {
   // if current user is not logged in, reroute to not logged in
   // if successful, reredirect to this organizations page (cannot use this route as it has /api in front of it)
 
-  // IMPLEMENT ME
-  res.send(req.body);
-
-
   //validate o_id
   var o_id = req.params.o_id;
 
   try {
     o_id = await id_validation.checkOrganizationID(req.params.o_id);
   } catch (e) {
+    console.trace(e); // ------------------------------DELETE THIS
     res.status(400).render('error', {
       title: "Error",
       ecode: 400,
@@ -317,42 +349,6 @@ router.route('/organizations/:o_id').patch(async (req, res) => {
       error: e
     });
   }
-
-
-});
-
-///api/organizations/{{o_id}}?_method=DELETE
-router.route('/organizations/:o_id').delete(async (req, res) =>{
-  // get the organization's adminAccount
-  // display error page if user is not the organization admin
-  // otherwise, call deleteOrganization
-  console.log("wtf2");
-  let o_id=req.params.o_id;
-  try{
-    o_id = await id_validation.checkOrganizationID(o_id);
-    const adminAccount= getOrganizationAdminAccount(o_id);
-    if(adminAccount!==req.session.user.a_id){
-      return res.status(400).render("error",{
-        title: "Error",
-        ecode: 500,
-        error: "User is not Organization admin",
-      });
-    }
-    const removed =  organizationData.deleteOrganization(o_id);
-    // if successful, redirect to render deletion confirmation page (just uncomment this block below)
-    // render organization deletion confirmation page if successfully deleted
-    res.render('deletionConfirmation', {
-      title: "Organization Deleted",
-      wasAccount: false,
-    });
-
-  }catch(e){
-    return res.status(400).render("error",{
-      title: "Error",
-      ecode: 500,
-      error: e,
-    });
-  }
 });
 
 router.route('/organizations/:o_id/edit').patch(async (req, res) => {
@@ -362,11 +358,10 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
 
-  // IMPLEMENT ME
   let o_id= req.params.o_id;
   let orgInfo = req.body;
   if(!orgInfo || Object.keys(orgInfo).length === 0){
-    return res.status(500).render("error",
+    return res.status(400).render("error",
       {
         title: "Error",
         ecode: 400,
