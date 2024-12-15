@@ -74,8 +74,27 @@ router.route('/users').delete(async (req, res) =>{
       res.redirect('/not-logged-in');
     }
 
-    //validate and delete account based on a_id
+    // validate a_id
     const a_id = await id_validation.checkID(req.session.user.a_id, 'Account');
+
+
+    // Clean up related account data
+
+    // for all owned organizations
+    // - for each interested account
+    //   - remove interest for this organization
+    //     organizationData.removeInterestedAccount (will remove interest for account)
+    // - for each comment
+    //   - get its comment_id and delete the comment
+    // - for each review
+    //   - get its review_id and delete the review
+
+    // for all interestedOrgs
+    // - remove interest for this organization
+    //   organizationData.removeInterestedAccount (will remove interest for account)
+
+
+    // delete account based on a_id
     await accountData.deleteAccount(a_id);
     
   } catch(e) {
