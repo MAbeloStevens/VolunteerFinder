@@ -133,9 +133,7 @@ a.nav_active {
 
 /* page content */
 #pageContent {
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px;
 }
 
 h1 {
@@ -425,24 +423,6 @@ div#searchPage {
     margin-bottom: auto;
 }
 
-/* .resultDiv .resultName {
-    margin: 5px;
-    margin-left: 10%;
-    float: left;
-}
-
-.resultDiv .resultTags {
-    margin: 5px;
-    float: left;
-    font-size: small;
-}
-
-.resultDiv .resultCount {
-    margin: 5px;
-    margin-right: 10%;
-    float: right;
-} */
-
 /* profile page */
 div.infoBox {
     margin: 10px;
@@ -469,4 +449,56 @@ div.orgBanner img {
     flex-shrink: 0;
     min-width: 100%;
     min-height: 100%;
+}
+
+div.commentsDiv {
+    margin-top: 20px;
+    overflow: hidden;
+    width: 70%;
+}
+
+div.commentsDiv *{
+    margin-top: 10px;
+}
+
+div.commentsDiv button{
+    margin-left: 20px;
+}
+
+div.commentsDiv div.comment {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+}
+
+div.commentsDiv div.comment .writtenBy {
+    text-align: right;
+}
+
+div.reviewsDiv {
+    margin-top: 20px;
+    overflow: hidden;
+    width: 70%;
+}
+
+div.reviewsDiv *{
+    margin-top: 10px;
+}
+
+div.reviewsDiv button{
+    margin-left: 20px;
+}
+
+div.reviewsDiv div.review {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+    border: solid var(--btn-color);
+    border-radius: 10px;
+}
+
+div.reviewsDiv div.review .writtenBy {
+    text-align: right;
 }
