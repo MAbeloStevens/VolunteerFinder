@@ -107,7 +107,7 @@ const accountsFunctions = {
 
         //check if email is already used in another account in the collection
         const existingAccount = await accountsInfo.findOne({email: email});
-        if(existingAccount) throw 'Email already exists!';
+        if(existingAccount) throw 'An account for that email already exists!';
 
         const result = await accountsInfo.insertOne({
             firstName: firstName, 
