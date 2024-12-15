@@ -55,8 +55,8 @@ router.route('/users/register').post(async (req, res) => {
   console.log(req.body)
   try{
     if(!firstName ||!lastName ||!password || !email) throw 'First name, last name, email, and password are required!';
-    firstName = await validation.checkName(firstName);
-    lastName = await validation.checkName(lastName);
+    firstName = await validation.checkName(firstName, 'first name');
+    lastName = await validation.checkName(lastName, 'last name');
     //password hashing
     password = await validation.checkPassword(password);
     if (password!==confirmPassword){
@@ -104,8 +104,8 @@ router.route('/users')
   let {firstName, lastName, phone, tags} = req.body
   try{
     if(!firstName ||!lastName ||!tags) throw 'First name, last name, and tags are required!';
-    firstName = await validation.checkName(firstName);
-    lastName = await validation.checkName(lastName);
+    firstName = await validation.checkName(firstName, 'first name');
+    lastName = await validation.checkName(lastName, 'first name');
 
     tags = await validation.checkTags(tags)
     tags = validation.properCaseTags(tags)
@@ -280,7 +280,7 @@ router.route('/createOrg').post(async (req, res) => {
   }
   //validation checks
   try{
-    orgInfo.name = await validation.checkName(orgInfo.name);
+    orgInfo.name = await validation.checkName(orgInfo.name, 'organization name');
     orgInfo.tags= await validation.checkTags(orgInfo.tags);
     orgInfo.description= await validation.checkDescription(orgInfo.description)
     orgInfo.contact= await validation.checkContact(orgInfo.contact)
@@ -451,7 +451,7 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
   //validation checks
   try{
     o_id = await id_validation.checkOrganizationID(o_id);
-    orgInfo.name = await validation.checkName(orgInfo.name);
+    orgInfo.name = await validation.checkName(orgInfo.name, 'organization name');
     orgInfo.tags= await validation.checkTags(orgInfo.tags);
     orgInfo.description= await validation.checkDescription(orgInfo.description)
     orgInfo.contact= await validation.checkContact(orgInfo.contact)

@@ -44,8 +44,8 @@ registrationForm.addEventListener('submit', async (evt) => {
 
   try {
 
-    await validation.checkName(registrationForm.firstName.value)
-    await validation.checkName(registrationForm.lastName.value)
+    await validation.checkName(registrationForm.firstName.value, 'first name')
+    await validation.checkName(registrationForm.lastName.value, 'first name')
 
     const pass = await validation.checkPassword(password.value)
     const confirmPass = await validation.checkPassword(confirmPassword.value)
