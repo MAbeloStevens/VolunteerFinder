@@ -428,6 +428,7 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
   // call createComment
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
+  let commentBody = req.body.comment;
 
   // IMPLEMENT ME
   try {
@@ -441,13 +442,13 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
     }
 
     //get comment body
-    const commentBody = await validation.checkComment(req.body);
+    commentBody = await validation.checkComment(commentBody);
 
     //create comment 
     const comment = await commentData.createComment(o_id, req.session.user.a_id, commentBody);
 
     //redirect to org page with comment
-    res.redirect(`/organization/${o_id}`);
+    res.redirect(`/organizations/${o_id}`);
   } catch (e) {
     console.trace(e);
     res.status(400).render('error', {
@@ -465,6 +466,8 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
   // call createReview
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
+  let {  rating, review } = req.body;
+  rating = Number(rating);
 
   try{
     //validate o_id
@@ -477,17 +480,15 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
     }
 
     //validate rating and review text
-    const {  rating, reviewBody } = req.body;
     const Vrating = await validation.validRating(rating)
-    const VReviewBody = await validation.checkReview(reviewBody);
+    const VReviewBody = await validation.checkReview(review);
 
     //create review 
     const newReview = await reviewData.createReview(o_id, Vrating, req.session.user.a_id, VReviewBody);
 
     //redirect to org page with review
-    res.redirect(`/organization/${o_id}`);
+    res.redirect(`/organizations/${o_id}`);
   } catch (e) {
-    console.trace(e);
     res.status(400).render('error', {
       title: "Error",
       ecode: 400,
@@ -506,8 +507,8 @@ router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (re
   let comment_id = req.params.comment_id;
   try {
     // validate route parameters
-    let o_id = await id_validation.checkID(o_id, 'Organization');
-    let comment_id = await id_validation.checkID(comment_id, 'Comment');
+    o_id = await id_validation.checkID(o_id, 'Organization');
+    comment_id = await id_validation.checkID(comment_id, 'Comment');
   } catch (e) {
     res.status(400).render('error', {
       title: "Error",
@@ -532,12 +533,12 @@ router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (re
       ecode = 400;
       throw 'You cannot delete a comment if you are not its author or the organization\'s admin';
     }
-
+  
     // delete comment
     const commentDeleted = await commentData.deleteComment(o_id, comment_id);
     if (!commentDeleted) throw 'Could not delete comment';
     // reload organization page
-    res.redirect(`/organization/${o_id}`);
+    res.redirect(`/organizations/${o_id}`);
   } catch (e) {
     res.status(ecode).render('error', {
       title: "Error",
@@ -554,11 +555,11 @@ router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req,
   // display error page if user is not the organization admin or review author
   
   let o_id = req.params.o_id;
-  let review_id = req.params.comment_id;
+  let review_id = req.params.review_id;
   try {
     // validate route parameters
-    let o_id = await id_validation.checkID(o_id, 'Organization');
-    let review_id = await id_validation.checkID(review_id, 'Review');
+    o_id = await id_validation.checkID(o_id, 'Organization');
+    review_id = await id_validation.checkID(review_id, 'Review');
   } catch (e) {
     res.status(400).render('error', {
       title: "Error",
@@ -588,7 +589,7 @@ router.route('/organizations/:o_id/review/:review_id/delete').delete(async (req,
     const reviewDeleted = await reviewData.deleteReview(o_id, review_id);
     if (!reviewDeleted) throw 'Could not delete review';
     // reload organization page
-    res.redirect(`/organization/${o_id}`);
+    res.redirect(`/organizations/${o_id}`);
   } catch (e) {
     res.status(ecode).render('error', {
       title: "Error",

@@ -17,7 +17,7 @@ const commentsFunctions = {
         // get organization comments
         const organizationLists = await organizationsFunctions.getOrganizationCommentsReviews(o_id);
         // find and return comment with matching id
-        const commentFound = organizationLists.comments.find((c) => c.id === comment_id);
+        const commentFound = organizationLists.comments.find((c) => c.id.toString() === comment_id);
         if (!commentFound) throw 'No comment with that ID';
 
         return commentFound;

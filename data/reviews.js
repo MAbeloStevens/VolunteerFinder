@@ -17,7 +17,7 @@ const reviewFunctions = {
         // get organization reviews
         const organizationLists = await organizationsFunctions.getOrganizationCommentsReviews(o_id);
         // find and return review with matching id
-        const reviewFound = organizationLists.reviews.find((r) => r.id === review_id);
+        const reviewFound = organizationLists.reviews.find((r) => r.id.toString() === review_id);
         if (!reviewFound) throw 'No review with that ID';
 
         return reviewFound;

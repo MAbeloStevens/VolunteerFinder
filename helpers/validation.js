@@ -8,6 +8,16 @@ const validation = {
         if(trimmedName.length>100) throw  'Name is too long, please keep it under 100 characters!'
         return trimmedName;
     },
+
+    // async checkName(name, varName){
+    //     //basic string check
+    //     if(typeof name !=='string') throw `${varName} is not a string!`;
+    //     const trimmedName= name.trim();
+    //     if(trimmedName.length===0) throw `${varName} cannot be empty!`;
+    //     if(trimmedName.length>100) throw  `${varName} is too long, please keep it under 100 characters!`
+    //     return trimmedName;
+    // },
+
     //Helper function because strings are stupid.
     //It will make sure the tag entires look like what they do in the proposal
     //example suppose a tag was 'race & ethnicity' or "raCe   & ethnicity " it will make sure its 'Race & Ethnicity' which will help filitering by tag

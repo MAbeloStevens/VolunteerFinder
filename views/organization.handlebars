@@ -57,12 +57,11 @@
     {{/each}}
     {{/if}}
     <a href="/organizations/{{o_id}}/comment"><button>Write a Comment</button></a>
-    
 </div>
 
 <div class="reviewsDiv">
     <h2>Reviews</h2>
-    {{#if (listEmpty organization.comments)}}
+    {{#if (listEmpty organization.reviews)}}
     <p>No reviews yet</p>
     {{else}}
     {{#each organization.reviews}}

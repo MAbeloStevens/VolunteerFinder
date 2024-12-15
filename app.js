@@ -50,10 +50,7 @@ Handlebars.registerHelper("breaklines", function(textBody) {
     return new Handlebars.SafeString(textBody);
 });
 
-app.use((req, res, next) => {
-    console.log(`Method: ${req.method}, URL: ${req.url}`);
-    next();
-  });
+
 // middleware functions
 
 // not-logged-in and logged-in redirection
@@ -137,7 +134,7 @@ app.use('/api/organizations/:o_id/comment/:comment_id/delete', async (req, res, 
 });
 
 // if trying to access the review delete api route, change the method to delete
-app.use('/organizations/:o_id/review/:review_id/delete', async (req, res, next) => {
+app.use('/api/organizations/:o_id/review/:review_id/delete', async (req, res, next) => {
     req.method = 'DELETE';
     next();
 });
@@ -158,6 +155,12 @@ app.use('/organizations/:o_id/review/:review_id/delete', async (req, res, next) 
 app.use('/api/organizations/:o_id/edit', upload.single('bannerImg'),async(req,res,next)=>{
     next();
 })
+
+//testing: print method and url for all routing
+app.use((req, res, next) => {
+    console.log(`Method: ${req.method}, URL: ${req.url}`);
+    next();
+});
 
 configRoutes(app);
 
