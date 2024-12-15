@@ -93,6 +93,9 @@ router.route('/users').delete(async (req, res) =>{
     // - remove interest for this organization
     //   organizationData.removeInterestedAccount (will remove interest for account)
 
+    // call deleteCommentsByAccount for this account
+    // call deleteReviewsByAccount for this account
+
 
     // delete account based on a_id
     await accountData.deleteAccount(a_id);

@@ -60,6 +60,11 @@ const commentsFunctions = {
             throw 'Failed to delete comment to the organization!';
         }
         return true;
+    },
+
+    async deleteCommentsByAccount(a_id) {
+        // delete all reviews made by the account with the given a_id
+        return 'IMPLEMENT ME';
     }
 }
 

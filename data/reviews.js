@@ -65,6 +65,11 @@ const reviewFunctions = {
             throw 'Failed to delete review to the organization.';
         }
         return true;
+    },
+
+    async deleteReviewsByAccount(a_id) {
+        // delete all reviews made by the account with the given a_id
+        return 'IMPLEMENT ME';
     }
 
 }
