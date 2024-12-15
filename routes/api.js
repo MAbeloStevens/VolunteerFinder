@@ -3,7 +3,13 @@ const router = Router();
 
 import { accountData, organizationData } from '../data/index.js';
 import id_validation from '../helpers/id_validation.js';
+
 import validation from '../helpers/validation.js';
+
+import { allValidTags } from '../helpers/helpers.js';
+import { accountData, organizationData, commentData, reviewData, knownTagsData } from '../data/index.js';
+import xss from 'xss';
+
 
 router.route('/session-data').get(async (req, res) => {
   if (req.session.user) {
@@ -14,7 +20,7 @@ router.route('/session-data').get(async (req, res) => {
 });
 
 router.route('/users/login').post(async (req, res) => {
-  console.log('testing route: /users/login')
+  console.log('testing route: /users/login') //----------------------------DELETE THIS
   let email = req.body.email;
   let password = req.body.password;
   
@@ -66,7 +72,46 @@ router.route('/users').patch(async (req, res) => {
 
 router.route('/users').delete(async (req, res) =>{
   // call deleteAccount for current user
-  // IMPLEMENT ME
+  try{
+    // check if user is logged in
+    if(!req.session.user){
+      res.redirect('/not-logged-in');
+    }
+
+    // validate a_id
+    const a_id = await id_validation.checkID(req.session.user.a_id, 'Account');
+
+
+    // Clean up related account data
+
+    // for all owned organizations
+    // - for each interested account
+    //   - remove interest for this organization
+    //     organizationData.removeInterestedAccount
+    // - for each comment
+    //   - get its comment_id and delete the comment
+    // - for each review
+    //   - get its review_id and delete the review
+
+    // for all interestedOrgs
+    // - remove interest for this organization
+    //   organizationData.removeInterestedAccount (will remove interest for account)
+
+    // call deleteCommentsByAccount for this account
+    // call deleteReviewsByAccount for this account
+
+
+    // delete account based on a_id
+    await accountData.deleteAccount(a_id);
+    
+  } catch(e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+    return;
+  }
 
   // destroy session
   req.session.destroy((e) => {
@@ -90,21 +135,47 @@ router.route('/users').delete(async (req, res) =>{
 router.route('/search').post(async (req, res) => {
   // body parameters: searchTxt (string), tags (list of strings), anyOrAll (string of value 'any' or 'all')
   // searchTxt can be the empty string, tags can be undefined
+  let searchTxt = '';
+  let tags = [];
+  let anyOrAll = 'any';
+  try {
+    searchTxt = req.body.searchTxt;
+    if (searchTxt) {
+      if (typeof searchTxt !=='string') throw 'Search text must be a string';
+    }
+    tags = req.body.tags;
+    if (tags){
+      if (!Array.isArray(tags) || !allValidTags(tags)) throw 'Tags must be an array of valid tags';
+    }
+    anyOrAll = req.body.anyOrAll;
+    if (!anyOrAll) throw 'anyOrAll must be provided';
+    if (typeof anyOrAll !=='string' || (anyOrAll !== 'any' && anyOrAll !== 'all')) throw 'anyOrAll must be a be a string of value \'any\' or \'all\'';
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 
-  // call the organization db function getSearchResults(searchTxt, tags, anyOrAll)
-  // the result will be a list of o_ids, and can be the empty list
-  
-  // map the result so each item is a projection of the result getOrganizationsInterest
-  // IMPORTANT NOTE: this is an async function, so you need to await for all of them
-  // it's a little tricky, but here is how I did it for an array of comment ids using 'await Promise.all'
-    // let commentsDisplay = await Promise.all(comments.map(getCommentProjection));
-    // /* where getCommentProjection is an async function */
-  
-  // return as res.json({searchResults: ListOfProjections});
-  // the case where it is the empty list will be handled by the ajax, so dont worry about that, just do the map and return the json
-  
-  // IMPLEMENT ME
-  res.send(req.body);
+  try {
+    // call the organization db function getSearchResults(searchTxt, tags, anyOrAll)
+    // the result will be a list of o_ids, and can be the empty list
+    let searchResults = await organizationData.getSearchResults(searchTxt, tags, anyOrAll);
+    // get the projections of the organizations
+    let searchProjections = await organizationData.getOrganizationsTags(searchResults);
+
+    return res.json({searchResults: searchProjections});
+
+  } catch (e) {
+    console.trace(e);
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+  }
 });
 
 router.route('/createOrg').post(async (req, res) => {
@@ -203,13 +274,52 @@ router.route('/createOrg').post(async (req, res) => {
 router.route('/organizations/:o_id').patch(async (req, res) => {
   // if current user is not logged in, reroute to not logged in
   // validate o_id
-  // req.body.interested (boolean)
-  // if true, get the current user and o_id and call org function for setting interested
-  // if false, get the current user and o_id and call org function for remove interested
+  // if false, get the current user and o_id and call org function for setting interested
+  // if true, get the current user and o_id and call org function for remove interested
   // if did error, load error page
+  // if current user is not logged in, reroute to not logged in
   // if successful, reredirect to this organizations page (cannot use this route as it has /api in front of it)
+
   // IMPLEMENT ME
   res.send(req.body);
+
+
+  //validate o_id
+  var o_id = req.params.o_id;
+
+  try {
+    o_id = await id_validation.checkOrganizationID(req.params.o_id);
+  } catch (e) {
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
+
+  //get current user 
+  const currentUser = req.session.user;
+  const interested = await accountData.isAccountInterested(currentUser.a_id, o_id);
+
+  try {
+    //call org function for setting/removing interested
+    if(interested) {
+      await organizationData.removeInterestedAccount(o_id, currentUser.a_id);
+    } else {
+      await organizationData.addInterestedAccount(o_id, currentUser.a_id);
+    }
+    //redirect to org page
+    res.redirect(`/organizations/${o_id}`);
+  } catch(e) {
+    res.status(500).render('error', {
+      title: "Error",
+      ecode: 500,
+      error: e
+    });
+  }
+
+
 });
 
 ///api/organizations/{{o_id}}?_method=DELETE
@@ -326,7 +436,33 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
   // if any errors, render error page passing error message
 
   // IMPLEMENT ME
-  res.send(req.body);
+  try {
+    //validate o_id
+    const o_id = await id_validation.checkOrganizationID(req.params.o_id);
+
+    //checks if user is logged in 
+    if (!req.session.user) {
+      res.redirect('/not-logged-in');
+      return;
+    }
+
+    //get comment body
+    const commentBody = await validation.checkComment(req.body);
+
+    //create comment 
+    const comment = await commentData.createComment(o_id, req.session.user.a_id, commentBody);
+
+    //redirect to org page with comment
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    console.trace(e);
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/review').post(async (req, res) => {
@@ -336,8 +472,35 @@ router.route('/organizations/:o_id/review').post(async (req, res) => {
   // if successful, reload the orgainization's page '/organizations/:o_id'
   // if any errors, render error page passing error message
 
-  // IMPLEMENT ME
-  res.send(req.body);
+  try{
+    //validate o_id
+    const o_id = await id_validation.checkOrganizationID(req.params.o_id);
+
+    //checks if user is logged in 
+    if (!req.session.user) {
+      res.redirect('/not-logged-in');
+      return;
+    }
+
+    //validate rating and review text
+    const {  rating, reviewBody } = req.body;
+    const Vrating = await validation.validRating(rating)
+    const VReviewBody = await validation.checkReview(reviewBody);
+
+    //create review 
+    const newReview = await reviewData.createReview(o_id, Vrating, req.session.user.a_id, VReviewBody);
+
+    //redirect to org page with review
+    res.redirect(`/organization/${o_id}`);
+  } catch (e) {
+    console.trace(e);
+    res.status(400).render('error', {
+      title: "Error",
+      ecode: 400,
+      error: e
+    });
+    return;
+  }
 });
 
 router.route('/organizations/:o_id/comment/:comment_id/delete').delete(async (req, res) =>{

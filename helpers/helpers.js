@@ -3,6 +3,8 @@
 import multer from "multer";
 import path from "path";
 import validation from "./validation.js";
+import { knownTagsData } from '../data/index.js';
+
 function getCookie(name) { /// SWITCHED TO EXPRESS-SESSION, DONT NEED THIS ANYMORE
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
@@ -60,5 +62,15 @@ const upload = multer({
 })
 
 
+// this tags in a list of tags and ensures that they are all valid known tags
+async function allValidTags(tags){
+    let knownTags = await knownTagsData.getKnownTags();
+    for (let tag of tags){
+        if (typeof tag !== 'string') throw 'Tags must only contain strings';
+        if (!knownTags.includes(tag)) throw `${tag} is not a known tag`;
+    }
+    return true;
+}
 
-export { a_idRenameField, getCookie, o_idRenameField, upload };
+export { a_idRenameField, getCookie, o_idRenameField, upload , allValidTags};
+

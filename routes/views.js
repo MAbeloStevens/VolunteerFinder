@@ -261,7 +261,7 @@ router.route('/organizations/:o_id').get(async (req, res) => {
     // if the current user is the owner, set owner to true
     let owner = undefined;
     if (currentUser_id === orgFound.adminAccount) {
-      // if the current user is the owner of this organization
+      // if the current user is the owner, set owner to true
       owner = true;
     }
 
@@ -273,7 +273,6 @@ router.route('/organizations/:o_id').get(async (req, res) => {
       adminInfo: adminInfo,
       owner: owner,
       userIsInterested: userIsInterested,
-      script_partial: 'organization_script'
     });
 
   } catch (e) {

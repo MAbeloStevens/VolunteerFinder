@@ -4,6 +4,9 @@
 <br>
 <div id="recommendedOrgsDiv" class="displayOrgsDiv">
   <h2>Recommended Organizations</h2>
+  {{#if (listEmpty recommendedOrgs)}}
+  <p> We can't find any organizations you might like. Try expanding your interests by editing your account page. </p>
+  {{else}}
   {{#each recommendedOrgs}}
   <a href="/organizations/{{o_id}}">
   <div class="displayOrg">
@@ -16,6 +19,7 @@
   </div>
   </a>
   {{/each}}
+  {{/if}}
 </div>
 {{else}}
 <h3>Welcome to Volunteer Finder!</h3>
