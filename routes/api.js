@@ -304,13 +304,16 @@ router.route('/createOrg').post(async (req, res) => {
         error: field.message,
       });
     } else {
-      orgInfo[field.key] = xss(orgInfo[field.key]);
+      if (field.key !== 'tags') orgInfo[field.key] = xss(orgInfo[field.key]);
     }
   }
   //validation checks
   try{
     orgInfo.name = await validation.checkName(orgInfo.name, 'organization name');
     orgInfo.tags= await validation.checkTags(orgInfo.tags);
+    for (let i = 0; i < orgInfo.tags.length; i++){
+      orgInfo.tags[i] = xss(orgInfo.tags[i]);
+    }
     orgInfo.description= await validation.checkDescription(orgInfo.description)
     orgInfo.contact= await validation.checkContact(orgInfo.contact)
     orgInfo.adminAccount= req.session.user.a_id
@@ -478,13 +481,16 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
         error: field.message,
       });
     } else {
-      orgInfo[field.key] = xss(orgInfo[field.key])
+      if (field.key !== 'tags') orgInfo[field.key] = xss(orgInfo[field.key]);
     }
   }
   //validation checks
   try{
     o_id = await id_validation.checkOrganizationID(o_id);
     orgInfo.name = await validation.checkName(orgInfo.name, 'organization name');
+    for (let i = 0; i < orgInfo.tags.length; i++){
+      orgInfo.tags[i] = xss(orgInfo.tags[i]);
+    }
     orgInfo.tags= await validation.checkTags(orgInfo.tags);
     orgInfo.description= await validation.checkDescription(orgInfo.description)
     orgInfo.contact= await validation.checkContact(orgInfo.contact)
