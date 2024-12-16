@@ -118,7 +118,7 @@ router.route('/users')
   let {firstName, lastName, phone, tags} = req.body
   firstName = xss(firstName);
   lastName = xss(lastName);
-  phone = xss(phone);
+
   for (let i = 0; i < tags.length; i++){
     tags[i] = xss(tags[i]);
   }
@@ -130,7 +130,8 @@ router.route('/users')
     tags = await validation.checkTags(tags)
     tags = validation.properCaseTags(tags)
 
-    if(phone){
+    if(phone.trim().length>0){
+      phone = xss(phone);
       phone = await validation.checkPhone(phone);
     }
   }catch(e){

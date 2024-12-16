@@ -1,10 +1,9 @@
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import { accounts, organizations } from '../config/mongoCollections.js';
-import { organizationData } from './index.js';
-import organizationFunctions from './organizations.js';
 import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
+import organizationFunctions from './organizations.js';
 const saltRounds = 10;
 const accountsFunctions = {
 
@@ -164,11 +163,16 @@ const accountsFunctions = {
             updateDoc.tags = a_tags;
         }
 
-        if(a_phone)
+        if(a_phone.trim().length>0)
         {
             //validated a_phone
             a_phone = await validation.checkPhone(a_phone);
             updateDoc.phone = a_phone;
+        }
+        else{
+            a_phone=undefined;
+            updateDoc.phone = a_phone;
+
         }
         //setting the new updated information
         const result = await accountsInfo.updateOne({_id: new ObjectId(a_id)}, {$set: updateDoc});
