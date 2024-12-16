@@ -107,7 +107,7 @@ const validation = {
     async checkLink(link){
         if(typeof link !=='string') throw 'Link is not a string!';
         link= link.trim();
-        if(link.length===0) throw 'Link cannot be empy!';
+        if(link.length===0) throw 'Link cannot be empty!';
         try{
             new URL (link);
             return link
