@@ -1,11 +1,11 @@
 import { Router } from 'express';
 const router = Router();
 
+import xss from 'xss';
+import { accountData, commentData, knownTagsData, organizationData, reviewData } from '../data/index.js';
+import { allValidTags } from '../helpers/helpers.js';
 import id_validation from '../helpers/id_validation.js';
 import validation from '../helpers/validation.js';
-import { accountData, commentData, organizationData, reviewData, knownTagsData } from '../data/index.js';
-import { allValidTags } from '../helpers/helpers.js';
-import xss from 'xss';
 
 
 router.route('/session-data').get(async (req, res) => {
@@ -498,7 +498,7 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
     orgInfo.adminAccount= req.session.user.a_id
     
     //optional link 
-    if(orgInfo.link){
+    if(orgInfo.link.trim().length>0){
       orgInfo.link = xss(orgInfo.link);
       orgInfo.link = await validation.checkLink(orgInfo.link)
     }

@@ -437,7 +437,7 @@ const organizationFunctions ={
         }
     
         let processedLink = undefined;
-        if (link !== undefined) {
+        if (link.trim().length>0) {
             processedLink = await validation.checkLink(link);
         }
     
