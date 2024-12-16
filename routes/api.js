@@ -232,7 +232,10 @@ router.route('/search').post(async (req, res) => {
     if (searchTxt) {
       if (typeof searchTxt !=='string') throw 'Search text must be a string';
     }
-    tags = xss(req.body.tags);
+    tags = req.body.tags;
+    for (let i = 0; i < tags.length; i++){
+      tags[i] = xss(tags[i]);
+    }
     if (tags){
       if (!Array.isArray(tags) || !allValidTags(tags)) throw 'Tags must be an array of valid tags';
     }
