@@ -2,16 +2,16 @@
   <form id="loginForm" method="post" action="/api/users/login">
     <div class="centered textInputs">
       <label for="email">Email 
-        <input name="email">
+        <input name="email" id="email">
       </label>
       <label for="password">Password
-        <input type="password" name="password">
+        <input type="password" name="password" id="password">
       </label>
     </div>
     <button>Login</button>
   </form>
 
-  <p>Don't have an account? <a href="/register"><button>Register</button></a></p>
+  <p>Don't have an account? <a href="/register" class="button">Register</a></p>
 </div>
 
 {{#if error}}

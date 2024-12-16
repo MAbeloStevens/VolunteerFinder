@@ -9,7 +9,7 @@
 <div class="orgInfo">
     <h1>{{organization.name}}</h1>
     {{#if owner}}
-    <a id="editOrgBtn" href="/organizations/{{o_id}}/edit"><button>Edit Page</button></a>
+    <a id="editOrgBtn" href="/organizations/{{o_id}}/edit" class="button">Edit Page</a>
     {{/if}}
     <form class="interestedBtnForm" method="post" action="/api/organizations/{{o_id}}?_method=PATCH">
         <button id="interestBtn" {{#if userIsInterested}}class="interested"{{/if}}> {{organization.interestCount}} Interested </button>
@@ -38,7 +38,7 @@
         <a href="{{organization.link}}">{{organization.name}} External Site</a> <br>
         <br>
     {{/if}}
-    <label>Admin: <a href="/account/accountPage/{{adminInfo.a_id}}"><p>{{adminInfo.firstName}} {{adminInfo.lastName}}</p></a></label>
+    <span>Admin: </span><p><a href="/account/accountPage/{{adminInfo.a_id}}">{{adminInfo.firstName}} {{adminInfo.lastName}}</a></p>
 </div>
 
 <div class="commentsDiv">
@@ -51,12 +51,13 @@
         <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
         {{#if canDelete}}
-        <a href="/api/organizations/{{../o_id}}/comment/{{comment_id}}/delete"><button class="important">Delete Comment</button></a>
+        <a href="/api/organizations/{{../o_id}}/comment/{{comment_id}}/delete" class="button important">Delete Comment</a>
         {{/if}}
     </div>
     {{/each}}
     {{/if}}
-    <a href="/organizations/{{o_id}}/comment"><button>Write a Comment</button></a>
+    <br>
+    <a href="/organizations/{{o_id}}/comment" class="button">Write a Comment</a>
 </div>
 
 <div class="reviewsDiv">
@@ -70,10 +71,11 @@
         <p>{{breaklines this.body}}</p>
         <p class="writtenBy">By <a href="/account/accountPage/{{author.a_id}}">{{author.firstName}} {{author.lastName}}</a></p>
         {{#if canDelete}}
-        <a href="/api/organizations/{{../o_id}}/review/{{review_id}}/delete"><button class="important">Delete Review</button></a>
+        <a href="/api/organizations/{{../o_id}}/review/{{review_id}}/delete" class="button important">Delete Review</a>
         {{/if}}
     </div>
     {{/each}}
     {{/if}}
-    <a href="/organizations/{{o_id}}/review"><button>Write a Review</button></a>
+    <br>
+    <a href="/organizations/{{o_id}}/review" class="button">Write a Review</a>
 </div>

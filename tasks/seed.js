@@ -164,7 +164,7 @@ try{
 
 // add 8 organizations for a single account
 try {
-    let Pill = await accountData.createAccount('Phill', 'Hatrick', 'Phat_123', ['Race & Ethnicity', 'Homeless', 'Race & Ethnicity'], 'phat@gmail.com', '1010011001');
+    let Pill = await accountData.createAccount('Phill', 'Hatrick', 'Phat_123', ['Race & Ethnicity', 'Homeless', 'Race & Ethnicity'], 'phat@gmail.com', '996-454-5024');
     const agesOrg = {
         adminAccount:Pill,
         name: "Fun For All Ages",

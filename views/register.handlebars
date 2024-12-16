@@ -24,7 +24,7 @@
       <label for="email">
         Email
         <input name="email" id="email">
-      </label for="">
+      </label>
 
       <label for="phoneNumber">
         Phone Number
@@ -38,7 +38,7 @@
       <p class="subtext">hold ctrl/cmd to select multiple</p>
       <select id="tagSelection" name="tags" multiple size="5">
           {{#each knownTags}}
-          <option value="{{this}}"/>{{this}}</option>
+          <option value="{{this}}">{{this}}</option>
           {{/each}}
       </select>
     </div>
@@ -51,7 +51,7 @@
     <button>Register</button>
   </form>
 
-  <p>Already have an account? <a href="/login"><button>Log in</button></a></p>
+  <p>Already have an account? <a href="/login" class="button">Log in</a></p>
 </div>
 
 <div id="errorDiv" class="errors centered" hidden>
