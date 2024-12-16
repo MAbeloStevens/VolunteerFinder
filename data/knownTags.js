@@ -39,9 +39,11 @@ const knownTagsFunctions  ={
             const existingTags= validation.properCaseTags(tagList.tags)
             //remove duplicates and concat two arrays together
             const updateTags= Array.from(new Set([...existingTags,...normalizeTags]));
+            if (existingTags.length === updateTags.length){
+                return existingTags;
+            }
             const updatingTagsDB = await tagsCollection.updateOne({},{$set: {tags:updateTags}});
             if (!updatingTagsDB.modifiedCount) throw new Error("Failed to update known tags");
-            //again not sure
             return updatingTagsDB;
         }
     },

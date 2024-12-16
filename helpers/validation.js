@@ -40,10 +40,10 @@ const validation = {
     async checkTags(tags){
         //checks to see if the tags are in a array
         if(!Array.isArray(tags)) throw 'Tags are not in an Array';
-        if(tags.length===0) throw  'Organization must have at least 1 tag';
+        if(tags.length===0) throw  'Must have at least 1 tag';
         //check tags individually. 
         tags.forEach((tag) =>{
-            if (typeof tag !=='string' || tag.trim() ===0)  throw "Organization tag can not be empty strings"
+            if (typeof tag !=='string' || tag.trim() ===0)  throw "Tags can not be empty strings"
         });
         //trim all tags
         return tags.map((tag) => tag.trim());

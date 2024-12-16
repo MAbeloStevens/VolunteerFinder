@@ -194,16 +194,13 @@ router.route('/orgAdmin').get(async (req, res) => {
     // get user's organization list
     let user_organizations = await accountData.getAccountOrganizations(req.session.user.a_id);
 
-    console.log("checkpoint 1");
     // call getOrganizationsInterest
     let ownedOrgs = await organizationData.getOrganizationsInterest(user_organizations);
-    console.log("checkpoint 2");
     // for all organizations in the list, map interestedAccounts to be the projection returned by getAccountNames
     ownedOrgs = await Promise.all(ownedOrgs.map(async (org) => {
       org.interestedAccounts = await accountData.getAccountNames(org.interestedAccounts);
       return org;
     }));
-    console.log("checkpoint 3");
     // render page
     res.render('orgAdmin', {
       title: 'Organization Admin',
