@@ -310,10 +310,10 @@ router.route('/createOrg').post(async (req, res) => {
   //validation checks
   try{
     orgInfo.name = await validation.checkName(orgInfo.name, 'organization name');
-    orgInfo.tags= await validation.checkTags(orgInfo.tags);
     for (let i = 0; i < orgInfo.tags.length; i++){
       orgInfo.tags[i] = xss(orgInfo.tags[i]);
     }
+    orgInfo.tags= await validation.checkTags(orgInfo.tags);
     orgInfo.description= await validation.checkDescription(orgInfo.description)
     orgInfo.contact= await validation.checkContact(orgInfo.contact)
     orgInfo.adminAccount= req.session.user.a_id
@@ -334,13 +334,14 @@ router.route('/createOrg').post(async (req, res) => {
       error: e,
     });
   }
+
   //time to add it to the db 
   let newOrg= undefined;
   try{
     // create organization in database
     newOrg= await organizationData.createOrganziation(orgInfo);
     // add new tags to knownTags
-    await knownTagsData.addToKnownTags(tags);
+    await knownTagsData.addToKnownTags(orgInfo.tags);
   }catch(e){
     return res.status(500).render("error",{
       title: "Error",
