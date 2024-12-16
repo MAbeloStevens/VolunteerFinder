@@ -382,10 +382,12 @@ const organizationFunctions ={
             //give me 10
             {$limit:10},
         ]).toArray()
-        return organizationsList.map((org)=>{
-            org._id=org._id.toString();
-            return org;
+        
+        organizationsList = organizationsList.map((org) => {
+            org._id = org._id.toString();
+            return o_idRenameField(org);
         });
+        return organizationsList;
     },
 
     async getMostInterestedOrgs(){
@@ -393,7 +395,7 @@ const organizationFunctions ={
         //grab collections
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection';
-        const organizationsList = await organizationCollection
+        let organizationsList = await organizationCollection
         .aggregate([
             { $match: {} }, // Optional match stage to filter documents
             { $sort: { interestCount: -1 } }, // Sort by interestCount descending
@@ -401,10 +403,11 @@ const organizationFunctions ={
             { $project: { _id: 1, name:1, tags:1, interestCount:1} } // Only include _id in the result
         ])
         .toArray();
-        return organizationsList.map((org)=>{
-            org._id=org._id.toString();
-            return org;
+        organizationsList = organizationsList.map((org) => {
+            org._id = org._id.toString();
+            return o_idRenameField(org);
         });
+        return organizationsList;
     },
     
     /*
