@@ -157,10 +157,10 @@ app.use('/api/organizations/:o_id/edit', upload.single('bannerImg'),async(req,re
 })
 
 //testing: print method and url for all routing
-app.use((req, res, next) => {
-    console.log(`Method: ${req.method}, URL: ${req.url}`);
-    next();
-});
+// app.use((req, res, next) => {
+//     console.log(`Method: ${req.method}, URL: ${req.url}`);
+//     next();
+// });
 
 configRoutes(app);
 

@@ -17,8 +17,8 @@ router.route('/session-data').get(async (req, res) => {
 });
 
 router.route('/users/login').post(async (req, res) => {
-  let email = req.body.email;
-  let password = req.body.password;
+  let email = xss(req.body.email);
+  let password = xss(req.body.password);
   
   let currentUser = undefined;
 
@@ -51,8 +51,16 @@ router.route('/users/register').post(async (req, res) => {
   // call createAccount
   // if successful, redirect to '/login'
   // if any errors, render error page passing error message
-  let {firstName, lastName, password, confirmPassword, email, phone, tags} =req.body
-  console.log(req.body)
+  let {firstName, lastName, password, confirmPassword, email, phone, tags} = req.body;
+  firstName = xss(firstName);
+  lastName = xss(lastName);
+  password = xss(password);
+  confirmPassword = xss(confirmPassword);
+  email = xss(email);
+  phone = xss(phone);
+  for (let i = 0; i < tags.length; i++){
+    tags[i] = xss(tags[i]);
+  }
   try{
     if(!firstName ||!lastName ||!password || !email) throw 'First name, last name, email, and password are required!';
     firstName = await validation.checkName(firstName, 'first name');
@@ -79,7 +87,12 @@ router.route('/users/register').post(async (req, res) => {
     return
   }
   try{
+    // create account
     const addUser= await accountData.createAccount(firstName,lastName,password,tags,email,phone);
+    // add new tags to knownTags
+    if (tags.length > 0){
+      await knownTagsData.addToKnownTags(tags);
+    }
     res.redirect('/login');
     return 
   }
@@ -101,7 +114,14 @@ router.route('/users')
   // if successful, redirect to '/account'
   // if any errors, render error page passing error message
   const a_id = req.session.user.a_id
+  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   let {firstName, lastName, phone, tags} = req.body
+  firstName = xss(firstName);
+  lastName = xss(lastName);
+  phone = xss(phone);
+  for (let i = 0; i < tags.length; i++){
+    tags[i] = xss(tags[i]);
+  }
   try{
     if(!firstName ||!lastName ||!tags) throw 'First name, last name, and tags are required!';
     firstName = await validation.checkName(firstName, 'first name');
@@ -122,7 +142,12 @@ router.route('/users')
     return
   }
   try{
+    // update account
     const updateUser= await accountData.updateAccount(a_id,firstName,lastName,tags,phone)
+    // add new tags to knownTags
+    if (tags.length > 0){
+      await knownTagsData.addToKnownTags(tags);
+    }
     res.redirect('/account');
     return
   }catch(e){
@@ -203,15 +228,15 @@ router.route('/search').post(async (req, res) => {
   let tags = [];
   let anyOrAll = 'any';
   try {
-    searchTxt = req.body.searchTxt;
+    searchTxt = xss(req.body.searchTxt);
     if (searchTxt) {
       if (typeof searchTxt !=='string') throw 'Search text must be a string';
     }
-    tags = req.body.tags;
+    tags = xss(req.body.tags);
     if (tags){
       if (!Array.isArray(tags) || !allValidTags(tags)) throw 'Tags must be an array of valid tags';
     }
-    anyOrAll = req.body.anyOrAll;
+    anyOrAll = xss(req.body.anyOrAll);
     if (!anyOrAll) throw 'anyOrAll must be provided';
     if (typeof anyOrAll !=='string' || (anyOrAll !== 'any' && anyOrAll !== 'all')) throw 'anyOrAll must be a be a string of value \'any\' or \'all\'';
   } catch (e) {
@@ -233,7 +258,6 @@ router.route('/search').post(async (req, res) => {
     return res.json({searchResults: searchProjections});
 
   } catch (e) {
-    console.trace(e);
     res.status(500).render('error', {
       title: "Error",
       ecode: 500,
@@ -276,6 +300,8 @@ router.route('/createOrg').post(async (req, res) => {
         ecode: 400,
         error: field.message,
       });
+    } else {
+      orgInfo[field.key] = xss(orgInfo[field.key]);
     }
   }
   //validation checks
@@ -288,6 +314,7 @@ router.route('/createOrg').post(async (req, res) => {
     
     //optional link 
     if(orgInfo.link){
+      orgInfo.link = xss(orgInfo.link);
       orgInfo.link = await validation.checkLink(orgInfo.link)
     }
     //this is the image path 
@@ -304,7 +331,10 @@ router.route('/createOrg').post(async (req, res) => {
   //time to add it to the db 
   let newOrg= undefined;
   try{
+    // create organization in database
     newOrg= await organizationData.createOrganziation(orgInfo);
+    // add new tags to knownTags
+    await knownTagsData.addToKnownTags(tags);
   }catch(e){
     return res.status(500).render("error",{
       title: "Error",
@@ -342,7 +372,6 @@ router.route('/organizations/:o_id')
   // get the organization's adminAccount
   // display error page if user is not the organization admin
   // otherwise, call deleteOrganization
-  console.log("wtf2");
   let o_id = req.params.o_id;
   let ecode = 500;
   try{
@@ -371,7 +400,6 @@ router.route('/organizations/:o_id')
   }
 })
 .patch(async (req, res) => {
-  req.body.tags = typeof req.body.tags === 'string' ? [req.body.tags] : req.body.tags
   // if current user is not logged in, reroute to not logged in
   // validate o_id
   // if false, get the current user and o_id and call org function for setting interested
@@ -479,6 +507,8 @@ router.route('/organizations/:o_id/edit').patch(async (req, res) => {
   let updateOrg= undefined;
   try{
     updateOrg= await organizationData.updateOrganization(o_id,orgInfo.name, orgInfo.tags, orgInfo.bannerImg, orgInfo.description, orgInfo.contact, orgInfo.link);
+    // add new tags to knownTags
+    await knownTagsData.addToKnownTags(orgInfo.tags);
   }
   catch(e){
     return res.status(500).render("error",{
@@ -518,7 +548,6 @@ router.route('/organizations/:o_id/comment').post(async (req, res) => {
     //redirect to org page with comment
     res.redirect(`/organizations/${o_id}`);
   } catch (e) {
-    console.trace(e);
     res.status(400).render('error', {
       title: "Error",
       ecode: 400,
