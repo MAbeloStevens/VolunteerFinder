@@ -197,7 +197,7 @@ const organizationFunctions ={
                 {name: {$regex: searchString, $options:'i'}}
             ).toArray();
         }
-        else if(tags && tags.length>0){
+        if(tags && tags.length>0){
             //tag entries
             let tagSearchResults=[]
             if (anyOrAll==="any"){
