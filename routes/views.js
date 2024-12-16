@@ -11,14 +11,11 @@ router.route('/').get(async (req, res) => {
   if(req.session.user) {
     // get user data
     let userData = await accountData.getAccountDisplayData(req.session.user.a_id);
-    const listOfTags= await organizationData.getRecommendedOrgs(userData.tags,req.session.user.a_id)
-    // get user recommended orgs , (adding a_id here)
-    recommendedOrgs = await organizationData.getOrganizationsTags(listOfTags);
+    recommendedOrgs=await organizationData.getRecommendedOrgs(userData.tags,req.session.user.a_id)
   }
 
   // get most interested orgs
-  let mostInterestedOrgs = await organizationData.getOrganizationsTags(await organizationData.getMostInterestedOrgs());
-
+  let mostInterestedOrgs= await organizationData.getMostInterestedOrgs();
   // render page  
   res.render('landing', {
     title: '',

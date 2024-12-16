@@ -378,12 +378,14 @@ const organizationFunctions ={
             {$addFields:{numberOfTagsMatch: {$size: {$setIntersection: ["$tags", tags]}}}}, 
             //first sort by number of matching tags then by interest count
             {$sort: {numberOfTagsMatch: -1, interestCount:-1}},
-            //only o_ids
-            {$project:{_id:1}},
+            {$project: { _id: 1, name:1, tags:1, interestCount:1}},
             //give me 10
             {$limit:10},
         ]).toArray()
-        return organizationsList.map((org)=> org._id.toString())
+        return organizationsList.map((org)=>{
+            org._id=org._id.toString();
+            return org;
+        });
     },
 
     async getMostInterestedOrgs(){
@@ -392,12 +394,17 @@ const organizationFunctions ={
         const organizationCollection= await organizations();
         if(!organizationCollection) throw 'Failed to connect to organization collection';
         const organizationsList = await organizationCollection
-            .find({})
-            .sort({interestCount:-1}) //we want to highest to lowest
-            .limit(10)  //following Mark's instructions
-            .project({_id:1})  
-            .toArray();
-        return organizationsList.map((org)=> org._id.toString())
+        .aggregate([
+            { $match: {} }, // Optional match stage to filter documents
+            { $sort: { interestCount: -1 } }, // Sort by interestCount descending
+            { $limit: 10 }, // Limit to top 10
+            { $project: { _id: 1, name:1, tags:1, interestCount:1} } // Only include _id in the result
+        ])
+        .toArray();
+        return organizationsList.map((org)=>{
+            org._id=org._id.toString();
+            return org;
+        });
     },
     
     /*
