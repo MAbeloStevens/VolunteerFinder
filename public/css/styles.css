@@ -169,7 +169,8 @@ p.important {
 }
 
 .centered {
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
     width: fit-content;
     text-align: center;
 }
@@ -195,12 +196,23 @@ div.leftDiv {
     float: left;
     margin: 0;
     padding: 0;
+    
 }
 
 div.rightDiv {
     float: right;
     margin: 0;
     padding: 0;
+}
+
+a.button {
+    margin-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: small;
+    text-decoration: none;
 }
 
 /* forms */
@@ -229,27 +241,27 @@ form.interestedBtnForm {
     flex-direction: column;
 }
 
+
 #interestBtn.interested:hover,
+a.button,
 button {
     border: solid 2px var(--btn-color);
     border-radius: 4px;
     color: var(--txt-color);
     background-color: var(--mnu-color);
 }
-
+    
 #interestBtn.interested,
+a.button:hover,
 button:hover {
     color: var(--txtalt-color);
     background-color: var(--bnnr-color);
 }
 
-button.important:hover {
+a.button.important:hover,
+button.important:hover{
     color: var(--txtalt-color);
     background-color: var(--err-color);
-}
-
-a button {
-    margin-top: 5px;
 }
 
 form div.textInputs {
@@ -307,22 +319,30 @@ div.displayOrgsDiv *{
     margin: 5px;
 }
 
-div.displayOrgsDiv a:link{
+#recommendedOrgsDiv a:link,
+#mostInterestedOrgsDiv a:link,
+ul.accountList a:link{
     text-decoration: none;
     margin: 0;
     padding: 0;
     color: var(--link-color);
 }
 
-div.displayOrgsDiv a:visited{
+#recommendedOrgsDiv a:visited,
+#mostInterestedOrgsDiv a:visited,
+ul.accountList a:visited{
     color: var(--link-color);
 }
 
-div.displayOrgsDiv a:hover{
+#recommendedOrgsDiv :hover,
+#mostInterestedOrgsDiv a:hover,
+ul.accountList a:hover{
     color: var(--txt-select-color);
 }
 
-div.displayOrgsDiv a:active{
+#recommendedOrgsDiv a:active,
+#mostInterestedOrgsDiv a:active,
+ul.accountList a:active{
     color: var(--txt-select-color);
 }
 
@@ -330,6 +350,7 @@ div.displayOrg {
     margin: 5px;
     padding-top: 10px;
     padding-left: 10px;
+    padding-bottom: 5px;
     border: 2px solid var(--btn-color);
     border-radius: 10px;
     overflow: hidden;
@@ -453,6 +474,7 @@ div.orgBanner img {
 
 div.commentsDiv {
     margin-top: 20px;
+    padding-bottom: 10px;
     overflow: hidden;
     width: 70%;
 }
@@ -479,6 +501,7 @@ div.commentsDiv div.comment .writtenBy {
 
 div.reviewsDiv {
     margin-top: 20px;
+    padding-bottom: 10px;
     overflow: hidden;
     width: 70%;
 }
